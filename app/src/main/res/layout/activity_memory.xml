@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+    <!-- media upload space -->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:id="@+id/image_upload"
+        android:adjustViewBounds="true"
+        android:scaleType="center"
+        android:layout_weight="0.58"
+        android:onClick="onClickImageUpload"/>
+
+    <!--  type in title space -->
+    <EditText
+        android:id="@+id/editor_title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="Memory Title"
+        android:inputType="text" />
+
+    <!--  type in date space -->
+    <TextView
+        android:id="@+id/text_date"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="date"
+        android:onClick="onClickSetDate"/>
+
+    <!-- type in details space -->
+    <EditText
+        android:id="@+id/editor_details"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:layout_weight="0.42"
+        android:hint="Memory Details"/>
+
+    <!-- button to create memory -->
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/button_createmem"
+        android:text="Confirm Memory"
+        android:onClick="onClickConfirmMemory"/>
+
+
+</LinearLayout>

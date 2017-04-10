@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/menu_search_address"
+        android:title="Create Memory at Address" />
+    <item android:id="@+id/menu_create_memory_at_location"
+        android:title="Create Memory at My Location" />
+</menu>
