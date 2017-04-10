@@ -32,9 +32,9 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void onClickCreateMemory(View v){
+    /*public void onClickCreateMemory(View v){
         Intent intent = new Intent(this, MemoryActivity.class);
         startActivity(intent);
-    }
+    }*/
 
 }

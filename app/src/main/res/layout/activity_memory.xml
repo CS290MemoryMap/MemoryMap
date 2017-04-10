@@ -14,13 +14,21 @@
         android:layout_weight="0.58"
         android:onClick="onClickImageUpload"/>
 
-    <!--  type in date space -->
+    <!--  type in title space -->
     <EditText
-        android:id="@+id/editor_date"
+        android:id="@+id/editor_title"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:inputType="date"
-        android:hint="Date"/>
+        android:hint="Memory Title"
+        android:inputType="text" />
+
+    <!--  type in date space -->
+    <TextView
+        android:id="@+id/text_date"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="date"
+        android:onClick="onClickSetDate"/>
 
     <!-- type in details space -->
     <EditText
@@ -29,7 +37,7 @@
         android:layout_height="wrap_content"
         android:inputType="text"
         android:layout_weight="0.42"
-        android:hint="Details about your memory"/>
+        android:hint="Memory Details"/>
 
     <!-- button to create memory -->
     <Button

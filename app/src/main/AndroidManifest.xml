@@ -7,15 +7,14 @@ package="compsci290.duke.edu.memorymap">
     <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
     <meta-data android:name="com.google.android.geo.API_KEY"
         android:value="AIzaSyAdqbh2xBrLpMYnHvwKvc8Ud4pdsHbwaR0" />
-    <activity android:name=".MainActivity">
+    <activity android:name=".MainActivity" android:theme="@style/Theme.AppCompat.Light">
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
-
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
     </activity>
-    <activity android:name="compsci290.duke.edu.memorymap.MapsActivity" android:label="@string/title_activity_maps"> </activity>
-    <activity android:name="compsci290.duke.edu.memorymap.MemoryActivity"> </activity>
+    <activity android:name="compsci290.duke.edu.memorymap.MapsActivity"  android:theme="@style/Theme.AppCompat.Light"> </activity>
+    <activity android:name="compsci290.duke.edu.memorymap.MemoryActivity" android:theme="@style/Theme.AppCompat.Light"> </activity>
 </application>
 
 </manifest>

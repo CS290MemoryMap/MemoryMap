@@ -1,39 +1,57 @@
 package compsci290.duke.edu.memorymap;
 
-import android.content.Context;
+
+import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.provider.MediaStore;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.KeyEvent;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethod;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.view.View;
-import android.view.View.OnClickListener;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Calendar;
 
 public class MemoryActivity extends AppCompatActivity {
     private static final int SELECT_PICTURE = 1;
-    private Intent intent;
-    private Bundle bundle;
+    private static final String DATE = "date";
+    private static final String DETAILS = "details";
+    private static final String TITLE = "title";
+    private static final String BITMAP = "bitmap";
+    private static final String LATLNG = "latlng";
+    private Intent mToMapsIntent;
+    private Bundle mToMapsBundle;
+    private static TextView mDateTextView;
+    private String mLatLngStr;
 
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memory);
 
-        /* Create intent for MapsActivity */
-        intent = new Intent(this,MapsActivity.class);
-        bundle = new Bundle();
+        /* Create mToMapsIntent for MapsActivity */
+        mToMapsIntent = new Intent(this,MapsActivity.class);
+        mToMapsBundle = new Bundle();
+
+        /* include previous location in next location */
+        Bundle prevBundle = getIntent().getExtras();
+        if(prevBundle != null){
+            mLatLngStr = prevBundle.getString(LATLNG);
+            //System.out.println("mLatLngStr in Memory activity: "+ mLatLngStr);
+            if(mLatLngStr != null) {
+                mToMapsBundle.putString(LATLNG, mLatLngStr);
+                //System.out.println("put latlng into mToMapsBundle from MemoryActivity");
+            }
+        }
+
+        /*find mDateTextView */
+        mDateTextView = (TextView) findViewById(R.id.text_date);
 
         /* set imageview to uploadmedia.png */
         ImageView imageView = (ImageView) findViewById(R.id.image_upload);
@@ -72,21 +90,50 @@ public class MemoryActivity extends AppCompatActivity {
                     imageView.setImageBitmap(mPic);
                     imageView.setScaleType(ImageView.ScaleType.FIT_XY);
                     imageView.setAdjustViewBounds(true);
-                    //also put image in bundle
-                    bundle.putParcelable("bitmap",mPic);
+                    //also put image in mToMapsBundle
+                    mToMapsBundle.putParcelable(BITMAP,mPic);
 
                 }
             }
         }
     }
 
+    public void onClickSetDate(View view){
+        DialogFragment newFragment = new DatePickerFragment();
+        newFragment.show((this.getSupportFragmentManager()), "datePicker");
+    }
+
+    public static class DatePickerFragment extends DialogFragment
+            implements DatePickerDialog.OnDateSetListener {
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the current date as the default date in the picker
+            final Calendar c = Calendar.getInstance();
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+
+            // Create a new instance of DatePickerDialog and return it
+            return new DatePickerDialog(getActivity(), this, year, month, day);
+        }
+
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            String str = String.format("%d/%d/%d",month,day,year);
+            mDateTextView.setText(str);
+        }
+    }
+
     public void onClickConfirmMemory(View view){
-        EditText date = (EditText) findViewById(R.id.editor_date);
         EditText details = (EditText) findViewById(R.id.editor_details);
-        bundle.putString("date", date.getText().toString());
-        bundle.putString("details", date.getText().toString());
-        intent.putExtras(bundle);
-        startActivity(intent);
+        EditText title = (EditText) findViewById(R.id.editor_title);
+
+        mToMapsBundle.putString(DATE, mDateTextView.getText().toString());
+        mToMapsBundle.putString(DETAILS, details.getText().toString());
+        mToMapsBundle.putString(TITLE, title.getText().toString());
+        mToMapsIntent.putExtras(mToMapsBundle);
+        setResult(Activity.RESULT_OK, mToMapsIntent);
+        finish();
     }
 
 }
