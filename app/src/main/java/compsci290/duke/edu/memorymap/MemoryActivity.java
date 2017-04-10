@@ -3,6 +3,8 @@ package compsci290.duke.edu.memorymap;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,6 +16,7 @@ import android.widget.Button;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -21,22 +24,25 @@ import java.util.Date;
 
 public class MemoryActivity extends AppCompatActivity {
     private static final int SELECT_PICTURE = 1;
+    private Intent intent;
+    private Bundle bundle;
 
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memory);
 
-        /* Pass the current date */
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
-        String currentDateandTime = sdf.format(new Date());
+        /* Create intent for MapsActivity */
+        intent = new Intent(this,MapsActivity.class);
+        bundle = new Bundle();
 
-        /*EditText editText = (EditText) findViewById(R.id.text_editor);
-        editText.setEnabled(false);
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(editText.getApplicationWindowToken(), 0);*/
+        /* set imageview to uploadmedia.png */
+        ImageView imageView = (ImageView) findViewById(R.id.image_upload);
+        Drawable res = getResources().getDrawable(R.drawable.uploadmedia,getTheme());
+        imageView.setImageDrawable(res);
+        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
     }
 
-    public void choosePicture(){
+    public void onClickImageUpload(View view){
         Intent pickIntent = new Intent();
         pickIntent.setType("image/*");
         pickIntent.setAction(Intent.ACTION_GET_CONTENT);
@@ -49,29 +55,6 @@ public class MemoryActivity extends AppCompatActivity {
 
         startActivityForResult(chooserIntent, SELECT_PICTURE);
     }
-    /*
-    public void onClickCreateTextMarker(View v){
-        EditText editText = (EditText) findViewById(R.id.text_editor);
-        editText.setEnabled(true);
-        InputMethodManager imm = (InputMethodManager)
-                getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
-        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                boolean handled = false;
-                if (actionId == EditorInfo.IME_ACTION_SEND) {
-                    Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putString("text",v.getText().toString());
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                    handled = true;
-                }
-                return handled;
-            }
-        });
-    }*/
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -84,14 +67,26 @@ public class MemoryActivity extends AppCompatActivity {
                 if (extras != null) {
                     //Get image
                     Bitmap mPic = extras.getParcelable("data");
-                    //pass to the map activity
-                    Intent intent = new Intent(getApplicationContext(),MapsActivity.class);
-                    Bundle bundle = new Bundle();
+                    //Put image in imageview
+                    ImageView imageView = (ImageView) findViewById(R.id.image_upload);
+                    imageView.setImageBitmap(mPic);
+                    imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                    imageView.setAdjustViewBounds(true);
+                    //also put image in bundle
                     bundle.putParcelable("bitmap",mPic);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
+
                 }
             }
         }
     }
+
+    public void onClickConfirmMemory(View view){
+        EditText date = (EditText) findViewById(R.id.editor_date);
+        EditText details = (EditText) findViewById(R.id.editor_details);
+        bundle.putString("date", date.getText().toString());
+        bundle.putString("details", date.getText().toString());
+        intent.putExtras(bundle);
+        startActivity(intent);
+    }
+
 }

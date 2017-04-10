@@ -15,6 +15,7 @@ package="compsci290.duke.edu.memorymap">
         </intent-filter>
     </activity>
     <activity android:name="compsci290.duke.edu.memorymap.MapsActivity" android:label="@string/title_activity_maps"> </activity>
+    <activity android:name="compsci290.duke.edu.memorymap.MemoryActivity"> </activity>
 </application>
 
 </manifest>
