@@ -22,12 +22,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -37,14 +32,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.location.LocationServices;
 
-import java.text.DateFormat;
-import java.util.Date;
-
-import static android.location.LocationManager.GPS_PROVIDER;
-
 public class MapsActivity extends AppCompatActivity
         implements OnMapReadyCallback,
-//        LocationListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener{
 
@@ -63,8 +52,6 @@ public class MapsActivity extends AppCompatActivity
     private String toMemoryActivityLatLngStr;
     private GoogleApiClient mGoogleApiClient;
     private static final String TAG = "MapsActivity";
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,59 +72,10 @@ public class MapsActivity extends AppCompatActivity
                 .build();
     }
 
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        getCurrentLocation();
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.d(TAG,"Google API Client connection failed.");
-    }
-
-    @Override
-    protected void onStart() {
-        mGoogleApiClient.connect();
-        super.onStart();
-    }
-
-    @Override
-    protected void onStop() {
-        mGoogleApiClient.disconnect();
-        super.onStop();
-    }
-
-    private void getCurrentLocation() {
-        // TODO: make blue dot appear! :(
-        Log.d(TAG,"Attempting to get current location");
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-            return;
-        }
-        userCurrLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (userCurrLocation != null) {
-            Log.d(TAG,"Got current location successfully");
-            //moving the map to location
-            userCurrLatLng = new LatLng(userCurrLocation.getLatitude(),userCurrLocation.getLongitude());
-            Log.d(TAG,"moving camera to user current location");
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userCurrLatLng,ZOOM));
-        }else{
-            Log.d(TAG,"userCurrLocation == null :(");
-        }
-    }
-
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
+     * This is where we can add markers or lines, add listeners or move the camera.
      * If Google Play services is not installed on the device, the user will be prompted to install
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
@@ -236,6 +174,27 @@ public class MapsActivity extends AppCompatActivity
         }
     }
 
+    private void getCurrentLocation() {
+        // TODO: make blue dot appear! :(
+        Log.d(TAG,"Attempting to get current location");
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+            return;
+        }
+        userCurrLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (userCurrLocation != null) {
+            Log.d(TAG,"Got current location successfully");
+            //moving the map to location
+            userCurrLatLng = new LatLng(userCurrLocation.getLatitude(),userCurrLocation.getLongitude());
+            Log.d(TAG,"moving camera to user current location");
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userCurrLatLng,ZOOM));
+        }else{
+            Log.d(TAG,"userCurrLocation == null :(");
+        }
+    }
+
     private LatLng addressToLatLng(String address){
         //TODO: create address to LatLng method!
         return new LatLng(1.0,1.0);
@@ -281,6 +240,32 @@ public class MapsActivity extends AppCompatActivity
         Double latitude = Double.parseDouble(latLongStrArr[0].substring(10));
         Double longitude = Double.parseDouble(latLongStrArr[1].substring(0,latLongStrArr[1].length()-1));
         return new LatLng(latitude,longitude);
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        getCurrentLocation();
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.d(TAG,"Google API Client connection failed.");
+    }
+
+    @Override
+    protected void onStart() {
+        mGoogleApiClient.connect();
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        mGoogleApiClient.disconnect();
+        super.onStop();
     }
 
 }
