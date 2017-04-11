@@ -1,21 +1,20 @@
 package compsci290.duke.edu.memorymap;
 
 import android.Manifest;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ContextThemeWrapper;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -24,6 +23,11 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -31,48 +35,103 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.location.LocationServices;
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
+import java.text.DateFormat;
+import java.util.Date;
+
+import static android.location.LocationManager.GPS_PROVIDER;
+
+public class MapsActivity extends AppCompatActivity
+        implements OnMapReadyCallback,
+//        LocationListener,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener{
 
     private GoogleMap mMap;
-    private int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
+    private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private static final int CREATE_MEMORY = 1;
     private static final String DATE = "date";
     private static final String DETAILS = "details";
     private static final String TITLE = "title";
     private static final String BITMAP = "bitmap";
     private static final String LATLNG = "latlng";
+    private static final float ZOOM = 13;
     private Location userCurrLocation = null;
     private LatLng userCurrLatLng = null;
     private String userInputAddress = "";
-    private LocationManager locationManager;
-    private String provider;
     private String toMemoryActivityLatLngStr;
+    private GoogleApiClient mGoogleApiClient;
+    private static final String TAG = "MapsActivity";
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate ...............................");
         setContentView(R.layout.activity_maps);
 
-        // Getting Google Play availability status
-        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getBaseContext());
-        // Showing status
-        if(status!= ConnectionResult.SUCCESS){ // Google Play Services are not available
-
-            int requestCode = 10;
-            Dialog dialog = GooglePlayServicesUtil.getErrorDialog(status, this, requestCode);
-            dialog.show();
-
-        }else { // Google Play Services are available
-            // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-
-            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.map);
-            mapFragment.getMapAsync(this);
+        mapFragment.getMapAsync(this);
 
-        }
+        //Initializing mGoogleApiClient
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
     }
 
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        getCurrentLocation();
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.d(TAG,"Google API Client connection failed.");
+    }
+
+    @Override
+    protected void onStart() {
+        mGoogleApiClient.connect();
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        mGoogleApiClient.disconnect();
+        super.onStop();
+    }
+
+    private void getCurrentLocation() {
+        // TODO: make blue dot appear! :(
+        Log.d(TAG,"Attempting to get current location");
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+            return;
+        }
+        userCurrLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (userCurrLocation != null) {
+            Log.d(TAG,"Got current location successfully");
+            //moving the map to location
+            userCurrLatLng = new LatLng(userCurrLocation.getLatitude(),userCurrLocation.getLongitude());
+            Log.d(TAG,"moving camera to user current location");
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userCurrLatLng,ZOOM));
+        }else{
+            Log.d(TAG,"userCurrLocation == null :(");
+        }
+    }
 
     /**
      * Manipulates the map once available.
@@ -86,35 +145,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        /* check permissions again... :/ */
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            mMap.setMyLocationEnabled(true);
-        } else {
-            // Show rationale and request permission.
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-
-        }
-        // Enabling MyLocation Layer of Google Map
-        googleMap.setMyLocationEnabled(true);
-        // Getting LocationManager object from System Service LOCATION_SERVICE
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
-        // Creating a criteria object to retrieve provider
-        Criteria criteria = new Criteria();
-
-        // Getting the name of the best provider
-        provider = locationManager.getBestProvider(criteria, true);
-
-
-        // Getting Current Location TODO: check if current location actually is working
-        userCurrLocation = locationManager.getLastKnownLocation(provider);
-        if (userCurrLocation != null) {
-            userCurrLatLng = new LatLng(userCurrLocation.getLatitude(), userCurrLocation.getLongitude());
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(userCurrLatLng));
-        }
+        //getCurrentLocation();
 
         // Set up on click listener. If clicked, make a marker
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
@@ -191,9 +222,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 createMemoryWithUserInputAddress();
                 return true;
             case R.id.menu_create_memory_at_location:
-                updateLocation();
-                Intent intent = createIntentWithLatLng(userCurrLatLng.toString(),MemoryActivity.class);
-                startActivityForResult(intent, CREATE_MEMORY);
+                getCurrentLocation();
+                if(userCurrLatLng == null){
+                    Toast.makeText(getApplicationContext(),"Current location not found. Try pressing the location button first.",Toast.LENGTH_LONG).show();
+                }
+                else{
+                    Intent intent = createIntentWithLatLng(userCurrLatLng.toString(),MemoryActivity.class);
+                    startActivityForResult(intent, CREATE_MEMORY);
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -203,14 +239,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private LatLng addressToLatLng(String address){
         //TODO: create address to LatLng method!
         return new LatLng(1.0,1.0);
-    }
-
-    private void updateLocation(){
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            userCurrLocation = locationManager.getLastKnownLocation(provider);
-            userCurrLatLng = new LatLng(userCurrLocation.getLatitude(), userCurrLocation.getLongitude());
-        }
     }
 
     private Intent createIntentWithLatLng(String latlngstr, Class<?> toClass){
@@ -247,6 +275,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         builder.show();
     }
 
+    /* the string is of the format "lat/lng: (x.xxxxx...,x.xxxx....)" */
     private LatLng stringToLatLng(String latlngstr){
         String[] latLongStrArr = latlngstr.split(",");
         Double latitude = Double.parseDouble(latLongStrArr[0].substring(10));
