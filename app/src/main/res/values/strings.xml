@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">MemoryMap</string>
     <string name="intro">Keep all of your memories in one place.</string>
+    <string name="title_activity_maps">Map</string>
 </resources>
