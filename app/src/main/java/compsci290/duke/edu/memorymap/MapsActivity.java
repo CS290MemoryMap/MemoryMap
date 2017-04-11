@@ -111,8 +111,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // Getting Current Location TODO: check if current location actually is working
         userCurrLocation = locationManager.getLastKnownLocation(provider);
-        userCurrLatLng = new LatLng(userCurrLocation.getLatitude(), userCurrLocation.getLongitude());
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(userCurrLatLng));
+        if (userCurrLocation != null) {
+            userCurrLatLng = new LatLng(userCurrLocation.getLatitude(), userCurrLocation.getLongitude());
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(userCurrLatLng));
+        }
 
         // Set up on click listener. If clicked, make a marker
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
