@@ -46,7 +46,8 @@ public class MapsActivity extends AppCompatActivity
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         GoogleMap.OnMapClickListener,
-        GoogleMap.InfoWindowAdapter{
+        GoogleMap.InfoWindowAdapter,
+        GoogleMap.OnInfoWindowLongClickListener{
 
     private GoogleMap mMap;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
@@ -105,6 +106,7 @@ public class MapsActivity extends AppCompatActivity
         // Set up on click listener. If clicked, make a marker
         mMap.setOnMapClickListener(this);
         mMap.setInfoWindowAdapter(this);
+        mMap.setOnInfoWindowLongClickListener(this);
     }
 
     @Override
@@ -133,21 +135,34 @@ public class MapsActivity extends AppCompatActivity
     public View getInfoContents(Marker m) {
 
         // Getting view from the layout file info_window_layout
-        View v = getLayoutInflater().inflate(R.layout.windowlayout, null);
+        View v = getLayoutInflater().inflate(R.layout.infowindowlayout, null);
         MarkerTag markerTag = (MarkerTag) m.getTag();
 
         if(markerTag == null){ //use default window if markerTag is null
             return null;
         }
-
-        TextView titleView = (TextView) v.findViewById(R.id.win_title);
+        TextView titleView = (TextView) v.findViewById(R.id.infowin_title);
         titleView.setText(markerTag.getTitle());
-        TextView dateView = (TextView) v.findViewById(R.id.win_date);
+        TextView dateView = (TextView) v.findViewById(R.id.infowin_date);
         dateView.setText(markerTag.getDate());
-        TextView detailsView = (TextView) v.findViewById(R.id.win_details);
+        TextView detailsView = (TextView) v.findViewById(R.id.infowin_details);
         detailsView.setText(markerTag.getDetails());
 
         return v;
+    }
+
+    @Override
+    public void onInfoWindowLongClick(Marker marker) {
+        new AlertDialog.Builder(new ContextThemeWrapper(MapsActivity.this, R.style.myDialog))
+                .setMessage("Delete this memory")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        //TODO: delete marker
+                    }
+                })
+                .setNegativeButton("No", null)
+                .show();
     }
 
     @Override
@@ -311,7 +326,7 @@ public class MapsActivity extends AppCompatActivity
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         getCurrentLocation();
-        if(mSeeNewMarker && mNewMarkerLatLng != null){
+        if(mSeeNewMarker && (mNewMarkerLatLng != null)){
             Log.d(TAG,"moving camera to user's new marker");
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mNewMarkerLatLng,ZOOM));
             mSeeNewMarker = false;
@@ -341,4 +356,5 @@ public class MapsActivity extends AppCompatActivity
         mGoogleApiClient.disconnect();
         super.onStop();
     }
+
 }

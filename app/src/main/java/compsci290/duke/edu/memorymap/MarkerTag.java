@@ -1,7 +1,6 @@
 package compsci290.duke.edu.memorymap;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 
 public class MarkerTag {
     private String title = "";
