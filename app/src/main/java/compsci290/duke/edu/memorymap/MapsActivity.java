@@ -5,6 +5,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,7 +20,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -27,15 +31,23 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.location.LocationServices;
+
+import java.util.List;
+import java.util.Locale;
 
 public class MapsActivity extends AppCompatActivity
         implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener{
+        GoogleApiClient.OnConnectionFailedListener,
+        GoogleMap.OnMapClickListener,
+        GoogleMap.InfoWindowAdapter,
+        GoogleMap.OnInfoWindowLongClickListener{
 
     private GoogleMap mMap;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
@@ -49,9 +61,11 @@ public class MapsActivity extends AppCompatActivity
     private Location userCurrLocation = null;
     private LatLng userCurrLatLng = null;
     private String userInputAddress = "";
-    private String toMemoryActivityLatLngStr;
     private GoogleApiClient mGoogleApiClient;
     private static final String TAG = "MapsActivity";
+
+    private LatLng mNewMarkerLatLng;
+    private boolean mSeeNewMarker = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,56 +97,88 @@ public class MapsActivity extends AppCompatActivity
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        //getCurrentLocation();
+
+        // Set up UI
+        UiSettings settings = mMap.getUiSettings();
+        settings.setZoomControlsEnabled(true);
+        settings.setMyLocationButtonEnabled(false);//TODO: make so this is true AND it works :(
 
         // Set up on click listener. If clicked, make a marker
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
-                toMemoryActivityLatLngStr = latLng.toString();
-                new AlertDialog.Builder(new ContextThemeWrapper(MapsActivity.this, R.style.myDialog))
-                        .setMessage("Create a memory at this location?")
-                        .setCancelable(false)
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                Intent intent = createIntentWithLatLng(toMemoryActivityLatLngStr,MemoryActivity.class);
-                                startActivityForResult(intent, CREATE_MEMORY);
-                            }
-                        })
-                        .setNegativeButton("No", null)
-                        .show();
-            }
-        });
+        mMap.setOnMapClickListener(this);
+        mMap.setInfoWindowAdapter(this);
+        mMap.setOnInfoWindowLongClickListener(this);
+    }
+
+    @Override
+    public void onMapClick(final LatLng latLng) {
+        new AlertDialog.Builder(new ContextThemeWrapper(MapsActivity.this, R.style.myDialog))
+                .setMessage("Create a memory at this location?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent intent = createIntentWithLatLng(latLng,MemoryActivity.class);
+                        startActivityForResult(intent, CREATE_MEMORY);
+                    }
+                })
+                .setNegativeButton("No", null)
+                .show();
+    }
+
+    // Use default InfoWindow frame
+    @Override
+    public View getInfoWindow(Marker m) {
+        return null;
+    }
+
+    // Defines the contents of the InfoWindow
+    @Override
+    public View getInfoContents(Marker m) {
+
+        // Getting view from the layout file info_window_layout
+        View v = getLayoutInflater().inflate(R.layout.infowindowlayout, null);
+        MarkerTag markerTag = (MarkerTag) m.getTag();
+
+        if(markerTag == null){ //use default window if markerTag is null
+            return null;
+        }
+        TextView titleView = (TextView) v.findViewById(R.id.infowin_title);
+        titleView.setText(markerTag.getTitle());
+        TextView dateView = (TextView) v.findViewById(R.id.infowin_date);
+        dateView.setText(markerTag.getDate());
+        TextView detailsView = (TextView) v.findViewById(R.id.infowin_details);
+        detailsView.setText(markerTag.getDetails());
+
+        return v;
+    }
+
+    @Override
+    public void onInfoWindowLongClick(Marker marker) {
+        new AlertDialog.Builder(new ContextThemeWrapper(MapsActivity.this, R.style.myDialog))
+                .setMessage("Delete this memory")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        //TODO: delete marker
+                    }
+                })
+                .setNegativeButton("No", null)
+                .show();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
-        System.out.println("returning to onActivityResult");
         if (requestCode == CREATE_MEMORY) {
             // Make sure the request was successful
-            System.out.println("request code is CREATE_MEMORY");
             if (resultCode == RESULT_OK) {
                 // The user successfully created a memory
                 final Bundle extras = data.getExtras();
                 if (extras != null) {
-                    //TODO: add everything to marker including date and details
-                    LatLng latLng = stringToLatLng(extras.getString(LATLNG));
-                    String date = extras.getString(DATE);
-                    String details = extras.getString(DETAILS);
-                    String title = extras.getString(TITLE);
-                    Bitmap bitmap = extras.getParcelable(BITMAP);
-                    if(bitmap == null){
-                        mMap.addMarker(new MarkerOptions()
-                                .title(title)
-                                .position(latLng));
-                    }else{
-                        mMap.addMarker(new MarkerOptions()
-                                .title(title)
-                                .position(latLng)
-                                .icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
-                    }
-                    //TODO: save marker somehow. currently is not saved
+                    mNewMarkerLatLng = extras.getParcelable(LATLNG);
+                    addMarkerFromBundle(extras);
+                    Log.d(TAG,"moving camera to new marker location");
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mNewMarkerLatLng,ZOOM));
+                    mSeeNewMarker = true;
                 }else{
                     Toast.makeText(this,"Memory not successfully created.", Toast.LENGTH_SHORT).show();
                 }
@@ -140,6 +186,37 @@ public class MapsActivity extends AppCompatActivity
             else{
                 Toast.makeText(this,"Memory not successfully created.", Toast.LENGTH_SHORT).show();
             }
+        }
+    }
+
+    private void addMarkerFromBundle(Bundle extras) {
+        MarkerTag markerTag =
+                new MarkerTag(extras.getString(TITLE),
+                        extras.getString(DATE),
+                        extras.getString(DETAILS),
+                        (Bitmap) extras.getParcelable(BITMAP),
+                        mNewMarkerLatLng.latitude,
+                        mNewMarkerLatLng.longitude);
+        if(mNewMarkerLatLng != null){
+            Marker newMarker;
+            if(markerTag.getImg() == null){
+                newMarker = mMap.addMarker(new MarkerOptions()
+                        .position(mNewMarkerLatLng));
+                newMarker.setTag(markerTag);
+
+            }else{
+                newMarker = mMap.addMarker(new MarkerOptions()
+                        .position(mNewMarkerLatLng)
+                        .icon(BitmapDescriptorFactory.fromBitmap(markerTag.getImg())));
+                newMarker.setTag(markerTag);
+            }
+            //TODO: save newMarker somehow. currently is not saved
+            /* if someone is here, consider checking out the newMarker.getTag() function.
+               at this point, it returns a MarkerTag object that has all of the info
+               needed to recreate the marker.
+            */
+        }else{
+            Log.d(TAG,"LatLng from previous MemoryActivity is null. Not adding marker.");
         }
     }
 
@@ -154,18 +231,19 @@ public class MapsActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-        switch (item.getItemId())
-        {
+        switch (item.getItemId()) {
             case R.id.menu_search_address:
-                createMemoryWithUserInputAddress();
+                askAddressCreateMemory();
                 return true;
             case R.id.menu_create_memory_at_location:
                 getCurrentLocation();
                 if(userCurrLatLng == null){
-                    Toast.makeText(getApplicationContext(),"Current location not found. Try pressing the location button first.",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),
+                            "Current location not found.",
+                            Toast.LENGTH_LONG).show();
                 }
                 else{
-                    Intent intent = createIntentWithLatLng(userCurrLatLng.toString(),MemoryActivity.class);
+                    Intent intent = createIntentWithLatLng(userCurrLatLng,MemoryActivity.class);
                     startActivityForResult(intent, CREATE_MEMORY);
                 }
                 return true;
@@ -175,7 +253,6 @@ public class MapsActivity extends AppCompatActivity
     }
 
     private void getCurrentLocation() {
-        // TODO: make blue dot appear! :(
         Log.d(TAG,"Attempting to get current location");
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
@@ -183,34 +260,41 @@ public class MapsActivity extends AppCompatActivity
                     MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
             return;
         }
+        mMap.setMyLocationEnabled(true);
         userCurrLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (userCurrLocation != null) {
             Log.d(TAG,"Got current location successfully");
-            //moving the map to location
             userCurrLatLng = new LatLng(userCurrLocation.getLatitude(),userCurrLocation.getLongitude());
-            Log.d(TAG,"moving camera to user current location");
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userCurrLatLng,ZOOM));
         }else{
             Log.d(TAG,"userCurrLocation == null :(");
         }
     }
 
     private LatLng addressToLatLng(String address){
-        //TODO: create address to LatLng method!
-        return new LatLng(1.0,1.0);
+        Geocoder geo = new Geocoder(this.getApplicationContext(), Locale.getDefault());
+        List<Address> addresses;
+        Address address1;
+        LatLng latLng;
+        try {
+            addresses = geo.getFromLocationName(address,1);
+            address1 = addresses.get(0);
+            latLng = new LatLng(address1.getLatitude(),address1.getLongitude());
+        }catch (Exception e){//TODO: make this more specific
+            e.printStackTrace();
+            latLng = null;
+        }
+        return latLng;
     }
 
-    private Intent createIntentWithLatLng(String latlngstr, Class<?> toClass){
+    private Intent createIntentWithLatLng(LatLng latlng, Class<?> toClass){
         Intent intent = new Intent(MapsActivity.this,toClass);
         Bundle bundle = new Bundle();
-        if(latlngstr != null || latlngstr != ""){
-            bundle.putString(LATLNG,latlngstr);
-        }
+        bundle.putParcelable(LATLNG, latlng);
         intent.putExtras(bundle);
         return intent;
     }
 
-    private void createMemoryWithUserInputAddress(){
+    private void askAddressCreateMemory(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Enter Address");
 
@@ -226,25 +310,30 @@ public class MapsActivity extends AppCompatActivity
             public void onClick(DialogInterface dialog, int which) {
                 userInputAddress = input.getText().toString();
                 LatLng latLng = addressToLatLng(userInputAddress);
-                Intent intent = createIntentWithLatLng(latLng.toString(),MemoryActivity.class);
-                startActivityForResult(intent, CREATE_MEMORY);
+                if(latLng != null){
+                    Intent intent = createIntentWithLatLng(latLng,MemoryActivity.class);
+                    startActivityForResult(intent, CREATE_MEMORY);
+                }else{
+                    Log.d(TAG,"failed to create memory with user input address");
+                    Toast.makeText(MapsActivity.this,"Failed to find location of address.",Toast.LENGTH_LONG).show();
+                }
             }
         });
         builder.setNegativeButton("Cancel", null);
         builder.show();
     }
 
-    /* the string is of the format "lat/lng: (x.xxxxx...,x.xxxx....)" */
-    private LatLng stringToLatLng(String latlngstr){
-        String[] latLongStrArr = latlngstr.split(",");
-        Double latitude = Double.parseDouble(latLongStrArr[0].substring(10));
-        Double longitude = Double.parseDouble(latLongStrArr[1].substring(0,latLongStrArr[1].length()-1));
-        return new LatLng(latitude,longitude);
-    }
-
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         getCurrentLocation();
+        if(mSeeNewMarker && (mNewMarkerLatLng != null)){
+            Log.d(TAG,"moving camera to user's new marker");
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mNewMarkerLatLng,ZOOM));
+            mSeeNewMarker = false;
+        }else{
+            Log.d(TAG,"moving camera to user current location");
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userCurrLatLng,ZOOM));
+        }
     }
 
     @Override

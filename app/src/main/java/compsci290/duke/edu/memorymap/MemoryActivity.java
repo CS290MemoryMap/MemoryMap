@@ -11,11 +11,14 @@ import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Calendar;
 
@@ -29,7 +32,8 @@ public class MemoryActivity extends AppCompatActivity {
     private Intent mToMapsIntent;
     private Bundle mToMapsBundle;
     private static TextView mDateTextView;
-    private String mLatLngStr;
+    private LatLng mLatLng;
+    private static final String TAG = "MemoryActivity";
 
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -42,12 +46,12 @@ public class MemoryActivity extends AppCompatActivity {
         /* include previous location in next location */
         Bundle prevBundle = getIntent().getExtras();
         if(prevBundle != null){
-            mLatLngStr = prevBundle.getString(LATLNG);
-            //System.out.println("mLatLngStr in Memory activity: "+ mLatLngStr);
-            if(mLatLngStr != null) {
-                mToMapsBundle.putString(LATLNG, mLatLngStr);
-                //System.out.println("put latlng into mToMapsBundle from MemoryActivity");
+            mLatLng = prevBundle.getParcelable(LATLNG);
+            if(mLatLng != null) {
+                mToMapsBundle.putParcelable(LATLNG, mLatLng);
             }
+        }else if(prevBundle == null || mLatLng == null){
+            Log.d(TAG,"Got to MemoryActivity without a latlng");
         }
 
         /*find mDateTextView */

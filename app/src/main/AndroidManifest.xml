@@ -8,7 +8,7 @@ package="compsci290.duke.edu.memorymap">
     <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
     <meta-data android:name="com.google.android.geo.API_KEY"
         android:value="AIzaSyAdqbh2xBrLpMYnHvwKvc8Ud4pdsHbwaR0" />
-      
+
         <!-- MainActivity -->
         <activity android:name=".MainActivity" android:theme="@style/Theme.AppCompat.Light">
             <intent-filter>
