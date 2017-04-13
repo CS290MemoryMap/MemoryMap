@@ -10,7 +10,7 @@ public class MarkerTag {
     private Double latitude = null;
     private Double longitude = null;
 
-    MarkerTag(String title, String date, String details, Bitmap img, Double latitude, Double longitude){
+    public MarkerTag(String title, String date, String details, Bitmap img, Double latitude, Double longitude){
         if(title != null) this.title = title;
         if(!date.equals("date")) this.date = date;
         if(details != null) this.details = details;

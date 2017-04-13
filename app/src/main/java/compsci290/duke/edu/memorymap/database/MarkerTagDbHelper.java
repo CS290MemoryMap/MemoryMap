@@ -12,6 +12,7 @@ public class MarkerTagDbHelper extends SQLiteOpenHelper {
     // If you change the database schema, you must increment the database version.
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "MarkerTag.db";
+    //TODO: is FLOAT the correct type for a double?
     private static final String SQL_CREATE_TABLE =
             "CREATE TABLE " + MarkerTagContract.MarkerTagTable.TABLE_NAME + " (" +
                     MarkerTagContract.MarkerTagTable._ID + " INTEGER PRIMARY KEY," +
