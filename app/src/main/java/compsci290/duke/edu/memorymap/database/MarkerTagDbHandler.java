@@ -114,6 +114,74 @@ public class MarkerTagDbHandler {
     }
 
     /**
+     * query all MarkerTag objects sorted by longitude and latitude (northwest to southeast)
+     * @return List of sorted MarkerTag objects
+     */
+    public ArrayList<MarkerTag> querySortByLongLat() {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        // Define a projection that specifies which columns from the database
+        // you will actually use after this query.
+        String[] projection = {
+//                MarkerTagContract.MarkerTagTable._ID,
+                MarkerTagContract.MarkerTagTable.COLUMN_NAME_TITLE,
+                MarkerTagContract.MarkerTagTable.COLUMN_NAME_DATE,
+                MarkerTagContract.MarkerTagTable.COLUMN_NAME_DETAILS,
+                MarkerTagContract.MarkerTagTable.COLUMN_NAME_IMG,
+                MarkerTagContract.MarkerTagTable.COLUMN_NAME_LATITUDE,
+                MarkerTagContract.MarkerTagTable.COLUMN_NAME_LONGITUDE
+        };
+
+//        // Filter results WHERE "title" = 'My Title'
+//        String selection = MarkerTagContract.MarkerTagTable.COLUMN_NAME_TITLE + " = ?";
+//        String[] selectionArgs = { "My Title" };
+
+        // How you want the results sorted in the resulting Cursor
+        String sortOrder = MarkerTagContract.MarkerTagTable.COLUMN_NAME_LONGITUDE + " ASC" +
+                ", " + MarkerTagContract.MarkerTagTable.COLUMN_NAME_LATITUDE + " DESC";
+
+        // Query the database for results (returns a cursor)
+        Cursor cursor = db.query(
+                MarkerTagContract.MarkerTagTable.TABLE_NAME,  // The table to query
+                projection,                               // The columns to return
+                null,                                       // The columns for the WHERE clause
+                null,                                      // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                sortOrder                                     // The sort order
+        );
+
+        // Makes MarkerTag objects from data queried and adds it to a Set
+//        Set<MarkerTag> markerTagList = new HashSet<>();
+        ArrayList<MarkerTag> markerTagList = new ArrayList<>();
+
+        while(cursor.moveToNext()) {
+            String title = cursor.getString(cursor.getColumnIndexOrThrow(
+                    MarkerTagContract.MarkerTagTable.COLUMN_NAME_TITLE));
+            String date = cursor.getString(cursor.getColumnIndexOrThrow(
+                    MarkerTagContract.MarkerTagTable.COLUMN_NAME_DATE));
+            String details = cursor.getString(cursor.getColumnIndexOrThrow(
+                    MarkerTagContract.MarkerTagTable.COLUMN_NAME_DETAILS));
+            byte[] imgByteArray = cursor.getBlob(cursor.getColumnIndexOrThrow(
+                    MarkerTagContract.MarkerTagTable.COLUMN_NAME_IMG));
+            double latitude = cursor.getDouble(cursor.getColumnIndexOrThrow(
+                    MarkerTagContract.MarkerTagTable.COLUMN_NAME_LATITUDE));
+            double longitude = cursor.getDouble(cursor.getColumnIndexOrThrow(
+                    MarkerTagContract.MarkerTagTable.COLUMN_NAME_LONGITUDE));
+
+            // Converts byte[] back to bitmap
+            Bitmap img = BitmapFactory.decodeByteArray(imgByteArray, 0, imgByteArray.length);
+
+            // Add MarkerTag to List
+            markerTagList.add(new MarkerTag(title, date, details, img, latitude, longitude));
+        }
+
+        cursor.close();
+
+        return markerTagList;
+    }
+
+    /**
      * update a MarkerTag
      * @param markerTitle original title of the MarkerTag
      * @param updatedMarkerTag MarkerTag object after the update
