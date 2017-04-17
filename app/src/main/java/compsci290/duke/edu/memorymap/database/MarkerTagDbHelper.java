@@ -16,10 +16,10 @@ class MarkerTagDbHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + MarkerTagContract.MarkerTagTable.TABLE_NAME + " (" +
                     MarkerTagContract.MarkerTagTable._ID + " INTEGER PRIMARY KEY," +
                     MarkerTagContract.MarkerTagTable.COLUMN_NAME_TITLE + " TEXT," +
-                    MarkerTagContract.MarkerTagTable.COLUMN_NAME_DATE + " TEXT)" +
-                    MarkerTagContract.MarkerTagTable.COLUMN_NAME_DETAILS + " TEXT)" +
-                    MarkerTagContract.MarkerTagTable.COLUMN_NAME_IMG + " BLOB)" +
-                    MarkerTagContract.MarkerTagTable.COLUMN_NAME_LATITUDE + " FLOAT)" +
+                    MarkerTagContract.MarkerTagTable.COLUMN_NAME_DATE + " TEXT," +
+                    MarkerTagContract.MarkerTagTable.COLUMN_NAME_DETAILS + " TEXT," +
+                    MarkerTagContract.MarkerTagTable.COLUMN_NAME_IMG + " BLOB," +
+                    MarkerTagContract.MarkerTagTable.COLUMN_NAME_LATITUDE + " FLOAT," +
                     MarkerTagContract.MarkerTagTable.COLUMN_NAME_LONGITUDE + " FLOAT)";
 
 

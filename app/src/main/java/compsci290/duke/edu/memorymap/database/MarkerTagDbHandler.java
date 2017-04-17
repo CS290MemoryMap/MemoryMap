@@ -7,8 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import java.io.ByteArrayOutputStream;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
 
 import compsci290.duke.edu.memorymap.MarkerTag;
 import compsci290.duke.edu.memorymap.MyApplication;
@@ -49,9 +48,9 @@ public class MarkerTagDbHandler {
 
     /**
      * Query for all rows and columns in the Marker Tag Table
-     * @return a MarkerTag array with all the queried data
+     * @return a MarkerTag list of all the queried data
      */
-    public Set<MarkerTag> queryAllMarkerTags() {
+    public ArrayList<MarkerTag> queryAllMarkerTags() {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
         // Define a projection that specifies which columns from the database
@@ -85,7 +84,9 @@ public class MarkerTagDbHandler {
         );
 
         // Makes MarkerTag objects from data queried and adds it to a Set
-        Set<MarkerTag> markerTagSet = new HashSet<>();
+//        Set<MarkerTag> markerTagList = new HashSet<>();
+        ArrayList<MarkerTag> markerTagList = new ArrayList<>();
+
         while(cursor.moveToNext()) {
             String title = cursor.getString(cursor.getColumnIndexOrThrow(
                     MarkerTagContract.MarkerTagTable.COLUMN_NAME_TITLE));
@@ -103,13 +104,13 @@ public class MarkerTagDbHandler {
             // Converts byte[] back to bitmap
             Bitmap img = BitmapFactory.decodeByteArray(imgByteArray, 0, imgByteArray.length);
 
-            // Add MarkerTag to Set
-            markerTagSet.add(new MarkerTag(title, date, details, img, latitude, longitude));
+            // Add MarkerTag to List
+            markerTagList.add(new MarkerTag(title, date, details, img, latitude, longitude));
         }
 
         cursor.close();
 
-        return markerTagSet;
+        return markerTagList;
     }
 
     /**
@@ -149,8 +150,9 @@ public class MarkerTagDbHandler {
     /**
      * delete a MarkerTag
      * @param markerTag MarkerTag object to delete
+     * @return the number of rows affected if a whereClause is passed in, 0 otherwise
      */
-    public void deleteMarkerTag(MarkerTag markerTag) {
+    public int deleteMarkerTag(MarkerTag markerTag) {
         // Gets the data repository in write mode
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
@@ -161,30 +163,31 @@ public class MarkerTagDbHandler {
         String[] selectionArgs = { markerTag.getTitle() };
 
         // Issue SQL statement.
-        db.delete(MarkerTagContract.MarkerTagTable.TABLE_NAME, selection, selectionArgs);
+        return db.delete(MarkerTagContract.MarkerTagTable.TABLE_NAME, selection, selectionArgs);
     }
 
     /**
      * delete a list of MarkerTag objects
      * @param markerTags List of MarkerTag objects to delete
+     * @return the number of rows affected if a whereClause is passed in, 0 otherwise
      */
-    public void deleteMarkerTagList(Set<MarkerTag> markerTags) {
+    public int deleteMarkerTagList(ArrayList<MarkerTag> markerTags) {
         // Gets the data repository in write mode
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        int count = 0;
 
         // Define 'where' part of query.
         String selection = MarkerTagContract.MarkerTagTable.COLUMN_NAME_TITLE + " = ?";
 
-        // Specify arguments in placeholder order.
-        String[] selectionArgs = new String[markerTags.size()];
-        int i = 0; // loop index
-        for (MarkerTag tag: markerTags) {
-            selectionArgs[i] = tag.getTitle();
-            i++;
+        for (int i=0; i<markerTags.size(); i++) {
+            // Specify arguments in placeholder order.
+            String[] selectionArgs = { markerTags.get(i).getTitle() };
+
+            // Issue SQL statement.
+            count += db.delete(MarkerTagContract.MarkerTagTable.TABLE_NAME, selection, selectionArgs);
         }
 
-        // Issue SQL statement.
-        db.delete(MarkerTagContract.MarkerTagTable.TABLE_NAME, selection, selectionArgs);
+        return count;
     }
 
     /**
