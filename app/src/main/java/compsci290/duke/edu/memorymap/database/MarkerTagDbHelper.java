@@ -8,11 +8,10 @@ import android.database.sqlite.SQLiteOpenHelper;
  * SQLite Helper class (create and upgrade table)
  */
 
-public class MarkerTagDbHelper extends SQLiteOpenHelper {
+class MarkerTagDbHelper extends SQLiteOpenHelper {
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 1;
-    public static final String DATABASE_NAME = "MarkerTag.db";
-    //TODO: is FLOAT the correct type for a double?
+    private static final int DATABASE_VERSION = 1;
+    private static final String DATABASE_NAME = "MarkerTag.db";
     private static final String SQL_CREATE_TABLE =
             "CREATE TABLE " + MarkerTagContract.MarkerTagTable.TABLE_NAME + " (" +
                     MarkerTagContract.MarkerTagTable._ID + " INTEGER PRIMARY KEY," +
@@ -27,7 +26,7 @@ public class MarkerTagDbHelper extends SQLiteOpenHelper {
     private static final String SQL_DELETE_TABLE =
             "DROP TABLE IF EXISTS " + MarkerTagContract.MarkerTagTable.TABLE_NAME;
 
-    public MarkerTagDbHelper(Context context) {
+    MarkerTagDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -38,7 +37,10 @@ public class MarkerTagDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        //TODO replace SQL with desired action
+        // drop older table if existed
         db.execSQL(SQL_DELETE_TABLE);
+
+        // create table again
+        onCreate(db);
     }
 }

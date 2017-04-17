@@ -18,13 +18,14 @@ import compsci290.duke.edu.memorymap.MyApplication;
  */
 
 public class MarkerTagDbHandler {
-    MarkerTagDbHelper mDbHelper = new MarkerTagDbHelper(MyApplication.getAppContext());
+    private MarkerTagDbHelper mDbHelper = new MarkerTagDbHelper(MyApplication.getAppContext());
 
     /**
      * insert a MarkerTag row into the Marker Tag Table
-     * @param markerTag
+     * @param markerTag MarkerTag object containing memory data
+     * @return the row ID of the newly inserted row, or -1 if an error occurred
      */
-    public void insertMarkerTag(MarkerTag markerTag) {
+    public long insertMarkerTag(MarkerTag markerTag) {
         // Gets the data repository in write mode
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
@@ -43,7 +44,7 @@ public class MarkerTagDbHandler {
         values.put(MarkerTagContract.MarkerTagTable.COLUMN_NAME_LONGITUDE, markerTag.getLongitude());
 
         // Insert the new row, returning the primary key value of the new row
-        long newRowId = db.insert(MarkerTagContract.MarkerTagTable.TABLE_NAME, null, values);
+        return db.insert(MarkerTagContract.MarkerTagTable.TABLE_NAME, null, values);
     }
 
     /**
@@ -113,11 +114,12 @@ public class MarkerTagDbHandler {
 
     /**
      * update a MarkerTag
-     * @param markerTitle
-     * @param updatedMarkerTag
+     * @param markerTitle original title of the MarkerTag
+     * @param updatedMarkerTag MarkerTag object after the update
+     * @return the number of rows affected
      */
-    public void updateMarkerTag(String markerTitle, MarkerTag updatedMarkerTag) {
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+    public int updateMarkerTag(String markerTitle, MarkerTag updatedMarkerTag) {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         // Converts the bitmap to byte[]
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -137,7 +139,7 @@ public class MarkerTagDbHandler {
         String selection = MarkerTagContract.MarkerTagTable.COLUMN_NAME_TITLE + " = ?";
         String[] selectionArgs = { markerTitle };
 
-        int count = db.update(
+        return db.update(
                 MarkerTagContract.MarkerTagTable.TABLE_NAME,
                 values,
                 selection,
@@ -146,7 +148,7 @@ public class MarkerTagDbHandler {
 
     /**
      * delete a MarkerTag
-     * @param markerTag
+     * @param markerTag MarkerTag object to delete
      */
     public void deleteMarkerTag(MarkerTag markerTag) {
         // Gets the data repository in write mode
@@ -164,7 +166,7 @@ public class MarkerTagDbHandler {
 
     /**
      * delete a list of MarkerTag objects
-     * @param markerTags
+     * @param markerTags List of MarkerTag objects to delete
      */
     public void deleteMarkerTagList(Set<MarkerTag> markerTags) {
         // Gets the data repository in write mode
@@ -183,5 +185,12 @@ public class MarkerTagDbHandler {
 
         // Issue SQL statement.
         db.delete(MarkerTagContract.MarkerTagTable.TABLE_NAME, selection, selectionArgs);
+    }
+
+    /**
+     * Close the database (call in the calling activity onDestroy())
+     */
+    public void closeDatabase(){
+        mDbHelper.close();
     }
 }
