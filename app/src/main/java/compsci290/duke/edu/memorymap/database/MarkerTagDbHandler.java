@@ -22,37 +22,28 @@ public class MarkerTagDbHandler {
 
     /**
      * insert a MarkerTag row into the Marker Tag Table
-     * @param title
-     * @param date
-     * @param details
-     * @param img
-     * @param latitude
-     * @param longitude
+     * @param markerTag
      */
-    public void insertMarkerTag(String title, String date, String details, Bitmap img,
-                                double latitude, double longitude) {
+    public void insertMarkerTag(MarkerTag markerTag) {
         // Gets the data repository in write mode
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         // Converts the bitmap to byte[]
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        img.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        markerTag.getImg().compress(Bitmap.CompressFormat.PNG, 100, stream);
         byte[] imgByteArray = stream.toByteArray();
 
-        // Create a new map of values, where column names are the keys
+        // Create a new map of values, where column names are the key
         ContentValues values = new ContentValues();
-        values.put(MarkerTagContract.MarkerTagTable.COLUMN_NAME_TITLE, title);
-        values.put(MarkerTagContract.MarkerTagTable.COLUMN_NAME_DATE, date);
-        values.put(MarkerTagContract.MarkerTagTable.COLUMN_NAME_DETAILS, details);
+        values.put(MarkerTagContract.MarkerTagTable.COLUMN_NAME_TITLE, markerTag.getTitle());
+        values.put(MarkerTagContract.MarkerTagTable.COLUMN_NAME_DATE, markerTag.getDate());
+        values.put(MarkerTagContract.MarkerTagTable.COLUMN_NAME_DETAILS, markerTag.getDetails());
         values.put(MarkerTagContract.MarkerTagTable.COLUMN_NAME_IMG, imgByteArray);
-        values.put(MarkerTagContract.MarkerTagTable.COLUMN_NAME_LATITUDE, latitude);
-        values.put(MarkerTagContract.MarkerTagTable.COLUMN_NAME_LONGITUDE, longitude);
+        values.put(MarkerTagContract.MarkerTagTable.COLUMN_NAME_LATITUDE, markerTag.getLatitude());
+        values.put(MarkerTagContract.MarkerTagTable.COLUMN_NAME_LONGITUDE, markerTag.getLongitude());
 
         // Insert the new row, returning the primary key value of the new row
         long newRowId = db.insert(MarkerTagContract.MarkerTagTable.TABLE_NAME, null, values);
-
-        db.close();
-        mDbHelper.close();
     }
 
     /**
@@ -116,17 +107,81 @@ public class MarkerTagDbHandler {
         }
 
         cursor.close();
-        db.close();
-        mDbHelper.close();
 
         return markerTagSet;
     }
 
-    public void updateMarkerTag() {
+    /**
+     * update a MarkerTag
+     * @param markerTitle
+     * @param updatedMarkerTag
+     */
+    public void updateMarkerTag(String markerTitle, MarkerTag updatedMarkerTag) {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
+        // Converts the bitmap to byte[]
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        updatedMarkerTag.getImg().compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] imgByteArray = stream.toByteArray();
+
+        // new values for all columns
+        ContentValues values = new ContentValues();
+        values.put(MarkerTagContract.MarkerTagTable.COLUMN_NAME_TITLE, updatedMarkerTag.getTitle());
+        values.put(MarkerTagContract.MarkerTagTable.COLUMN_NAME_DATE, updatedMarkerTag.getDate());
+        values.put(MarkerTagContract.MarkerTagTable.COLUMN_NAME_DETAILS, updatedMarkerTag.getDetails());
+        values.put(MarkerTagContract.MarkerTagTable.COLUMN_NAME_IMG, imgByteArray);
+        values.put(MarkerTagContract.MarkerTagTable.COLUMN_NAME_LATITUDE, updatedMarkerTag.getLatitude());
+        values.put(MarkerTagContract.MarkerTagTable.COLUMN_NAME_LONGITUDE, updatedMarkerTag.getLongitude());
+
+        // Which row to update, based on the title
+        String selection = MarkerTagContract.MarkerTagTable.COLUMN_NAME_TITLE + " = ?";
+        String[] selectionArgs = { markerTitle };
+
+        int count = db.update(
+                MarkerTagContract.MarkerTagTable.TABLE_NAME,
+                values,
+                selection,
+                selectionArgs);
     }
 
-    public void deleteMarkerTag() {
+    /**
+     * delete a MarkerTag
+     * @param markerTag
+     */
+    public void deleteMarkerTag(MarkerTag markerTag) {
+        // Gets the data repository in write mode
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
+        // Define 'where' part of query.
+        String selection = MarkerTagContract.MarkerTagTable.COLUMN_NAME_TITLE + " = ?";
+
+        // Specify arguments in placeholder order.
+        String[] selectionArgs = { markerTag.getTitle() };
+
+        // Issue SQL statement.
+        db.delete(MarkerTagContract.MarkerTagTable.TABLE_NAME, selection, selectionArgs);
+    }
+
+    /**
+     * delete a list of MarkerTag objects
+     * @param markerTags
+     */
+    public void deleteMarkerTagList(Set<MarkerTag> markerTags) {
+        // Gets the data repository in write mode
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        // Define 'where' part of query.
+        String selection = MarkerTagContract.MarkerTagTable.COLUMN_NAME_TITLE + " = ?";
+
+        // Specify arguments in placeholder order.
+        String[] selectionArgs = new String[markerTags.size()];
+        int i = 0; // loop index
+        for (MarkerTag tag: markerTags) {
+            selectionArgs[i] = tag.getTitle();
+            i++;
+        }
+
+        // Issue SQL statement.
+        db.delete(MarkerTagContract.MarkerTagTable.TABLE_NAME, selection, selectionArgs);
     }
 }
