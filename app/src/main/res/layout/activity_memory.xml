@@ -39,7 +39,7 @@
         android:layout_weight="0.42"
         android:hint="Memory Details"/>
 
-    <!-- button to create memory -->
+    <!-- button to create memorylist -->
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
