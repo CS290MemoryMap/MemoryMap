@@ -332,7 +332,9 @@ public class MapsActivity extends AppCompatActivity
             mSeeNewMarker = false;
         }else{
             Log.d(TAG,"moving camera to user current location");
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userCurrLatLng,ZOOM));
+            if(userCurrLatLng != null){
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userCurrLatLng,ZOOM));
+            }
         }
     }
 
