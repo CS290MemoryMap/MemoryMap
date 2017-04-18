@@ -92,7 +92,7 @@ public class MemoryList extends AppCompatActivity {
 
     @Override
     public void onDestroy() {
-        mDbHandler.deleteMarkerTagList(mMarkerTagList);
+        // mDbHandler.deleteMarkerTagList(mMarkerTagList);
         mDbHandler.closeDatabase();
         super.onDestroy();
     }
