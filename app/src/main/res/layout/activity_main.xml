@@ -24,6 +24,13 @@
         android:onClick="onClickMapBtn"
         android:text="Go to map" />
 
+    <Button
+        android:id="@+id/buttonToList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onClickListBtn"
+        android:text="Go to list of memories" />
+
     <!--
     <Button
         android:id="@+id/createMemory"

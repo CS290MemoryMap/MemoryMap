@@ -2,4 +2,6 @@
     <string name="app_name">MemoryMap</string>
     <string name="intro">Keep all of your memories in one place.</string>
     <string name="title_activity_maps">Map</string>
+    <string name="location_sort">Sort by Location</string>
+    <string name="time_sort">Sort by Time Added</string>
 </resources>

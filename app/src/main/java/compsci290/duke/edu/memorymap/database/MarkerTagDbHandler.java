@@ -102,7 +102,9 @@ public class MarkerTagDbHandler {
                     MarkerTagContract.MarkerTagTable.COLUMN_NAME_LONGITUDE));
 
             // Converts byte[] back to bitmap
-            Bitmap img = BitmapFactory.decodeByteArray(imgByteArray, 0, imgByteArray.length);
+            //Bitmap img = BitmapFactory.decodeByteArray(imgByteArray, 0, imgByteArray.length);
+            Bitmap img = Bitmap.createScaledBitmap(BitmapFactory.
+                    decodeByteArray(imgByteArray, 0, imgByteArray.length), 100, 100, true);
 
             // Add MarkerTag to List
             markerTagList.add(new MarkerTag(title, date, details, img, latitude, longitude));
@@ -170,7 +172,9 @@ public class MarkerTagDbHandler {
                     MarkerTagContract.MarkerTagTable.COLUMN_NAME_LONGITUDE));
 
             // Converts byte[] back to bitmap
-            Bitmap img = BitmapFactory.decodeByteArray(imgByteArray, 0, imgByteArray.length);
+            //Bitmap img = BitmapFactory.decodeByteArray(imgByteArray, 0, imgByteArray.length);
+            Bitmap img = Bitmap.createScaledBitmap(BitmapFactory.
+                    decodeByteArray(imgByteArray, 0, imgByteArray.length), 100, 100, true);
 
             // Add MarkerTag to List
             markerTagList.add(new MarkerTag(title, date, details, img, latitude, longitude));

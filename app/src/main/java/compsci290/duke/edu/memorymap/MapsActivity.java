@@ -112,7 +112,7 @@ public class MapsActivity extends AppCompatActivity
     @Override
     public void onMapClick(final LatLng latLng) {
         new AlertDialog.Builder(new ContextThemeWrapper(MapsActivity.this, R.style.myDialog))
-                .setMessage("Create a memory at this location?")
+                .setMessage("Create a memorylist at this location?")
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -154,7 +154,7 @@ public class MapsActivity extends AppCompatActivity
     @Override
     public void onInfoWindowLongClick(Marker marker) {
         new AlertDialog.Builder(new ContextThemeWrapper(MapsActivity.this, R.style.myDialog))
-                .setMessage("Delete this memory")
+                .setMessage("Delete this memorylist")
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -171,7 +171,7 @@ public class MapsActivity extends AppCompatActivity
         if (requestCode == CREATE_MEMORY) {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
-                // The user successfully created a memory
+                // The user successfully created a memorylist
                 final Bundle extras = data.getExtras();
                 if (extras != null) {
                     mNewMarkerLatLng = extras.getParcelable(LATLNG);
@@ -314,7 +314,7 @@ public class MapsActivity extends AppCompatActivity
                     Intent intent = createIntentWithLatLng(latLng,MemoryActivity.class);
                     startActivityForResult(intent, CREATE_MEMORY);
                 }else{
-                    Log.d(TAG,"failed to create memory with user input address");
+                    Log.d(TAG,"failed to create memorylist with user input address");
                     Toast.makeText(MapsActivity.this,"Failed to find location of address.",Toast.LENGTH_LONG).show();
                 }
             }
