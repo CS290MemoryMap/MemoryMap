@@ -5,7 +5,8 @@ package="compsci290.duke.edu.memorymap">
 
     <application android:name="compsci290.duke.edu.memorymap.MyApplication" android:allowBackup="true"
         android:icon="@mipmap/ic_launcher" android:label="@string/app_name"
-        android:supportsRtl="true" android:theme="@style/AppTheme">
+        android:supportsRtl="true" android:theme="@style/AppTheme"
+        android:largeHeap="true">
     <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
     <meta-data android:name="com.google.android.geo.API_KEY"
         android:value="AIzaSyAdqbh2xBrLpMYnHvwKvc8Ud4pdsHbwaR0" />
@@ -40,6 +41,12 @@ package="compsci290.duke.edu.memorymap">
         <activity 
             android:name="compsci290.duke.edu.memorymap.MemoryActivity" 
             android:theme="@style/Theme.AppCompat.Light"> 
+        </activity>
+
+        <!-- MemoryListActivity -->
+        <activity
+            android:name="compsci290.duke.edu.memorymap.MemoryList"
+            android:theme="@style/Theme.AppCompat.Light">
         </activity>
         
     </application>

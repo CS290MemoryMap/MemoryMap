@@ -37,4 +37,9 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }*/
 
+    public void onClickListBtn(View v) {
+        Intent intent = new Intent(this, MemoryList.class);
+        startActivity(intent);
+    }
+
 }

@@ -44,14 +44,22 @@ public class MarkerTagAdapter extends RecyclerView.Adapter<MarkerTagAdapter.Mark
         holder.mMemTitle.setText(mMemoryList.get(i).getTitle());
         holder.mMemDescription.setText(mMemoryList.get(i).getDetails());
         holder.mMemDate.setText(mMemoryList.get(i).getDate());
-        Glide.with(mContext)
-                .load(mMemoryList.get(i).getImg())
-                .into(holder.mMemImage);
+        holder.mMemImage.setImageBitmap(mMemoryList.get(i).getImg());
     }
 
     @Override
     public int getItemCount() {
         return mMemoryList.size();
+    }
+
+    public void swap(ArrayList<MarkerTag> datas) {
+        if(mMemoryList != null) {
+            mMemoryList.clear();
+            mMemoryList.addAll(datas);
+        } else {
+            mMemoryList = datas;
+        }
+        notifyDataSetChanged();
     }
 
     public static class MarkerTagHolder extends RecyclerView.ViewHolder {
