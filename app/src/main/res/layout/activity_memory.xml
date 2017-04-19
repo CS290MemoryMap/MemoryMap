@@ -28,7 +28,8 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:onClick="onClickSetDate"
-        android:calendarViewShown="false"/>
+        android:calendarViewShown="false"
+        android:text="Date"/>
 
     <!-- type in details space -->
     <EditText
