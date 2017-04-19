@@ -38,8 +38,11 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.location.LocationServices;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import compsci290.duke.edu.memorymap.database.MarkerTagDbHandler;
 
 public class MapsActivity extends AppCompatActivity
         implements OnMapReadyCallback,
@@ -66,6 +69,8 @@ public class MapsActivity extends AppCompatActivity
 
     private LatLng mNewMarkerLatLng;
     private boolean mSeeNewMarker = false;
+
+    MarkerTagDbHandler mDbHandler = new MarkerTagDbHandler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,10 +108,16 @@ public class MapsActivity extends AppCompatActivity
         settings.setZoomControlsEnabled(true);
         settings.setMyLocationButtonEnabled(false);//TODO: make so this is true AND it works :(
 
-        // Set up on click listener. If clicked, make a marker
+        // Set up listeners and adapters
         mMap.setOnMapClickListener(this);
         mMap.setInfoWindowAdapter(this);
         mMap.setOnInfoWindowLongClickListener(this);
+
+        //restore all markers
+        ArrayList<MarkerTag> tagList = mDbHandler.queryAllMarkerTags();
+        for(MarkerTag tag : tagList){
+            addMarkerFromTag(tag);
+        }
     }
 
     @Override
@@ -152,13 +163,15 @@ public class MapsActivity extends AppCompatActivity
     }
 
     @Override
-    public void onInfoWindowLongClick(Marker marker) {
+    public void onInfoWindowLongClick(final Marker marker) {
         new AlertDialog.Builder(new ContextThemeWrapper(MapsActivity.this, R.style.myDialog))
                 .setMessage("Delete this memorylist")
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        //TODO: delete marker
+                        MarkerTag markerTag = (MarkerTag) marker.getTag();
+                        int count = mDbHandler.deleteMarkerTag(markerTag);
+                        marker.remove();
                     }
                 })
                 .setNegativeButton("No", null)
@@ -189,6 +202,7 @@ public class MapsActivity extends AppCompatActivity
         }
     }
 
+
     private void addMarkerFromBundle(Bundle extras) {
         MarkerTag markerTag =
                 new MarkerTag(extras.getString(TITLE),
@@ -210,11 +224,7 @@ public class MapsActivity extends AppCompatActivity
                         .icon(BitmapDescriptorFactory.fromBitmap(markerTag.getImg())));
                 newMarker.setTag(markerTag);
             }
-            //TODO: save newMarker somehow. currently is not saved
-            /* if someone is here, consider checking out the newMarker.getTag() function.
-               at this point, it returns a MarkerTag object that has all of the info
-               needed to recreate the marker.
-            */
+            mDbHandler.insertMarkerTag(markerTag);
         }else{
             Log.d(TAG,"LatLng from previous MemoryActivity is null. Not adding marker.");
         }
@@ -252,6 +262,10 @@ public class MapsActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * Attempts to update the variables userCurrLocation and userCurrLatLng
+     * by using LocationServices (which requires the Google API client)
+     */
     private void getCurrentLocation() {
         Log.d(TAG,"Attempting to get current location");
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -270,6 +284,13 @@ public class MapsActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * Returns a LatLng describing the input String address, or null if the address
+     * can't be translated. Uses Google's Geocoder.
+     *
+     * @param  address  String address to be convered to a LatLng
+     * @return      the LatLng of the input address
+     */
     private LatLng addressToLatLng(String address){
         Geocoder geo = new Geocoder(this.getApplicationContext(), Locale.getDefault());
         List<Address> addresses;
@@ -286,6 +307,14 @@ public class MapsActivity extends AppCompatActivity
         return latLng;
     }
 
+    /**
+     * Returns an intent to a specified class that has a bundle with a LatLng
+     * parcelable object already inside it
+     *
+     * @param  latlng  the latlng to include in the intent
+     * @param  toClass the class to which the intent will be passed
+     * @return      the intent
+     */
     private Intent createIntentWithLatLng(LatLng latlng, Class<?> toClass){
         Intent intent = new Intent(MapsActivity.this,toClass);
         Bundle bundle = new Bundle();
@@ -294,6 +323,12 @@ public class MapsActivity extends AppCompatActivity
         return intent;
     }
 
+    /**
+     * Creates a dialog that asks the user to input an address. Attempts to convert
+     * the address to a LatLng and then starts MemoryActivity with that information.
+     * Upon failure to convert the address, this method makes a toast to alert the user
+     * that their address could not be converted.
+     */
     private void askAddressCreateMemory(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Enter Address");
@@ -359,4 +394,22 @@ public class MapsActivity extends AppCompatActivity
         super.onStop();
     }
 
+    void addMarkerFromTag(MarkerTag markerTag){
+        Bitmap img = markerTag.getImg();
+        Double latitude = markerTag.getLatitude();
+        Double longitude = markerTag.getLongitude();
+        LatLng latLng = new LatLng(latitude,longitude);
+        Marker marker;
+        if(img != null){
+            marker = mMap.addMarker(new MarkerOptions()
+                    .position(latLng)
+                    .icon(BitmapDescriptorFactory.fromBitmap(img)));
+            marker.setTag(markerTag);
+        }
+        else{
+            marker = mMap.addMarker(new MarkerOptions()
+                    .position(latLng));
+            marker.setTag(markerTag);
+        }
+    }
 }
