@@ -27,8 +27,8 @@
         android:id="@+id/text_date"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="date"
-        android:onClick="onClickSetDate"/>
+        android:onClick="onClickSetDate"
+        android:calendarViewShown="false"/>
 
     <!-- type in details space -->
     <EditText
