@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Calendar;
+import java.util.Date;
 
 public class MemoryActivity extends AppCompatActivity {
     private static final int SELECT_PICTURE = 1;
