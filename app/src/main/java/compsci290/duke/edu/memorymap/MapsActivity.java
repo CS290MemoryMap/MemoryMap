@@ -120,10 +120,16 @@ public class MapsActivity extends AppCompatActivity
         }
     }
 
+    /* Activated when the user clicks on the map.
+     * Asks the user if they would like to create a memory at the clicked location.
+     * Upon answering yes, MemoryActivity is started
+     *
+     * @param  latLng  LatLng of clicked location
+     */
     @Override
     public void onMapClick(final LatLng latLng) {
         new AlertDialog.Builder(new ContextThemeWrapper(MapsActivity.this, R.style.myDialog))
-                .setMessage("Create a memorylist at this location?")
+                .setMessage("Create a memory at this location?")
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -135,13 +141,75 @@ public class MapsActivity extends AppCompatActivity
                 .show();
     }
 
-    // Use default InfoWindow frame
+    /**
+     * Creates the options menu
+     *
+     * @param  menu the latlng to include in the intent
+     * @return      true on successful handling
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.map_menu, menu);
+        super.onCreateOptionsMenu(menu);
+        return true;
+    }
+
+    /**
+     * Describes on how to handle each menu item being clicked.
+     *
+     * @param  item the clicked menu item
+     * @return      true on successful handling
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId()) {
+            case R.id.menu_get_current_location:
+                getCurrentLocation();
+                if(userCurrLatLng != null){
+                    Log.d(TAG,"moving camera to user current location (by menu seleciton)");
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userCurrLatLng,ZOOM));
+                }
+                return true;
+            case R.id.menu_search_address:
+                askAddressCreateMemory();
+                return true;
+            case R.id.menu_create_memory_at_location:
+                getCurrentLocation();
+                if(userCurrLatLng == null){
+                    Toast.makeText(getApplicationContext(),
+                            "Current location not found.",
+                            Toast.LENGTH_LONG).show();
+                }
+                else{
+                    Intent intent = createIntentWithLatLng(userCurrLatLng,MemoryActivity.class);
+                    startActivityForResult(intent, CREATE_MEMORY);
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    /**
+     * Placeholder function in order to use the "getInfoContents" method,
+     * as it only gets called when this function returns null.
+     *
+     * @param  m    the marker about which the InfoWindow is concerned
+     * @return      returns the InfoWindow view
+     */
     @Override
     public View getInfoWindow(Marker m) {
         return null;
     }
 
-    // Defines the contents of the InfoWindow
+    /**
+     * Defines the content of the InfoWindow
+     *
+     * @param  m    the marker about which the InfoWindow contents are concerned
+     * @return      returns the InfoWindow view
+     */
     @Override
     public View getInfoContents(Marker m) {
 
@@ -162,15 +230,23 @@ public class MapsActivity extends AppCompatActivity
         return v;
     }
 
+    /**
+     * Describes on how to handle the infowindow being long clicked.
+     * If the InfoWindow is long clicked, a dialog appears offering
+     * the user the option to delete the marker.
+     * //TODO: also offer option to edit the marker instead
+     *
+     * @param  marker   the marker whose InfoWindow was clicked
+     */
     @Override
     public void onInfoWindowLongClick(final Marker marker) {
         new AlertDialog.Builder(new ContextThemeWrapper(MapsActivity.this, R.style.myDialog))
-                .setMessage("Delete this memorylist")
+                .setMessage("Delete this memory")
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         MarkerTag markerTag = (MarkerTag) marker.getTag();
-                        int count = mDbHandler.deleteMarkerTag(markerTag);
+                        mDbHandler.deleteMarkerTag(markerTag);
                         marker.remove();
                     }
                 })
@@ -178,13 +254,21 @@ public class MapsActivity extends AppCompatActivity
                 .show();
     }
 
+    /**
+     * Handles the result from an activity.
+     * Currently defined only for MemoryActivity passing a result
+     *
+     * @param  requestCode  code identifying the previous activity
+     * @param  resultCode   describes if the previous activity was a success
+     * @param  data         intent from the previous activity
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
         if (requestCode == CREATE_MEMORY) {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
-                // The user successfully created a memorylist
+                // The user successfully created a memory
                 final Bundle extras = data.getExtras();
                 if (extras != null) {
                     mNewMarkerLatLng = extras.getParcelable(LATLNG);
@@ -202,7 +286,11 @@ public class MapsActivity extends AppCompatActivity
         }
     }
 
-
+    /**
+     * Adds a marker to mMap based on the bundle passed to it
+     *
+     * @param  extras The bundle containing marker information
+     */
     private void addMarkerFromBundle(Bundle extras) {
         MarkerTag markerTag =
                 new MarkerTag(extras.getString(TITLE),
@@ -227,38 +315,6 @@ public class MapsActivity extends AppCompatActivity
             mDbHandler.insertMarkerTag(markerTag);
         }else{
             Log.d(TAG,"LatLng from previous MemoryActivity is null. Not adding marker.");
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.map_menu, menu);
-        super.onCreateOptionsMenu(menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        switch (item.getItemId()) {
-            case R.id.menu_search_address:
-                askAddressCreateMemory();
-                return true;
-            case R.id.menu_create_memory_at_location:
-                getCurrentLocation();
-                if(userCurrLatLng == null){
-                    Toast.makeText(getApplicationContext(),
-                            "Current location not found.",
-                            Toast.LENGTH_LONG).show();
-                }
-                else{
-                    Intent intent = createIntentWithLatLng(userCurrLatLng,MemoryActivity.class);
-                    startActivityForResult(intent, CREATE_MEMORY);
-                }
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -349,7 +405,7 @@ public class MapsActivity extends AppCompatActivity
                     Intent intent = createIntentWithLatLng(latLng,MemoryActivity.class);
                     startActivityForResult(intent, CREATE_MEMORY);
                 }else{
-                    Log.d(TAG,"failed to create memorylist with user input address");
+                    Log.d(TAG,"failed to create memory with user input address");
                     Toast.makeText(MapsActivity.this,"Failed to find location of address.",Toast.LENGTH_LONG).show();
                 }
             }
@@ -358,6 +414,11 @@ public class MapsActivity extends AppCompatActivity
         builder.show();
     }
 
+    /**
+     * Occurs when the the GoogleApiClient becomes connected
+     *
+     * @param  bundle   bundle passed, not used
+     */
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         getCurrentLocation();
@@ -373,27 +434,45 @@ public class MapsActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * Placeholder function for when connection is suspended
+     */
     @Override
     public void onConnectionSuspended(int i) {
     }
 
+    /**
+     * Logs if the connection fails
+     */
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.d(TAG,"Google API Client connection failed.");
     }
 
+    /**
+     * Connects the GoogleApiClient when the activity is started
+     */
     @Override
     protected void onStart() {
         mGoogleApiClient.connect();
         super.onStart();
     }
 
+    /**
+     * Disconnects the GoogleApiClient when the activity is stopped
+     */
     @Override
     protected void onStop() {
         mGoogleApiClient.disconnect();
         super.onStop();
     }
 
+    /**
+     * Adds a marker to the mMap from MarkerTag's information
+     *
+     * @param  markerTag    MarkerTag object containing all info needed
+     *                      to create a marker
+     */
     void addMarkerFromTag(MarkerTag markerTag){
         Bitmap img = markerTag.getImg();
         Double latitude = markerTag.getLatitude();
