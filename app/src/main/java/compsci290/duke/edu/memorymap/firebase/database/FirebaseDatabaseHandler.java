@@ -8,29 +8,60 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import compsci290.duke.edu.memorymap.MarkerTag;
+
 import static android.content.ContentValues.TAG;
 
 /**
- * Created by Saeed on 4/19/2017.
+ * Handle CRUD transaction on Firebase database
  */
 
 public class FirebaseDatabaseHandler {
-    public void write() {
-        // Write a message to the database
-        FirebaseDatabase database = FirebaseDatabase.getInstance(); // retrieve instance of database
-        DatabaseReference myRef = database.getReference("message"); // reference location to write to
+    private static final String NODE_NAME = "markertags";
 
-        myRef.setValue("Hello, World!");
+    private DatabaseReference mDatabase;
+
+    public FirebaseDatabaseHandler() {
+        // retrieve instance of database and reference location for read/write
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+    }
+
+    public void writeNewMarkerTag(MarkerTag markerTag) {
+        // get primary get ID for new object
+        String key = mDatabase.child(NODE_NAME).push().getKey();
+        // Write a MarkerTag to the database
+        mDatabase.child(NODE_NAME).child(key).setValue(markerTag);
+        // e.g.
+//        mDatabase.child("users").child(userId).child("username").setValue(name);
     }
 
     public void read() {
-        // Read from the database
-        FirebaseDatabase database = FirebaseDatabase.getInstance(); // retrieve instance of database
-        DatabaseReference myRef = database.getReference("message"); // reference location to write to
+        final List<MarkerTag> markerTagList = new ArrayList<>();
+        mDatabase.child(NODE_NAME).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot noteSnapshot: dataSnapshot.getChildren()){
+                    MarkerTag tag = noteSnapshot.getValue(MarkerTag.class);
+                    markerTagList.add(tag);
+                }
+            }
 
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d("FB Read", databaseError.getMessage());
+            }
+        });
+        for (int i=0; i<markerTagList.size(); i++) {
+            Log.d("FB READ", markerTagList.get(i).getTitle());
+        }
+
+        // Read from the database
         // this is called when attached
         // and again every time the data changes (including the children)
-        myRef.addValueEventListener(new ValueEventListener() {
+        /*mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
@@ -44,7 +75,7 @@ public class FirebaseDatabaseHandler {
                 // Failed to read value
                 Log.w(TAG, "Failed to read value.", error.toException());
             }
-        });
+        });*/
     }
 
 }

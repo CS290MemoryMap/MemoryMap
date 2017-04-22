@@ -10,6 +10,11 @@ public class MarkerTag {
     private Double latitude = null;
     private Double longitude = null;
 
+    public MarkerTag() {
+        // Default constructor required for calls to DataSnapshot.getValue(User.class)
+        // for firebase real-time database
+    }
+
     public MarkerTag(String title, String date, String details, Bitmap img, Double latitude, Double longitude){
         if(title != null) this.title = title;
         if(!date.equals("date")) this.date = date;
