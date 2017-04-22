@@ -29,21 +29,6 @@
         android:layout_width="wrap_content"
         tools:text="Firebase User ID: 123456789abc" />
 
-    <Button
-        android:id="@+id/buttonToMap"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="onClickMapBtn"
-        android:text="Go to map" />
-
-    <Button
-        android:id="@+id/buttonToList"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="onClickListBtn"
-        android:text="Go to list of memories" />
-
-
     <LinearLayout
         android:id="@+id/email_password_fields"
         android:layout_width="fill_parent"
@@ -119,5 +104,19 @@
             android:text="@string/verify_email"/>
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/buttonToMap"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onClickMapBtn"
+        android:text="Go to map" />
+
+    <Button
+        android:id="@+id/buttonToList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onClickListBtn"
+        android:text="Go to list of memories" />
 
 </LinearLayout>

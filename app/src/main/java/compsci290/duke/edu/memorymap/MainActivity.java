@@ -239,22 +239,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public void onClickMapBtn(View v)
-    {
-        Intent intent = new Intent(this, MapsActivity.class);
-        startActivity(intent);
-    }
-
-    /*public void onClickCreateMemory(View v){
-        Intent intent = new Intent(this, MemoryActivity.class);
-        startActivity(intent);
-    }*/
-
-    public void onClickListBtn(View v) {
-        Intent intent = new Intent(this, MemoryList.class);
-        startActivity(intent);
-    }
-
     public ProgressDialog mProgressDialog;
 
     public void showProgressDialog() {
@@ -279,4 +263,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         hideProgressDialog();
     }
 
+    public void onClickMapBtn(View v)
+    {
+        Intent intent = new Intent(this, MapsActivity.class);
+        startActivity(intent);
+    }
+
+    public void onClickListBtn(View v) {
+        Intent intent = new Intent(this, MemoryList.class);
+        startActivity(intent);
+    }
 }
