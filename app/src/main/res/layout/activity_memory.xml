@@ -40,6 +40,14 @@
         android:layout_weight="0.42"
         android:hint="Memory Details"/>
 
+    <!-- button to toggle private/public memory -->
+    <ToggleButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/button_toggle"
+        android:textOn="Public"
+        android:textOff="Private"/>
+
     <!-- button to create memorylist -->
     <Button
         android:layout_width="match_parent"
