@@ -69,4 +69,28 @@ public class FirebaseDatabaseHandler {
         return mMarkerTagList;
     }
 
+    public MarkerTag updateMarkerTag(MarkerTag markerTag) {
+        // convert MarkerTag to MarkerTagModel
+        MarkerTagModel markerTagModel = new MarkerTagModel(markerTag);
+        // Write a MarkerTag to the database
+        mDatabase.child(MARKERTAG_NODE_NAME).child(markerTagModel.getId()).setValue(markerTagModel);
+
+        return markerTag;
+    }
+
+    public void deleteMarkerTag(MarkerTag markerTag) {
+        MarkerTagModel markerTagModel = new MarkerTagModel(markerTag);
+        mDatabase.child(MARKERTAG_NODE_NAME).child(markerTagModel.getId())
+                .removeValue(new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                // update MarkerTagList with SingleEventListener
+            }
+        });
+    }
+
+    public void deleteMarkerTagList(ArrayList<MarkerTag> markerTags) {
+
+    }
+
 }
