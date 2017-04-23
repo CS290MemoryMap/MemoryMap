@@ -60,6 +60,8 @@ public class MapsActivity extends AppCompatActivity
     private static final String TITLE = "title";
     private static final String BITMAP = "bitmap";
     private static final String LATLNG = "latlng";
+    private static final String ISPUBLIC = "ispublic";
+    private static final String MARKERTAG = "markertag";
     private static final float ZOOM = 13;
     private Location userCurrLocation = null;
     private LatLng userCurrLatLng = null;
@@ -70,7 +72,8 @@ public class MapsActivity extends AppCompatActivity
     private LatLng mNewMarkerLatLng;
     private boolean mSeeNewMarker = false;
 
-    MarkerTagDbHandler mDbHandler = new MarkerTagDbHandler();
+
+    //MarkerTagDbHandler mDbHandler = new MarkerTagDbHandler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,11 +116,14 @@ public class MapsActivity extends AppCompatActivity
         mMap.setInfoWindowAdapter(this);
         mMap.setOnInfoWindowLongClickListener(this);
 
+        //TODO: undo this comment when db works
+        /*
         //restore all markers
         ArrayList<MarkerTag> tagList = mDbHandler.queryAllMarkerTags();
         for(MarkerTag tag : tagList){
             addMarkerFromTag(tag);
         }
+        */
     }
 
     /* Activated when the user clicks on the map.
@@ -241,12 +247,15 @@ public class MapsActivity extends AppCompatActivity
     @Override
     public void onInfoWindowLongClick(final Marker marker) {
         new AlertDialog.Builder(new ContextThemeWrapper(MapsActivity.this, R.style.myDialog))
-                .setMessage("Delete this memory")
+                .setMessage("Delete this memory?")
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         MarkerTag markerTag = (MarkerTag) marker.getTag();
+                        //TODO: remove comments when db works
+                        /*
                         mDbHandler.deleteMarkerTag(markerTag);
+                        */
                         marker.remove();
                     }
                 })
@@ -271,7 +280,7 @@ public class MapsActivity extends AppCompatActivity
                 // The user successfully created a memory
                 final Bundle extras = data.getExtras();
                 if (extras != null) {
-                    mNewMarkerLatLng = extras.getParcelable(LATLNG);
+                    //mNewMarkerLatLng = extras.getParcelable(LATLNG);
                     addMarkerFromBundle(extras);
                     Log.d(TAG,"moving camera to new marker location");
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mNewMarkerLatLng,ZOOM));
@@ -292,14 +301,9 @@ public class MapsActivity extends AppCompatActivity
      * @param  extras The bundle containing marker information
      */
     private void addMarkerFromBundle(Bundle extras) {
-        MarkerTag markerTag =
-                new MarkerTag(extras.getString(TITLE),
-                        extras.getString(DATE),
-                        extras.getString(DETAILS),
-                        (Bitmap) extras.getParcelable(BITMAP),
-                        mNewMarkerLatLng.latitude,
-                        mNewMarkerLatLng.longitude);
-        if(mNewMarkerLatLng != null){
+        MarkerTag markerTag = extras.getParcelable(MARKERTAG);
+        if(markerTag != null){
+            mNewMarkerLatLng = new LatLng(markerTag.getLatitude(),markerTag.getLongitude());
             Marker newMarker;
             if(markerTag.getImg() == null){
                 newMarker = mMap.addMarker(new MarkerOptions()
@@ -312,9 +316,11 @@ public class MapsActivity extends AppCompatActivity
                         .icon(BitmapDescriptorFactory.fromBitmap(markerTag.getImg())));
                 newMarker.setTag(markerTag);
             }
+            /* TODO: remove comment when db works
             mDbHandler.insertMarkerTag(markerTag);
+            */
         }else{
-            Log.d(TAG,"LatLng from previous MemoryActivity is null. Not adding marker.");
+            Log.d(TAG,"MarkerTag from previous MemoryActivity is null. Not adding marker.");
         }
     }
 
@@ -364,7 +370,7 @@ public class MapsActivity extends AppCompatActivity
     }
 
     /**
-     * Returns an intent to a specified class that has a bundle with a LatLng
+     * Returns an intent to a specified class that has a bundle with a MarkerTag
      * parcelable object already inside it
      *
      * @param  latlng  the latlng to include in the intent
@@ -374,7 +380,10 @@ public class MapsActivity extends AppCompatActivity
     private Intent createIntentWithLatLng(LatLng latlng, Class<?> toClass){
         Intent intent = new Intent(MapsActivity.this,toClass);
         Bundle bundle = new Bundle();
-        bundle.putParcelable(LATLNG, latlng);
+        MarkerTag mTag = new MarkerTag();
+        mTag.setLatitude(latlng.latitude);
+        mTag.setLongitude(latlng.longitude);
+        bundle.putParcelable(MARKERTAG, mTag);
         intent.putExtras(bundle);
         return intent;
     }

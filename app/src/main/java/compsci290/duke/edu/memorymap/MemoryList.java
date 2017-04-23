@@ -50,19 +50,19 @@ public class MemoryList extends AppCompatActivity {
 
         double lat = 123456789;
         double lon = 987654321;
-        MarkerTag markerTag = new MarkerTag("tag 1", "Apr 16, 2017", "Details of this tag", img, lat, lon);
-        long id = mDbHandler.insertMarkerTag(markerTag);
+        /*TODO: uncomment MarkerTag markerTag = new MarkerTag("tag 1", "Apr 16, 2017", "Details of this tag", img, lat, lon);
+        long id = mDbHandler.insertMarkerTag(markerTag);*/
         //CharSequence text = "Inserted ID " + id;
 
         lat = 123456789;
         lon = 887654321;
-        markerTag = new MarkerTag("tag 2", "Apr 16, 2017", "Details of this tag", img, lat, lon);
+        /*TODO: uncomment markerTag = new MarkerTag("tag 2", "Apr 16, 2017", "Details of this tag", img, lat, lon);
         id = mDbHandler.insertMarkerTag(markerTag);
 
         lat = 987654321;
         lon = 123456789;
         markerTag = new MarkerTag("tag 3", "Apr 18, 2017", "Details of this tag", img, lat, lon);
-        id = mDbHandler.insertMarkerTag(markerTag);
+        id = mDbHandler.insertMarkerTag(markerTag);*/
 
     }
 

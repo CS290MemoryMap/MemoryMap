@@ -17,11 +17,11 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Calendar;
-import java.util.Date;
 
 public class MemoryActivity extends AppCompatActivity {
     private static final int SELECT_PICTURE = 1;
@@ -31,17 +31,22 @@ public class MemoryActivity extends AppCompatActivity {
     private static final String BITMAP = "bitmap";
     private static final String LATLNG = "latlng";
     private static final String BUNDLE = "bundle";
+    private static final String ISPUBLIC = "ispublic";
+    private static final String MARKERTAG = "markertag";
 
-    private static TextView mDateTextView;
-    private static EditText mTitleView;
-    private static EditText mDetailsView;
-    private static ImageView mImageView;
+    private static TextView mDateView;
+    private EditText mTitleView;
+    private EditText mDetailsView;
+    private ImageView mImageView;
+    private ToggleButton mToggleButton;
 
     private static final String TAG = "MemoryActivity";
 
     private Bitmap mPic;
     private LatLng mLatLng;
-    private Bundle mToMapsBundle;
+    //private Bundle mToMapsBundle;
+    private MarkerTag mTag;
+    private boolean mIsPublic;
 
     /**
      * onCreate sets the content view, gets all of the views,
@@ -52,43 +57,33 @@ public class MemoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_memory);
 
         /* get all views */
-        mDateTextView = (TextView) findViewById(R.id.text_date);
+        mDateView = (TextView) findViewById(R.id.text_date);
         mTitleView = (EditText) findViewById(R.id.editor_title);
         mDetailsView = (EditText) findViewById(R.id.editor_details);
         mImageView = (ImageView) findViewById(R.id.image_upload);
+        mToggleButton = (ToggleButton) findViewById(R.id.button_toggle);
 
         if (savedInstanceState != null) {
-            //TODO: restore state
-            mToMapsBundle = savedInstanceState.getBundle(BUNDLE);
-            if(mToMapsBundle != null){
-                mPic = mToMapsBundle.getParcelable(BITMAP);
-                if(mPic == null){
-                    displayDefaultPicture();
-                }else{
-                    mImageView.setImageBitmap(mPic);
-                    mImageView.setScaleType(ImageView.ScaleType.FIT_XY);
-                    mImageView.setAdjustViewBounds(true);
-                }
-                mTitleView.setText(mToMapsBundle.getString(TITLE));
-                mDateTextView.setText(mToMapsBundle.getString(DATE));
-                mDetailsView.setText(mToMapsBundle.getString(DETAILS));
+            mTag = savedInstanceState.getParcelable(MARKERTAG);//getBundle(BUNDLE);
+            if(mTag != null) {
+                setFieldsFromTag();
+            } else{
+                Log.d(TAG,"mTag was null.");
             }
-        }
-        if(savedInstanceState == null || mToMapsBundle == null){
-            /* Create mToMapsBundle for MapsActivity */
-            mToMapsBundle = new Bundle();
-
-            /* set the default camera upload picture */
-            displayDefaultPicture();
-
-            /* include previous location in next location */
+        }else{
             Bundle prevBundle = getIntent().getExtras();
             if(prevBundle != null){
-                mLatLng = prevBundle.getParcelable(LATLNG);
-            }else if(prevBundle == null || mLatLng == null){
-                Log.d(TAG,"Got to MemoryActivity without a latlng");
+                mTag = prevBundle.getParcelable(MARKERTAG);
+            }
+            if(mTag == null){
+                Log.d(TAG,"savedInstanceState and prevBundle both did not contain a markertag");
+            /* set the default camera upload picture */
+                displayDefaultPicture();
+            }else{
+                setFieldsFromTag();
             }
         }
+
     }
 
     /**
@@ -133,7 +128,7 @@ public class MemoryActivity extends AppCompatActivity {
                     mImageView.setScaleType(ImageView.ScaleType.FIT_XY);
                     mImageView.setAdjustViewBounds(true);
                     //also put image in mToMapsBundle
-                    mToMapsBundle.putParcelable(BITMAP,mPic);
+                    mTag.setImg(mPic);
 
                 }
             }
@@ -169,9 +164,7 @@ public class MemoryActivity extends AppCompatActivity {
             int year = c.get(Calendar.YEAR);
             int month = c.get(Calendar.MONTH);
             int day = c.get(Calendar.DAY_OF_MONTH);
-            DatePickerDialog dialogDatePicker = new DatePickerDialog(getActivity(), R.style.MyDatePickerStyle,this, year, month, day);
-            // Create a new instance of DatePickerDialog and return it
-            return dialogDatePicker;
+            return new DatePickerDialog(getActivity(), R.style.MyDatePickerStyle,this, year, month, day);
         }
 
         /**
@@ -184,23 +177,23 @@ public class MemoryActivity extends AppCompatActivity {
          */
         public void onDateSet(DatePicker view, int year, int month, int day) {
             String str = String.format("%d/%d/%d",month,day,year);
-            mDateTextView.setText(str);
+            mDateView.setText(str);
         }
     }
 
     /**
      * Defines the "Confirm Memory" button's functionality.
-     * Puts the title, date, and details into an already-created bundle
+     * Puts the MarkerTag in a bundle
      * and passes them back to MapsActivity
      *
      * @param  view  unused button view parameter
      */
     public void onClickConfirmMemory(View view){
         Intent toMapsIntent = new Intent();
-        mToMapsBundle.putString(DATE, mDateTextView.getText().toString());
-        mToMapsBundle.putString(DETAILS, mDetailsView.getText().toString());
-        mToMapsBundle.putString(TITLE, mTitleView.getText().toString());
-        toMapsIntent.putExtras(mToMapsBundle);
+        Bundle bundle = new Bundle();
+        putFieldsInTag();
+        bundle.putParcelable(MARKERTAG,mTag);
+        toMapsIntent.putExtras(bundle);
         setResult(Activity.RESULT_OK, toMapsIntent);
         finish();
     }
@@ -216,13 +209,8 @@ public class MemoryActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         //outState.putCharSequence(KEY_TEXT_VALUE, mTextView.getText());
         /* mToMapsBundle already has picture if it has been chosen */
-        mToMapsBundle.putString(DATE,mDateTextView.getText().toString());
-        mToMapsBundle.putString(DETAILS,mDetailsView.getText().toString());
-        mToMapsBundle.putString(TITLE,mTitleView.getText().toString());
-        if(mLatLng != null) {
-            mToMapsBundle.putParcelable(LATLNG, mLatLng);
-        }
-        outState.putBundle(BUNDLE,mToMapsBundle);
+        putFieldsInTag();
+        outState.putParcelable(MARKERTAG, mTag);
     }
 
     /**
@@ -235,4 +223,29 @@ public class MemoryActivity extends AppCompatActivity {
         mImageView.setScaleType(ImageView.ScaleType.FIT_XY);
     }
 
+    private void putFieldsInTag(){/*image not included because don't want to include default picture*/
+        mTag.setDate(mDateView.getText().toString());
+        mTag.setTitle(mTitleView.getText().toString());
+        mTag.setDetails(mDetailsView.getText().toString());
+        mTag.setIsPublic(mToggleButton.isChecked());
+    }
+
+    private void setFieldsFromTag(){
+        mPic = mTag.getImg();
+        if(mPic == null){
+            displayDefaultPicture();
+        }else{
+            mImageView.setImageBitmap(mPic);
+            mImageView.setScaleType(ImageView.ScaleType.FIT_XY);
+            mImageView.setAdjustViewBounds(true);
+        }
+        String title = mTag.getTitle();
+        if(title != "" && title != null) mTitleView.setText(title);
+        String date = mTag.getDate();
+        if(date != null) mDateView.setText(date);
+        String details = mTag.getDetails();
+        if(details != "" && details != null) mDetailsView.setText(details);
+        Boolean checked = mTag.getIsPublic();
+        if(checked != null) mToggleButton.setChecked(checked);
+    }
 }

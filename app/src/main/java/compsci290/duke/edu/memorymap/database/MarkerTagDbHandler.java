@@ -107,7 +107,7 @@ public class MarkerTagDbHandler {
                     decodeByteArray(imgByteArray, 0, imgByteArray.length), 100, 100, true);
 
             // Add MarkerTag to List
-            markerTagList.add(new MarkerTag(title, date, details, img, latitude, longitude));
+            //TODO: uncomment markerTagList.add(new MarkerTag(title, date, details, img, latitude, longitude));
         }
 
         cursor.close();
@@ -177,7 +177,7 @@ public class MarkerTagDbHandler {
                     decodeByteArray(imgByteArray, 0, imgByteArray.length), 100, 100, true);
 
             // Add MarkerTag to List
-            markerTagList.add(new MarkerTag(title, date, details, img, latitude, longitude));
+            //TODO: uncomment markerTagList.add(new MarkerTag(title, date, details, img, latitude, longitude));
         }
 
         cursor.close();
