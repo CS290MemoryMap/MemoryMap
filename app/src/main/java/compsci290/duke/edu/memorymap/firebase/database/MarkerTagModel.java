@@ -13,6 +13,10 @@ import compsci290.duke.edu.memorymap.MarkerTag;
  */
 
 public class MarkerTagModel {
+    static final String TABLE_NAME_MARKERTAG = "markertags";
+    static final String CHILD_NAME_TITLE = "title";
+    static final String CHILD_NAME_DATE = "date";
+    static final String CHILD_NAME_LOCATION = "latitude";
 
     private String id = "";
     private String title = "";

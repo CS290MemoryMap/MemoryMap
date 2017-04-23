@@ -18,7 +18,7 @@ import compsci290.duke.edu.memorymap.MarkerTag;
  */
 
 public class FirebaseDatabaseHandler {
-    private static final String MARKERTAG_NODE_NAME = "markertags";
+//    private static final String TABLE_NAME_MARKERTAG = "markertags";
     private static final String TAG = "DB_HANDLER"; // TAG for Logging
 
     private DatabaseReference mDatabase;
@@ -46,13 +46,13 @@ public class FirebaseDatabaseHandler {
      */
     public MarkerTag insertMarkerTag(MarkerTag markerTag) {
         // get primary ID for new object
-        String key = mDatabase.child(MARKERTAG_NODE_NAME).push().getKey();
+        String key = mDatabase.child(MarkerTagModel.TABLE_NAME_MARKERTAG).push().getKey();
         // update MarkerTag with ID
         markerTag.setID(key);
         // convert MarkerTag to MarkerTagModel
         MarkerTagModel markerTagModel = new MarkerTagModel(markerTag);
         // Write a MarkerTag to the database
-        mDatabase.child(MARKERTAG_NODE_NAME).child(key).setValue(markerTagModel);
+        mDatabase.child(MarkerTagModel.TABLE_NAME_MARKERTAG).child(key).setValue(markerTagModel);
 
         // update MarkerTagList with SingleEventListener
         updateMarkerTagLists();
@@ -102,7 +102,7 @@ public class FirebaseDatabaseHandler {
         // convert MarkerTag to MarkerTagModel
         MarkerTagModel markerTagModel = new MarkerTagModel(markerTag);
         // Write a MarkerTag to the database
-        mDatabase.child(MARKERTAG_NODE_NAME).child(markerTagModel.getId()).setValue(markerTagModel);
+        mDatabase.child(MarkerTagModel.TABLE_NAME_MARKERTAG).child(markerTagModel.getId()).setValue(markerTagModel);
 
         // update MarkerTagList with SingleEventListener
         updateMarkerTagLists();
@@ -117,12 +117,12 @@ public class FirebaseDatabaseHandler {
     public void deleteMarkerTag(MarkerTag markerTag) {
         // delete MarkerTag
         MarkerTagModel markerTagModel = new MarkerTagModel(markerTag);
-        mDatabase.child(MARKERTAG_NODE_NAME).child(markerTagModel.getId()).setValue(null);
+        mDatabase.child(MarkerTagModel.TABLE_NAME_MARKERTAG).child(markerTagModel.getId()).setValue(null);
 
         // update MarkerTagList with SingleEventListener
         updateMarkerTagLists();
 
-//        mDatabase.child(MARKERTAG_NODE_NAME).child(markerTagModel.getId())
+//        mDatabase.child(MarkerTagModel.TABLE_NAME_MARKERTAG).child(markerTagModel.getId())
 //                .removeValue(new DatabaseReference.CompletionListener() {
 //            @Override
 //            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
@@ -140,7 +140,7 @@ public class FirebaseDatabaseHandler {
         for (int i=0; i<markerTags.size(); i++) {
             // delete MarkerTag
             MarkerTagModel markerTagModel = new MarkerTagModel(markerTags.get(i));
-            mDatabase.child(MARKERTAG_NODE_NAME).child(markerTagModel.getId()).setValue(null);
+            mDatabase.child(MarkerTagModel.TABLE_NAME_MARKERTAG).child(markerTagModel.getId()).setValue(null);
         }
 
         // update MarkerTagList with SingleEventListener
@@ -163,7 +163,8 @@ public class FirebaseDatabaseHandler {
      */
     private void readMarkerTagListSortByTitle() {
         final List<MarkerTag> markerTagList = new ArrayList<>(); // empty MarkerTag list
-        mDatabase.child(MARKERTAG_NODE_NAME).orderByChild("title")
+        mDatabase.child(MarkerTagModel.TABLE_NAME_MARKERTAG)
+                .orderByChild(MarkerTagModel.CHILD_NAME_TITLE)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -188,7 +189,8 @@ public class FirebaseDatabaseHandler {
      */
     private void readMarkerTagListSortByDate() {
         final List<MarkerTag> markerTagList = new ArrayList<>(); // empty MarkerTag list
-        mDatabase.child(MARKERTAG_NODE_NAME).orderByChild("date")
+        mDatabase.child(MarkerTagModel.TABLE_NAME_MARKERTAG)
+                .orderByChild(MarkerTagModel.CHILD_NAME_DATE)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -213,7 +215,8 @@ public class FirebaseDatabaseHandler {
      */
     private void readMarkerTagListSortByLocation() {
         final List<MarkerTag> markerTagList = new ArrayList<>(); // empty MarkerTag list
-        mDatabase.child(MARKERTAG_NODE_NAME).orderByChild("latitude")
+        mDatabase.child(MarkerTagModel.TABLE_NAME_MARKERTAG)
+                .orderByChild(MarkerTagModel.CHILD_NAME_LOCATION)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -238,7 +241,8 @@ public class FirebaseDatabaseHandler {
      */
     private void readMarkerTagListUnsorted() {
         final List<MarkerTag> markerTagList = new ArrayList<>(); // empty MarkerTag list
-        mDatabase.child(MARKERTAG_NODE_NAME).addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabase.child(MarkerTagModel.TABLE_NAME_MARKERTAG)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot noteSnapshot: dataSnapshot.getChildren()){
