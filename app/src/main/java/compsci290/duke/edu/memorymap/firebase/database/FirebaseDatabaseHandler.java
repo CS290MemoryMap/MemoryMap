@@ -9,7 +9,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import compsci290.duke.edu.memorymap.MarkerTag;
 
@@ -51,16 +53,6 @@ public class FirebaseDatabaseHandler {
                 Log.d("FB Read", databaseError.getMessage());
             }
         });
-//        mDatabase.child(MARKERTAG_NODE_NAME).addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//
-//            }
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        });
     }
 
     public MarkerTag insertMarkerTag(MarkerTag markerTag) {
@@ -72,9 +64,8 @@ public class FirebaseDatabaseHandler {
         MarkerTagModel markerTagModel = new MarkerTagModel(markerTag);
         // Write a MarkerTag to the database
         mDatabase.child(MARKERTAG_NODE_NAME).child(key).setValue(markerTagModel);
-        // e.g.
-//        mDatabase.child("users").child(userId).child("username").setValue(name);
 
+        // update MarkerTagList with SingleEventListener
         readMarkerTagList();
 
         return markerTag;
@@ -90,25 +81,39 @@ public class FirebaseDatabaseHandler {
         // Write a MarkerTag to the database
         mDatabase.child(MARKERTAG_NODE_NAME).child(markerTagModel.getId()).setValue(markerTagModel);
 
+        // update MarkerTagList with SingleEventListener
         readMarkerTagList();
 
         return markerTag;
     }
 
     public void deleteMarkerTag(MarkerTag markerTag) {
+        // delete MarkerTag
         MarkerTagModel markerTagModel = new MarkerTagModel(markerTag);
-        mDatabase.child(MARKERTAG_NODE_NAME).child(markerTagModel.getId())
-                .removeValue(new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                // update MarkerTagList with SingleEventListener
-                readMarkerTagList();
-            }
-        });
+        mDatabase.child(MARKERTAG_NODE_NAME).child(markerTagModel.getId()).setValue(null);
+
+        // update MarkerTagList with SingleEventListener
+        readMarkerTagList();
+
+//        mDatabase.child(MARKERTAG_NODE_NAME).child(markerTagModel.getId())
+//                .removeValue(new DatabaseReference.CompletionListener() {
+//            @Override
+//            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+//                // update MarkerTagList with SingleEventListener
+//                readMarkerTagList();
+//            }
+//        });
     }
 
-    public void deleteMarkerTagList(ArrayList<MarkerTag> markerTags) {
+    public void deleteMarkerTagList(List<MarkerTag> markerTags) {
+        for (int i=0; i<markerTags.size(); i++) {
+            // delete MarkerTag
+            MarkerTagModel markerTagModel = new MarkerTagModel(markerTags.get(i));
+            mDatabase.child(MARKERTAG_NODE_NAME).child(markerTagModel.getId()).setValue(null);
+        }
 
+        // update MarkerTagList with SingleEventListener
+        readMarkerTagList();
     }
 
 }
