@@ -20,62 +20,49 @@ import static android.content.ContentValues.TAG;
  */
 
 public class FirebaseDatabaseHandler {
-    private static final String NODE_NAME = "markertags";
+    private static final String MARKERTAG_NODE_NAME = "markertags";
 
     private DatabaseReference mDatabase;
+    private List<MarkerTag> mMarkerTagList;
 
     public FirebaseDatabaseHandler() {
         // retrieve instance of database and reference location for read/write
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        // activate MarkerTag listener (updates onDataChange)
+        readMarkerTagList();
     }
 
-    public void writeNewMarkerTag(MarkerTag markerTag) {
-        // get primary get ID for new object
-        String key = mDatabase.child(NODE_NAME).push().getKey();
-        // Write a MarkerTag to the database
-        mDatabase.child(NODE_NAME).child(key).setValue(markerTag);
-        // e.g.
-//        mDatabase.child("users").child(userId).child("username").setValue(name);
-    }
-
-    public void read() {
-        final List<MarkerTag> markerTagList = new ArrayList<>();
-        mDatabase.child(NODE_NAME).addValueEventListener(new ValueEventListener() {
+    private void readMarkerTagList() {
+        mMarkerTagList = new ArrayList<>(); // empty MarkerTag list
+        mDatabase.child(MARKERTAG_NODE_NAME).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot noteSnapshot: dataSnapshot.getChildren()){
-                    MarkerTag tag = noteSnapshot.getValue(MarkerTag.class);
-                    markerTagList.add(tag);
+                    MarkerTagModel markerTagModel = noteSnapshot.getValue(MarkerTagModel.class);
+                    mMarkerTagList.add(new MarkerTag((markerTagModel)));
+                    Log.d("FB READ", "added " + markerTagModel.getTitle());
                 }
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.d("FB Read", databaseError.getMessage());
             }
         });
-        for (int i=0; i<markerTagList.size(); i++) {
-            Log.d("FB READ", markerTagList.get(i).getTitle());
-        }
+    }
 
-        // Read from the database
-        // this is called when attached
-        // and again every time the data changes (including the children)
-        /*mDatabase.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                String value = dataSnapshot.getValue(String.class);
-                Log.d(TAG, "Value is: " + value);
-            }
+    public void writeNewMarkerTag(MarkerTag markerTag) {
+        // convert MarkerTag to MarkerTagModel
+        MarkerTagModel markerTagModel = new MarkerTagModel(markerTag);
+        // get primary get ID for new object
+        String key = mDatabase.child(MARKERTAG_NODE_NAME).push().getKey();
+        // Write a MarkerTag to the database
+        mDatabase.child(MARKERTAG_NODE_NAME).child(key).setValue(markerTagModel);
+        // e.g.
+//        mDatabase.child("users").child(userId).child("username").setValue(name);
+    }
 
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });*/
+    public List<MarkerTag> getMarkerTagList() {
+        return mMarkerTagList;
     }
 
 }
