@@ -16,7 +16,7 @@ import compsci290.duke.edu.memorymap.MarkerTag;
 import static android.content.ContentValues.TAG;
 
 /**
- * Handle CRUD transaction on Firebase database
+ * Handle CRUD transactions on Firebase database
  */
 
 public class FirebaseDatabaseHandler {
@@ -29,25 +29,38 @@ public class FirebaseDatabaseHandler {
         // retrieve instance of database and reference location for read/write
         mDatabase = FirebaseDatabase.getInstance().getReference();
         // activate MarkerTag listener (updates onDataChange)
+        mMarkerTagList = new ArrayList<>();
         readMarkerTagList();
     }
 
     private void readMarkerTagList() {
-        mMarkerTagList = new ArrayList<>(); // empty MarkerTag list
-        mDatabase.child(MARKERTAG_NODE_NAME).addValueEventListener(new ValueEventListener() {
+        final List<MarkerTag> markerTagList = new ArrayList<>(); // empty MarkerTag list
+        mDatabase.child(MARKERTAG_NODE_NAME).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot noteSnapshot: dataSnapshot.getChildren()){
                     MarkerTagModel markerTagModel = noteSnapshot.getValue(MarkerTagModel.class);
-                    mMarkerTagList.add(new MarkerTag((markerTagModel)));
+                    markerTagList.add(new MarkerTag((markerTagModel)));
                     Log.d("FB READ", "added " + markerTagModel.getTitle());
                 }
+                mMarkerTagList = markerTagList;
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.d("FB Read", databaseError.getMessage());
             }
         });
+//        mDatabase.child(MARKERTAG_NODE_NAME).addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//
+//            }
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
     }
 
     public MarkerTag insertMarkerTag(MarkerTag markerTag) {
@@ -62,6 +75,8 @@ public class FirebaseDatabaseHandler {
         // e.g.
 //        mDatabase.child("users").child(userId).child("username").setValue(name);
 
+        readMarkerTagList();
+
         return markerTag;
     }
 
@@ -75,6 +90,8 @@ public class FirebaseDatabaseHandler {
         // Write a MarkerTag to the database
         mDatabase.child(MARKERTAG_NODE_NAME).child(markerTagModel.getId()).setValue(markerTagModel);
 
+        readMarkerTagList();
+
         return markerTag;
     }
 
@@ -85,6 +102,7 @@ public class FirebaseDatabaseHandler {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                 // update MarkerTagList with SingleEventListener
+                readMarkerTagList();
             }
         });
     }
