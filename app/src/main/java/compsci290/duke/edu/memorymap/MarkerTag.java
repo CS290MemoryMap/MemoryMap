@@ -27,30 +27,26 @@ public class MarkerTag implements Parcelable {
 
     /*new fields*/
     private Boolean isPublic = false;
-    private int ID = 0;
+    private String ID = "";
     //TODO: get rid of this constructor that doesn't have the isPublic boolean and the ID int
-    /*
     public MarkerTag(String title, String date, String details, Bitmap img, Double latitude, Double longitude){
         if(title != null) this.title = title;
-        //if(!date.equals("Date")) this.date = date;
         if(!date.equals("Date")){
             this.dateStr = date;
-            DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
-            try{
-                this.date = format.parse(date);
-            }catch(ParseException pe){
-                Log.d(TAG, "Failed to parse the date");
-            }
+            this.date = createDateFromString(date);
         }
         if(details != null) this.details = details;
         this.img = img;
         this.latitude = latitude;
         this.longitude = longitude;
-    }*/
+        this.isPublic = false; // default
+        this.ID = ""; // default
+    }
     public MarkerTag(){
 
     }
-    public MarkerTag(String title, String date, String details, Bitmap img, Double latitude, Double longitude, boolean isPublic, int ID){
+    public MarkerTag(String title, String date, String details, Bitmap img, Double latitude,
+                     Double longitude, boolean isPublic, String ID){
         if(title != null) this.title = title;
         if(!date.equals("Date")){
             this.dateStr = date;
@@ -69,8 +65,9 @@ public class MarkerTag implements Parcelable {
      * @param markerTagModel firebase database MarkerTag model
      */
     public MarkerTag(MarkerTagModel markerTagModel) {
+        this.ID = markerTagModel.getId();
         this.title = markerTagModel.getTitle();
-        this.date = markerTagModel.getDate();
+        this.dateStr = markerTagModel.getDate();
         this.details = markerTagModel.getDetails();
         this.img = base64ToBitmap(markerTagModel.getImgBase64());
         this.latitude = markerTagModel.getLatitude();
@@ -114,7 +111,7 @@ public class MarkerTag implements Parcelable {
                 decodeByteArray(imgArray, 0, imgArray.length), 100, 100, true);
     }
     public Boolean getIsPublic(){return this.isPublic;}
-    public int getID(){return this.ID;}
+    public String getID(){return this.ID;}
 
     /* setters */
     public void setTitle(String title){this.title = title;}
@@ -131,7 +128,7 @@ public class MarkerTag implements Parcelable {
     public void setLatitude(Double latitude){this.latitude = latitude;}
     public void setLongitude(Double longitude){this.longitude = longitude;}
     public void setIsPublic(Boolean isPublic){this.isPublic = isPublic;}
-    public void setID(int ID){this.ID = ID;}
+    public void setID(String ID){this.ID = ID;}
 
     protected MarkerTag(Parcel in) {
         title = in.readString();
@@ -143,7 +140,7 @@ public class MarkerTag implements Parcelable {
         latitude = in.readByte() == 0x00 ? null : in.readDouble();
         longitude = in.readByte() == 0x00 ? null : in.readDouble();
         isPublic = in.readByte() != 0x00;
-        ID = in.readInt();
+        ID = in.readString();
     }
 
     @Override
@@ -171,7 +168,7 @@ public class MarkerTag implements Parcelable {
             dest.writeDouble(longitude);
         }
         dest.writeByte((byte) (isPublic ? 0x01 : 0x00));
-        dest.writeInt(ID);
+        dest.writeString(ID);
     }
 
     @SuppressWarnings("unused")

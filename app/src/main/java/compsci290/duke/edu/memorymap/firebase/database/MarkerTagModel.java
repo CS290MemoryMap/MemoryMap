@@ -14,6 +14,7 @@ import compsci290.duke.edu.memorymap.MarkerTag;
 
 public class MarkerTagModel {
 
+    private String id = "";
     private String title = "";
     private String date = "";
     private String details = "";
@@ -27,6 +28,7 @@ public class MarkerTagModel {
     }
 
     public MarkerTagModel(MarkerTag markerTag) {
+        this.id = markerTag.getID();
         this.title = markerTag.getTitle();
         this.date = markerTag.getDate();
         this.details = markerTag.getDetails();
@@ -35,6 +37,8 @@ public class MarkerTagModel {
         this.longitude = markerTag.getLongitude();
     }
 
+    /* Getters */
+    public String getId() {return this.id;}
     public String getTitle(){return this.title;}
     public String getDate(){return this.date;}
     public String getDetails(){return this.details;}

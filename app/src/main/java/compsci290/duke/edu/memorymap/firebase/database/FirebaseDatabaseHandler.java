@@ -50,18 +50,22 @@ public class FirebaseDatabaseHandler {
         });
     }
 
-    public void writeNewMarkerTag(MarkerTag markerTag) {
+    public MarkerTag insertMarkerTag(MarkerTag markerTag) {
+        // get primary ID for new object
+        String key = mDatabase.child(MARKERTAG_NODE_NAME).push().getKey();
+        // update MarkerTag with ID
+        markerTag.setID(key);
         // convert MarkerTag to MarkerTagModel
         MarkerTagModel markerTagModel = new MarkerTagModel(markerTag);
-        // get primary get ID for new object
-        String key = mDatabase.child(MARKERTAG_NODE_NAME).push().getKey();
         // Write a MarkerTag to the database
         mDatabase.child(MARKERTAG_NODE_NAME).child(key).setValue(markerTagModel);
         // e.g.
 //        mDatabase.child("users").child(userId).child("username").setValue(name);
+
+        return markerTag;
     }
 
-    public List<MarkerTag> getMarkerTagList() {
+    public List<MarkerTag> queryAllMarkerTags() {
         return mMarkerTagList;
     }
 
