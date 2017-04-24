@@ -105,6 +105,9 @@ public class MarkerTag implements Parcelable {
      * @return
      */
     private Bitmap base64ToBitmap(String imgBase64) {
+        if (imgBase64.isEmpty()) {
+            return null;
+        }
         byte[] imgArray = Base64.decode(imgBase64, Base64.DEFAULT);
         //Bitmap img = BitmapFactory.decodeByteArray(imgArray, 0, imgArray.length);
         return Bitmap.createScaledBitmap(BitmapFactory.
