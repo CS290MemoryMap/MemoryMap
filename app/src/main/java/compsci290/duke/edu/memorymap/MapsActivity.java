@@ -43,18 +43,20 @@ import java.util.List;
 import java.util.Locale;
 
 import compsci290.duke.edu.memorymap.database.MarkerTagDbHandler;
+import compsci290.duke.edu.memorymap.firebase.database.FirebaseDatabaseHandler;
 
 public class MapsActivity extends AppCompatActivity
         implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        GoogleMap.OnMapClickListener,
+        GoogleMap.OnMapLongClickListener,
         GoogleMap.InfoWindowAdapter,
         GoogleMap.OnInfoWindowLongClickListener{
 
     private GoogleMap mMap;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private static final int CREATE_MEMORY = 1;
+    private static final int EDIT_MEMORY = 2;
     private static final String DATE = "date";
     private static final String DETAILS = "details";
     private static final String TITLE = "title";
@@ -74,6 +76,8 @@ public class MapsActivity extends AppCompatActivity
 
 
     //MarkerTagDbHandler mDbHandler = new MarkerTagDbHandler();
+    FirebaseDatabaseHandler mDbHandler = new FirebaseDatabaseHandler();
+    private static List<MarkerTag> mTagList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,28 +116,26 @@ public class MapsActivity extends AppCompatActivity
         settings.setMyLocationButtonEnabled(false);//TODO: make so this is true AND it works :(
 
         // Set up listeners and adapters
-        mMap.setOnMapClickListener(this);
+        mMap.setOnMapLongClickListener(this);
         mMap.setInfoWindowAdapter(this);
         mMap.setOnInfoWindowLongClickListener(this);
 
-        //TODO: undo this comment when db works
-        /*
         //restore all markers
-        ArrayList<MarkerTag> tagList = mDbHandler.queryAllMarkerTags();
-        for(MarkerTag tag : tagList){
+        mTagList = mDbHandler.queryAllMarkerTags();
+        for(MarkerTag tag : mTagList){
             addMarkerFromTag(tag);
         }
-        */
+
     }
 
-    /* Activated when the user clicks on the map.
+    /* Activated when the user long clicks on the map.
      * Asks the user if they would like to create a memory at the clicked location.
      * Upon answering yes, MemoryActivity is started
      *
      * @param  latLng  LatLng of clicked location
      */
     @Override
-    public void onMapClick(final LatLng latLng) {
+    public void onMapLongClick(final LatLng latLng) {
         new AlertDialog.Builder(new ContextThemeWrapper(MapsActivity.this, R.style.myDialog))
                 .setMessage("Create a memory at this location?")
                 .setCancelable(false)
@@ -239,27 +241,34 @@ public class MapsActivity extends AppCompatActivity
     /**
      * Describes on how to handle the infowindow being long clicked.
      * If the InfoWindow is long clicked, a dialog appears offering
-     * the user the option to delete the marker.
-     * //TODO: also offer option to edit the marker instead
+     * the user the options to delete or edit the marker.
      *
      * @param  marker   the marker whose InfoWindow was clicked
      */
     @Override
     public void onInfoWindowLongClick(final Marker marker) {
         new AlertDialog.Builder(new ContextThemeWrapper(MapsActivity.this, R.style.myDialog))
-                .setMessage("Delete this memory?")
-                .setCancelable(false)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                .setMessage("Delete/edit this memory?")
+                .setCancelable(true)
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         MarkerTag markerTag = (MarkerTag) marker.getTag();
-                        //TODO: remove comments when db works
-                        /*
                         mDbHandler.deleteMarkerTag(markerTag);
-                        */
                         marker.remove();
                     }
                 })
-                .setNegativeButton("No", null)
+                .setNeutralButton("Edit", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        MarkerTag markerTag = (MarkerTag) marker.getTag();
+                        Intent intent = new Intent(MapsActivity.this, MemoryActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable(MARKERTAG, markerTag);
+                        intent.putExtras(bundle);
+                        marker.remove(); //remove marker to be edited, will replace when returns
+                        startActivityForResult(intent, EDIT_MEMORY);
+                    }
+                })
+                .setNegativeButton("Cancel", null)
                 .show();
     }
 
@@ -293,6 +302,37 @@ public class MapsActivity extends AppCompatActivity
                 Toast.makeText(this,"Memory not successfully created.", Toast.LENGTH_SHORT).show();
             }
         }
+        else if(requestCode == EDIT_MEMORY){
+            if(resultCode == RESULT_OK){
+                final Bundle extras = data.getExtras();
+                if(extras != null){
+                    MarkerTag markerTag = extras.getParcelable(MARKERTAG);
+                    mDbHandler.updateMarkerTag(markerTag);
+                    for(MarkerTag tag : mTagList){
+                        if(tag.getID() == markerTag.getID()){
+                            mTagList.remove(tag);
+                            mTagList.add(markerTag);
+                        }
+                    }
+                    Marker newMarker;
+                    if(markerTag.getImg() == null){
+                        newMarker = mMap.addMarker(new MarkerOptions()
+                                .position(mNewMarkerLatLng));
+                        newMarker.setTag(markerTag);
+
+                    }else{
+                        newMarker = mMap.addMarker(new MarkerOptions()
+                                .position(mNewMarkerLatLng)
+                                .icon(BitmapDescriptorFactory.fromBitmap(markerTag.getImg())));
+                        newMarker.setTag(markerTag);
+                    }
+                }else{
+                    Log.d(TAG, "Result from EDIT_MEMORY extras == null");
+                }
+            }else{
+                Toast.makeText(this,"Memory not successfully edited.", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     /**
@@ -316,9 +356,8 @@ public class MapsActivity extends AppCompatActivity
                         .icon(BitmapDescriptorFactory.fromBitmap(markerTag.getImg())));
                 newMarker.setTag(markerTag);
             }
-            /* TODO: remove comment when db works
-            mDbHandler.insertMarkerTag(markerTag);
-            */
+            markerTag = mDbHandler.insertMarkerTag(markerTag);
+            mTagList.add(markerTag);
         }else{
             Log.d(TAG,"MarkerTag from previous MemoryActivity is null. Not adding marker.");
         }
