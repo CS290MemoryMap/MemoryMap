@@ -67,6 +67,9 @@ public class MarkerTagModel {
      * @return a Base64 stream of the given image
      */
     private String bitmapToBase64(Bitmap bmp) {
+        if(bmp == null){
+            return null;
+        }
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
 //        img.recycle();
