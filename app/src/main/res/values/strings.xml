@@ -5,6 +5,9 @@
     <string name="location_sort">Sort by Location</string>
     <string name="time_sort">Sort by Time Added</string>
 
+    <string name="title_sort">Sort by Title</string>
+    <string name="date_sort">Sort by Date</string>
+
     <string name="emailpassword_status_fmt">%1$s</string>
     <string name="emailpassword_title_text">Email and Password</string>
 

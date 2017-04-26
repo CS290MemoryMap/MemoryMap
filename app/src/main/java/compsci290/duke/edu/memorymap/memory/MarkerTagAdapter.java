@@ -21,6 +21,11 @@ public class MarkerTagAdapter extends RecyclerView.Adapter<MarkerTagAdapter.Mark
 
     private ArrayList<MarkerTag> mMemoryList;
     private Context mContext;
+    private MarkerTagAdapter.OnItemClickListener mOnItemClickListener;
+
+    public interface OnItemClickListener {
+        void onItemClick(View view, int position);
+    }
 
     public MarkerTagAdapter(ArrayList<MarkerTag> list, Context c) {
         this.mMemoryList = list;
@@ -52,7 +57,11 @@ public class MarkerTagAdapter extends RecyclerView.Adapter<MarkerTagAdapter.Mark
         return mMemoryList.size();
     }
 
-    public void swap(ArrayList<MarkerTag> datas) {
+    /*
+        Updates the data in the MarkerTagAdapter and notifies
+        the view that is has changed
+     */
+    public void swap(List<MarkerTag> datas) {
         if(mMemoryList != null) {
             mMemoryList.clear();
             mMemoryList.addAll(datas);
