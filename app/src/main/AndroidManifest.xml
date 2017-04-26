@@ -45,7 +45,7 @@ package="compsci290.duke.edu.memorymap">
 
         <!-- MemoryListActivity -->
         <activity
-            android:name="compsci290.duke.edu.memorymap.MemoryList"
+            android:name="compsci290.duke.edu.memorymap.MemoryListActivity"
             android:theme="@style/Theme.AppCompat.Light">
         </activity>
         

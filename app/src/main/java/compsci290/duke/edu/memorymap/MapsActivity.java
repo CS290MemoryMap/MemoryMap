@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.Locale;
 
 import compsci290.duke.edu.memorymap.database.MarkerTagDbHandler;
+import compsci290.duke.edu.memorymap.firebase.database.FirebaseDatabaseHandler;
 
 public class MapsActivity extends AppCompatActivity
         implements OnMapReadyCallback,
@@ -73,7 +74,7 @@ public class MapsActivity extends AppCompatActivity
     private boolean mSeeNewMarker = false;
 
 
-    //MarkerTagDbHandler mDbHandler = new MarkerTagDbHandler();
+    FirebaseDatabaseHandler mDbHandler = new FirebaseDatabaseHandler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,13 +118,13 @@ public class MapsActivity extends AppCompatActivity
         mMap.setOnInfoWindowLongClickListener(this);
 
         //TODO: undo this comment when db works
-        /*
+
         //restore all markers
-        ArrayList<MarkerTag> tagList = mDbHandler.queryAllMarkerTags();
+        List<MarkerTag> tagList = mDbHandler.queryAllMarkerTags();
         for(MarkerTag tag : tagList){
             addMarkerFromTag(tag);
         }
-        */
+
     }
 
     /* Activated when the user clicks on the map.
@@ -316,9 +317,9 @@ public class MapsActivity extends AppCompatActivity
                         .icon(BitmapDescriptorFactory.fromBitmap(markerTag.getImg())));
                 newMarker.setTag(markerTag);
             }
-            /* TODO: remove comment when db works
+            // TODO: remove comment when db works
             mDbHandler.insertMarkerTag(markerTag);
-            */
+
         }else{
             Log.d(TAG,"MarkerTag from previous MemoryActivity is null. Not adding marker.");
         }

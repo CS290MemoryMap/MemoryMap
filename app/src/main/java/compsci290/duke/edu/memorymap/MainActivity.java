@@ -1,21 +1,9 @@
 package compsci290.duke.edu.memorymap;
 
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.KeyEvent;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethod;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.EditText;
-import android.widget.TextView;
-
 
 
 public class MainActivity extends AppCompatActivity {
@@ -38,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     }*/
 
     public void onClickListBtn(View v) {
-        Intent intent = new Intent(this, MemoryList.class);
+        Intent intent = new Intent(this, MemoryListActivity.class);
         startActivity(intent);
     }
 

@@ -1,6 +1,7 @@
 package compsci290.duke.edu.memorymap.firebase.database;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;

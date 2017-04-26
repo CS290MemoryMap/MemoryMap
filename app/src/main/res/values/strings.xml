@@ -4,4 +4,6 @@
     <string name="title_activity_maps">Map</string>
     <string name="location_sort">Sort by Location</string>
     <string name="time_sort">Sort by Time Added</string>
+    <string name="title_sort">Sort by Title</string>
+    <string name="date_sort">Sort by Date</string>
 </resources>

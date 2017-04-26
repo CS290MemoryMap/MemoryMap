@@ -13,16 +13,19 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-
-import java.util.ArrayList;
+import java.util.List;
 
 public class MarkerTagAdapter extends RecyclerView.Adapter<MarkerTagAdapter.MarkerTagHolder> {
 
-    private ArrayList<MarkerTag> mMemoryList;
+    private List<MarkerTag> mMemoryList;
     private Context mContext;
+    private MarkerTagAdapter.OnItemClickListener mOnItemClickListener;
 
-    public MarkerTagAdapter(ArrayList<MarkerTag> list, Context c) {
+    public interface OnItemClickListener {
+        void onItemClick(View view, int position);
+    }
+
+    public MarkerTagAdapter(List<MarkerTag> list, Context c) {
         this.mMemoryList = list;
         this.mContext = c;
     }
@@ -52,7 +55,11 @@ public class MarkerTagAdapter extends RecyclerView.Adapter<MarkerTagAdapter.Mark
         return mMemoryList.size();
     }
 
-    public void swap(ArrayList<MarkerTag> datas) {
+    /*
+        Updates the data in the MarkerTagAdapter and notifies
+        the view that is has changed
+     */
+    public void swap(List<MarkerTag> datas) {
         if(mMemoryList != null) {
             mMemoryList.clear();
             mMemoryList.addAll(datas);
