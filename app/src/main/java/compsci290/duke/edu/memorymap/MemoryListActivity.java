@@ -29,6 +29,7 @@ import compsci290.duke.edu.memorymap.firebase.database.FirebaseDatabaseHandler;
 
 public class MemoryListActivity extends AppCompatActivity implements MarkerTagAdapter.OnItemClickListener {
 
+    private static final String TAG = "MemoryListActivity"; // TAG for Logging
 
     private static final String MARKERTAG = "markertag";
     private static final int OPEN_MEMORY = 1;
@@ -52,8 +53,14 @@ public class MemoryListActivity extends AppCompatActivity implements MarkerTagAd
         // get MarkerTag set from database, convert to ArrayList
         mDbHandler = new FirebaseDatabaseHandler();
         // addToDatabase();
+        // MUST GO TO BACKGROUND (call initialize adapter when data available?)
         mMarkerTagList = Collections.emptyList();
-        //mMarkerTagList = mDbHandler.queryAllMarkerTags();
+        Log.d(TAG, "mMarkerTagList empty!");
+//        while(mMarkerTagList.size()==0) {
+            mMarkerTagList = mDbHandler.queryAllMarkerTags();
+//        }
+        Log.d(TAG, "TagList Queried");
+
 
         LinearLayoutManager llm = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(llm);
@@ -62,6 +69,23 @@ public class MemoryListActivity extends AppCompatActivity implements MarkerTagAd
         initializeAdapter();
     }
 
+    @Override
+    protected void onStart(){
+        super.onStart();
+        Log.d(TAG, "onStart started");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d(TAG, "onRestart started");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume started");
+    }
 
     /*
      * Used for testing; adds 3 marker tags to the database
