@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "728477751818-7dko41gmit6h4qas5v4oe8u00lgiu3dj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "compsci290.duke.edu.memorymap",
+            "certificate_hash": "33a36230c1024246170835c2ba30d610c991cbd0"
+          }
+        },
+        {
           "client_id": "728477751818-7ofn3stlc64ie160p0qoqc8hg4djoqdr.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

@@ -29,8 +29,10 @@ public class FirebaseDatabaseHandler {
     private List<MarkerTag> mMarkerTagListByTitle;
 
     public FirebaseDatabaseHandler() {
+        Log.d(TAG, "FirebaseDatabaseHandler contructor called");
         // retrieve instance of database and reference location for read/write
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        Log.d(TAG, "mDatabase reference acquired");
 
         // initialize/update all MarkerTag lists
         mMarkerTagList = new ArrayList<>();
@@ -38,6 +40,7 @@ public class FirebaseDatabaseHandler {
         mMarkerTagListByDate = new ArrayList<>();
         mMarkerTagListByLocation = new ArrayList<>();
         updateMarkerTagLists();
+        Log.d(TAG, "Completed FirebaseDatabaseHandler constructor");
     }
 
     /**
@@ -152,7 +155,9 @@ public class FirebaseDatabaseHandler {
      * update all MarkerTag lists (global variables)
      */
     private void updateMarkerTagLists() {
+        Log.d(TAG, "updateMarkerTagLists called");
         readMarkerTagListUnsorted();
+        Log.d(TAG, "readMarkerTagListUnsorted called");
         readMarkerTagListSortByTitle();
         readMarkerTagListSortByDate();
         readMarkerTagListSortByLocation();
@@ -241,17 +246,20 @@ public class FirebaseDatabaseHandler {
      * read and update the MarkerTag list unsorted
      */
     private void readMarkerTagListUnsorted() {
+        Log.d(TAG, "readMarkerTagListUnsorted started");
         final List<MarkerTag> markerTagList = new ArrayList<>(); // empty MarkerTag list
         mDatabase.child(MarkerTagModel.TABLE_NAME_MARKERTAG)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d(TAG, "readMarkerTagListUnsorted onDataChange");
                 for (DataSnapshot noteSnapshot: dataSnapshot.getChildren()){
                     MarkerTagModel markerTagModel = noteSnapshot.getValue(MarkerTagModel.class);
                     markerTagList.add(new MarkerTag((markerTagModel)));
                     Log.d(TAG, "QUERY ALL " + markerTagModel.getTitle());
                 }
                 mMarkerTagList = markerTagList;
+                Log.d(TAG, "readMarkerTagListUnsorted data ready!");
             }
 
             @Override
