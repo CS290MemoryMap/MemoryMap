@@ -12,21 +12,24 @@
     android:orientation="vertical">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/intro" />
+        android:text="@string/intro"
+        android:textAlignment="center" />
 
 
     <TextView
         android:id="@+id/status"
+        android:layout_width="356dp"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="@string/signed_out" />
+        android:text="@string/signed_out"
+        android:textAlignment="center" />
 
     <TextView
         android:id="@+id/detail"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
+        android:textAlignment="center"
         tools:text="Firebase User ID: 123456789abc" />
 
     <LinearLayout
@@ -37,21 +40,6 @@
         android:paddingLeft="16dp"
         android:paddingRight="16dp">
 
-        <EditText
-            android:id="@+id/field_email"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="@string/hint_email"
-            android:inputType="textEmailAddress" />
-
-        <EditText
-            android:id="@+id/field_password"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="@string/hint_password"
-            android:inputType="textPassword" />
     </LinearLayout>
 
     <LinearLayout
@@ -63,19 +51,6 @@
         android:paddingLeft="16dp"
         android:paddingRight="16dp">
 
-        <Button
-            android:id="@+id/email_sign_in_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/sign_in" />
-
-        <Button
-            android:id="@+id/email_create_account_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/create_account"/>
     </LinearLayout>
 
     <LinearLayout
@@ -86,23 +61,16 @@
         android:orientation="horizontal"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:visibility="gone"
+        android:visibility="visible"
         android:weightSum="2.0">
 
         <Button
             android:id="@+id/sign_out_button"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1.0"
-            android:text="@string/sign_out"/>
-
-        <Button
-            android:id="@+id/verify_email_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1.0"
-            android:text="@string/verify_email"/>
-
+            android:layout_weight="1"
+            android:onClick="onClick"
+            android:text="@string/sign_out" />
     </LinearLayout>
 
     <Button
