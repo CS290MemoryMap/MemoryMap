@@ -70,7 +70,6 @@ public class MapsActivity extends AppCompatActivity
         setContentView(R.layout.activity_maps);
         mDbHandler = new FirebaseDatabaseHandler();
 
-        //TODO: saveInstanceState (need to save current camera position)
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.map);
@@ -189,7 +188,7 @@ public class MapsActivity extends AppCompatActivity
     public View getInfoContents(Marker m) {
 
         // Getting view from the layout file info_window_layout
-        View v = getLayoutInflater().inflate(R.layout.infowindowlayout, null);
+        View v = View.inflate(this,R.layout.infowindowlayout, null);
         MarkerTag markerTag = (MarkerTag) m.getTag();
 
         if(markerTag == null){ //use default window if markerTag is null

@@ -28,7 +28,7 @@ public class MarkerTag implements Parcelable {
     /*new fields*/
     private Boolean isPublic = false;
     private String ID = "";
-    //TODO: get rid of this constructor that doesn't have the isPublicMarkerTag boolean and the ID int
+
     public MarkerTag(String title, String date, String details, Bitmap img, Double latitude, Double longitude){
         if(title != null) this.title = title;
         if(!date.equals("Date")){
@@ -102,7 +102,7 @@ public class MarkerTag implements Parcelable {
 
     /**
      * convert Base64 image String to Bitmap
-     * @param imgBase64
+     * @param imgBase64 image String
      * @return
      */
     private Bitmap base64ToBitmap(String imgBase64) {
