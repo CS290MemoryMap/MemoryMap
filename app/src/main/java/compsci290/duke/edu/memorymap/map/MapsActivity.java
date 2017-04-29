@@ -342,9 +342,6 @@ public class MapsActivity extends AppCompatActivity
                 });
     }
 
-}
-
-
     /**
     * Saves the state of this activity, which includes only the camera position
     *
