@@ -21,7 +21,11 @@ import android.widget.ToggleButton;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import compsci290.duke.edu.memorymap.R;
 
@@ -242,8 +246,11 @@ public class MemoryActivity extends AppCompatActivity {
         }
         String title = mTag.getTitle();
         if(!title.equals("") && title != null) mTitleView.setText(title);
-        String date = mTag.getDate();
-        if(date != (null)) mDateView.setText(date);
+        Date date = mTag.getDateDate();
+        if(date != (null)){
+            DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
+            mDateView.setText(format.format(date));
+        }
         String details = mTag.getDetails();
         if(!details.equals("") && details != null) mDetailsView.setText(details);
         Boolean checked = mTag.getIsPublic();

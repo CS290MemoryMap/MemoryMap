@@ -192,6 +192,7 @@ public class EditableMapsActivity extends MapsActivity
                     MarkerTag markerTag = extras.getParcelable(MARKERTAG);
                     if(markerTag != null) {
                         markerTag = mDbHandler.updateMarkerTag(markerTag);
+                        mNewMarkerLatLng = new LatLng(markerTag.getLatitude(),markerTag.getLongitude());
                         for (MarkerTag tag : mTagList) {
                             if (tag.getID().equals(markerTag.getID())) {
                                 mTagList.remove(tag);
