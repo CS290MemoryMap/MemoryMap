@@ -2,6 +2,8 @@ package compsci290.duke.edu.memorymap.firebase.database;
 
 import android.util.Log;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -20,7 +22,9 @@ import compsci290.duke.edu.memorymap.MarkerTag;
 public class FirebaseDatabaseHandler {
     private static final String TAG = "DB_HANDLER"; // TAG for Logging
 
-    private DatabaseReference mDatabase;
+    private DatabaseReference mDatabase; // database reference
+    private String mUserId; // authenticated firebase user ID
+    // MarkerTag lists (sorted differently)
     private List<MarkerTag> mMarkerTagList;
     private List<MarkerTag> mMarkerTagListByLocation;
     private List<MarkerTag> mMarkerTagListByDate;
@@ -29,6 +33,13 @@ public class FirebaseDatabaseHandler {
     public FirebaseDatabaseHandler() {
         // retrieve instance of database and reference location for read/write
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        // retrieve authenticated user
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            mUserId = user.getUid();
+        } else {
+            mUserId = ""; // no authenticated user
+        }
 
         // initialize/update all MarkerTag lists
         mMarkerTagList = new ArrayList<>();
@@ -246,8 +257,10 @@ public class FirebaseDatabaseHandler {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot noteSnapshot: dataSnapshot.getChildren()){
                     MarkerTagModel markerTagModel = noteSnapshot.getValue(MarkerTagModel.class);
-                    markerTagList.add(new MarkerTag((markerTagModel)));
-                    Log.d(TAG, "QUERY ALL " + markerTagModel.getTitle());
+                    if (markerTagModel.getUserId().equals(mUserId)) {
+                        markerTagList.add(new MarkerTag((markerTagModel)));
+                        Log.d(TAG, "QUERY ALL " + markerTagModel.getTitle());
+                    }
                 }
                 mMarkerTagList = markerTagList;
             }
