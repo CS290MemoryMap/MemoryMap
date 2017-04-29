@@ -1,8 +1,10 @@
-package compsci290.duke.edu.memorymap;
+package compsci290.duke.edu.memorymap.startup;
 
 import android.app.ProgressDialog;
 import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.AppCompatActivity;
+
+import compsci290.duke.edu.memorymap.R;
 
 public class BaseActivity extends AppCompatActivity {
 

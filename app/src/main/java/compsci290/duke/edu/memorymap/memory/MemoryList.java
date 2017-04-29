@@ -1,4 +1,4 @@
-package compsci290.duke.edu.memorymap;
+package compsci290.duke.edu.memorymap.memory;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,7 +11,10 @@ import android.view.MenuItem;
 
 import java.util.ArrayList;
 
+import compsci290.duke.edu.memorymap.R;
 import compsci290.duke.edu.memorymap.database.MarkerTagDbHandler;
+import compsci290.duke.edu.memorymap.memory.MarkerTag;
+import compsci290.duke.edu.memorymap.memory.MarkerTagAdapter;
 
 /**
  * Created by taranagar on 4/13/17.

@@ -12,7 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import compsci290.duke.edu.memorymap.MarkerTag;
+import compsci290.duke.edu.memorymap.memory.MarkerTag;
 
 /**
  * Define a MarkerTag model for Firebase Real-time Database objects/nodes

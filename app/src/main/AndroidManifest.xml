@@ -3,7 +3,7 @@ package="compsci290.duke.edu.memorymap">
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-    <application android:name="compsci290.duke.edu.memorymap.MyApplication" android:allowBackup="true"
+    <application android:name="compsci290.duke.edu.memorymap.database.MyApplication" android:allowBackup="true"
         android:icon="@mipmap/ic_launcher" android:label="@string/app_name"
         android:supportsRtl="true" android:theme="@style/AppTheme"
         android:largeHeap="true">
@@ -11,16 +11,14 @@ package="compsci290.duke.edu.memorymap">
     <meta-data android:name="com.google.android.geo.API_KEY"
         android:value="AIzaSyAdqbh2xBrLpMYnHvwKvc8Ud4pdsHbwaR0" />
 
-        \
-
         <!-- MainActivity -->
-        <activity android:name=".MainActivity" >
+        <activity android:name=".startup.MainActivity" android:theme="@style/Theme.AppCompat.Light">
 
         </activity>
 
 
-        <!-- SignInActivity -->
-    <activity android:name=".SignInActivity"
+
+    <activity android:name=".startup.SignInActivity"
         android:label="@string/app_name">
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
@@ -32,7 +30,7 @@ package="compsci290.duke.edu.memorymap">
 
         <!-- SplashActivity -->
         <activity
-            android:name="compsci290.duke.edu.memorymap.SplashActivity"
+            android:name="compsci290.duke.edu.memorymap.startup.SplashActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -43,27 +41,27 @@ package="compsci290.duke.edu.memorymap">
 
         <!-- MapsActivity -->
         <activity
-            android:name="compsci290.duke.edu.memorymap.MapsActivity"
+            android:name="compsci290.duke.edu.memorymap.map.MapsActivity"
             android:theme="@style/Theme.AppCompat.Light"
             android:label="@string/title_activity_maps">
         </activity>
 
         <!-- EditableMapsActivity -->
         <activity
-            android:name="compsci290.duke.edu.memorymap.EditableMapsActivity"
+            android:name="compsci290.duke.edu.memorymap.map.EditableMapsActivity"
             android:theme="@style/Theme.AppCompat.Light"
             android:label="@string/title_activity_maps">
         </activity>
       
         <!-- MemoryActivity -->
         <activity 
-            android:name="compsci290.duke.edu.memorymap.MemoryActivity" 
+            android:name="compsci290.duke.edu.memorymap.memory.MemoryActivity"
             android:theme="@style/Theme.AppCompat.Light"> 
         </activity>
 
         <!-- MemoryListActivity -->
         <activity
-            android:name="compsci290.duke.edu.memorymap.MemoryList"
+            android:name="compsci290.duke.edu.memorymap.memory.MemoryList"
             android:theme="@style/Theme.AppCompat.Light">
         </activity>
         

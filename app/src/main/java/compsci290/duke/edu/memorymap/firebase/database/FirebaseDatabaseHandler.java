@@ -13,7 +13,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import compsci290.duke.edu.memorymap.MarkerTag;
+import compsci290.duke.edu.memorymap.memory.MarkerTag;
 
 /**
  * Handle CRUD operation for Firebase database
@@ -48,7 +48,7 @@ public class FirebaseDatabaseHandler {
         mMarkerTagListByDate = new ArrayList<>();
         mMarkerTagListByLocation = new ArrayList<>();
         mPublicMarkerTagList = new ArrayList<>();
-        updateMarkerTagLists();
+//        updateMarkerTagLists();
     }
 
     /**

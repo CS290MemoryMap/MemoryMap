@@ -1,4 +1,4 @@
-package compsci290.duke.edu.memorymap;
+package compsci290.duke.edu.memorymap.memory;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
