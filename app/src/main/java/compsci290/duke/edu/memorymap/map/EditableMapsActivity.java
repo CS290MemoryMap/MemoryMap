@@ -408,8 +408,7 @@ public class EditableMapsActivity extends MapsActivity
                                 Log.d(TAG, "QUERIED MarkerTag " + markerTagModel.getTitle());
                             }
                         }
-                        // TODO call a method to update your Activity MarkerTag
-                        // e.g. updateMap(markerTagList)
+
                         //restore all markers
                         mTagList = markerTagList;
                         for (MarkerTag tag : mTagList) {

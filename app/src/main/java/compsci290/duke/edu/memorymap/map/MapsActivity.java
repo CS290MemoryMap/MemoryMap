@@ -126,7 +126,7 @@ public class MapsActivity extends AppCompatActivity
         mMap.setInfoWindowAdapter(this);
         //mMap.setOnInfoWindowLongClickListener(this);
 
-        queryMyMarkerTagList();
+        queryPublicMarkerTagList();
 //        //restore all markers
 //        mTagList = mDbHandler.queryAllMarkerTags();
 //        for (MarkerTag tag : mTagList) {
@@ -302,23 +302,24 @@ public class MapsActivity extends AppCompatActivity
         }
     }
 
-    private void queryMyMarkerTagList() {
+    private void queryPublicMarkerTagList() {
         final List<MarkerTag> markerTagList = new ArrayList<>(); // empty MarkerTag list
-
+        // Query for most recent 20 public MarkerTag
         mDbHandler.getDatabase().child(MarkerTagModel.TABLE_NAME_MARKERTAG)
+                .orderByChild(MarkerTagModel.CHILD_NAME_PUBLICMARKERTAG)
+                .equalTo(true).limitToFirst(20)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         for (DataSnapshot noteSnapshot: dataSnapshot.getChildren()){
                             MarkerTagModel markerTagModel = noteSnapshot.getValue(MarkerTagModel.class);
-                            // filter user MarkerTag only
-                            if (markerTagModel.getUserId().equals(mDbHandler.getUserId())) {
+                            // filter public MarkerTag only (most recent 20)
+//                            if (markerTagModel.isPublicMarkerTag()) {
                                 markerTagList.add(new MarkerTag((markerTagModel)));
                                 Log.d(TAG, "QUERIED MarkerTag " + markerTagModel.getTitle());
-                            }
+//                            }
                         }
-                        // TODO call a method to update your Activity MarkerTag
-                        // e.g. updateMap(markerTagList)
+
                         //restore all markers
                         mTagList = markerTagList;
                         for (MarkerTag tag : mTagList) {
@@ -333,4 +334,5 @@ public class MapsActivity extends AppCompatActivity
                     }
                 });
     }
+
 }
