@@ -20,11 +20,11 @@ import compsci290.duke.edu.memorymap.memory.MarkerTag;
  */
 
 public class MarkerTagModel {
-    static final String TABLE_NAME_MARKERTAG = "markertags";
-    static final String CHILD_NAME_TITLE = "title";
-    static final String CHILD_NAME_DATE = "date";
-    // TODO change this String value to "location" when available
-    static final String CHILD_NAME_LOCATION = "latitude";
+    public static final String TABLE_NAME_MARKERTAG = "markertags";
+    public static final String CHILD_NAME_TITLE = "title";
+    public static final String CHILD_NAME_DATE = "date";
+    public static final String CHILD_NAME_LOCATION = "latitude";
+    public static final String CHILD_NAME_PUBLICMARKERTAG = "publicMarkerTag";
 
     private String markerTagId;
     private String title;
@@ -35,10 +35,9 @@ public class MarkerTagModel {
     private Double longitude;
     private String userId;
     private boolean publicMarkerTag;
-    // TODO add location parameter so we can use it for sorting by location
 
     /**
-     * Default ocnstructor required for calls to DataSnapshot.getValue(MarkerTagModel.class)
+     * Default constructor required for calls to DataSnapshot.getValue(MarkerTagModel.class)
      * for firebase real-time database
      */
     public MarkerTagModel() {
