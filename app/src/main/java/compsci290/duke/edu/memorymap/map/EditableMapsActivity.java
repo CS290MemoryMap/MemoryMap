@@ -44,6 +44,7 @@ public class EditableMapsActivity extends MapsActivity
     protected String userInputAddress = "";
     protected LatLng mNewMarkerLatLng;
     protected boolean mSeeNewMarker = false;
+    private Marker markerToRemove = null;
 
 
     /**
@@ -119,7 +120,7 @@ public class EditableMapsActivity extends MapsActivity
                         Bundle bundle = new Bundle();
                         bundle.putParcelable(MARKERTAG, markerTag);
                         intent.putExtras(bundle);
-                        marker.remove(); //remove marker to be edited, will replace when returns
+                        markerToRemove = marker; //remove marker to be edited, will replace when returns
                         startActivityForResult(intent, EDIT_MEMORY);
                     }
                 })
@@ -163,7 +164,7 @@ public class EditableMapsActivity extends MapsActivity
                 if(extras != null){
                     MarkerTag markerTag = extras.getParcelable(MARKERTAG);
                     if(markerTag != null) {
-                        mDbHandler.updateMarkerTag(markerTag);
+                        markerTag = mDbHandler.updateMarkerTag(markerTag);
                         for (MarkerTag tag : mTagList) {
                             if (tag.getID().equals(markerTag.getID())) {
                                 mTagList.remove(tag);
@@ -183,6 +184,10 @@ public class EditableMapsActivity extends MapsActivity
                             newMarker.setTag(markerTag);
                         }
                         mSeeNewMarker = true;
+                        if(markerToRemove != null){
+                            markerToRemove.remove();
+                            markerToRemove = null;
+                        }
                     }else{
                         Log.d(TAG, "MarkerTag in extras was null");
                     }
@@ -190,6 +195,7 @@ public class EditableMapsActivity extends MapsActivity
                     Log.d(TAG, "Result from EDIT_MEMORY extras == null");
                 }
             }else{
+                markerToRemove = null;
                 Toast.makeText(this,"Memory not successfully edited.", Toast.LENGTH_SHORT).show();
             }
         }
@@ -393,7 +399,6 @@ public class EditableMapsActivity extends MapsActivity
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                         Log.d(TAG, "Error Querying Data: " + databaseError.getMessage());
-                        // TODO what do you want to do when an error occurs?
                     }
                 });
     }
