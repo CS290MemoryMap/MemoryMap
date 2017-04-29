@@ -21,6 +21,9 @@ public class FirebaseDatabaseHandler {
     private DatabaseReference mDatabase; // database reference
     private String mUserId; // authenticated firebase user ID
 
+    /**
+     * Default Constructor
+     */
     public FirebaseDatabaseHandler() {
         // retrieve instance of database and reference location for read/write
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -103,6 +106,7 @@ public class FirebaseDatabaseHandler {
         }
     }
 
+    /* Getters */
     public DatabaseReference getDatabase() {
         return mDatabase;
     }

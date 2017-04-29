@@ -26,14 +26,14 @@ public class MarkerTagModel {
     public static final String CHILD_NAME_LOCATION = "latitude";
     public static final String CHILD_NAME_PUBLICMARKERTAG = "publicMarkerTag";
 
-    private String markerTagId;
+    private String markerTagId; // MarkerTag unique ID
     private String title;
     private String date;
     private String details;
     private String imgBase64;
     private Double latitude;
     private Double longitude;
-    private String userId;
+    private String userId; // authenticated user ID
     private boolean publicMarkerTag;
 
     /**
@@ -44,14 +44,21 @@ public class MarkerTagModel {
         // This is intentionally left empty
     }
 
+    /**
+     * Constructor
+     * @param markerTag a MarkerTag object used to construct the MArkerTagModel object
+     */
     MarkerTagModel(MarkerTag markerTag) {
         this.markerTagId = markerTag.getID();
         this.title = markerTag.getTitle();
+        // convert date to year, month day for sorting purposes
         this.date = convertDateToString(markerTag.getDateDate());
         this.details = markerTag.getDetails();
+        // convert Bitmap to Base64 to store in firebase
         this.imgBase64 = bitmapToBase64(markerTag.getImg());
         this.latitude = markerTag.getLatitude();
         this.longitude = markerTag.getLongitude();
+        // user must always be logged in (but just in case)
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null)
             this.userId = user.getUid();
@@ -74,7 +81,6 @@ public class MarkerTagModel {
         // used for database object creation
         return userId;
     }
-
     public boolean isPublicMarkerTag() {
         return publicMarkerTag;
     }
@@ -91,7 +97,6 @@ public class MarkerTagModel {
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
-//        img.recycle();
         byte[] byteArray = stream.toByteArray();
 
         return Base64.encodeToString(byteArray, Base64.DEFAULT);
