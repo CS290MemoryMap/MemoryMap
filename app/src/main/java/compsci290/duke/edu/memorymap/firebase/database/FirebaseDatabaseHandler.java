@@ -4,13 +4,9 @@ import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import compsci290.duke.edu.memorymap.memory.MarkerTag;
@@ -20,16 +16,10 @@ import compsci290.duke.edu.memorymap.memory.MarkerTag;
  */
 
 public class FirebaseDatabaseHandler {
-    private static final String TAG = "DB_HANDLER"; // TAG for Logging
+    private static final String TAG = "FDbHandler"; // TAG for Logging
 
     private DatabaseReference mDatabase; // database reference
     private String mUserId; // authenticated firebase user ID
-    // MarkerTag lists (sorted differently)
-    private List<MarkerTag> mMarkerTagList;
-    private List<MarkerTag> mMarkerTagListByLocation;
-    private List<MarkerTag> mMarkerTagListByDate;
-    private List<MarkerTag> mMarkerTagListByTitle;
-    private List<MarkerTag> mPublicMarkerTagList;
 
     public FirebaseDatabaseHandler() {
         // retrieve instance of database and reference location for read/write
@@ -42,13 +32,7 @@ public class FirebaseDatabaseHandler {
             mUserId = ""; // no authenticated user
         }
 
-        // initialize/update all MarkerTag lists
-        mMarkerTagList = new ArrayList<>();
-        mMarkerTagListByTitle = new ArrayList<>();
-        mMarkerTagListByDate = new ArrayList<>();
-        mMarkerTagListByLocation = new ArrayList<>();
-        mPublicMarkerTagList = new ArrayList<>();
-//        updateMarkerTagLists();
+        Log.d(TAG, "instantiated handler for user " + mUserId);
     }
 
     /**
@@ -66,50 +50,10 @@ public class FirebaseDatabaseHandler {
         // Write a MarkerTag to the database
         mDatabase.child(MarkerTagModel.TABLE_NAME_MARKERTAG).child(key).setValue(markerTagModel);
 
-        // update MarkerTagList with SingleEventListener
-        updateMarkerTagLists();
+        Log.d(TAG, "inserted Marker Tag " + markerTagModel.getMarkerTagId() + " with title "
+        + markerTagModel.getTitle());
 
         return markerTag;
-    }
-
-    /**
-     * return a list of all MarkerTag objects
-     * @return MarkerTag list
-     */
-    public List<MarkerTag> queryAllMarkerTags() {
-        return mMarkerTagList;
-    }
-
-    /**
-     * return a list of all MarkerTag objects sorted ascending by title
-     * @return MarkerTag list
-     */
-    public List<MarkerTag> querySortByTitle() {
-        return mMarkerTagListByTitle;
-    }
-
-    /**
-     * return a list of all MarkerTag objects sorted ascending by date
-     * @return MarkerTag list
-     */
-    public List<MarkerTag> querySortByDate() {
-        return mMarkerTagListByDate;
-    }
-
-    /**
-     * return a list of all MarkerTag objects sorted ascending by location
-     * @return MarkerTag list
-     */
-    public List<MarkerTag> querySortByLocation() {
-        return mMarkerTagListByLocation;
-    }
-
-    /**
-     * return a list of the most recent public MarkerTag objects
-     * @return MarkerTag list
-     */
-    public List<MarkerTag> queryRecentPublic() {
-        return mPublicMarkerTagList;
     }
 
     /**
@@ -124,8 +68,8 @@ public class FirebaseDatabaseHandler {
         // Write a MarkerTag to the database
         mDatabase.child(MarkerTagModel.TABLE_NAME_MARKERTAG).child(markerTagModel.getMarkerTagId()).setValue(markerTagModel);
 
-        // update MarkerTagList with SingleEventListener
-        updateMarkerTagLists();
+        Log.d(TAG, "updated Marker Tag " + markerTagModel.getMarkerTagId() + " with title "
+                + markerTagModel.getTitle());
 
         return markerTag;
     }
@@ -139,17 +83,9 @@ public class FirebaseDatabaseHandler {
         MarkerTagModel markerTagModel = new MarkerTagModel(markerTag);
         mDatabase.child(MarkerTagModel.TABLE_NAME_MARKERTAG).child(markerTagModel.getMarkerTagId()).setValue(null);
 
-        // update MarkerTagList with SingleEventListener
-        updateMarkerTagLists();
+        Log.d(TAG, "deleted Marker Tag " + markerTagModel.getMarkerTagId() + " with title "
+                + markerTagModel.getTitle());
 
-//        mDatabase.child(MarkerTagModel.TABLE_NAME_MARKERTAG).child(markerTagModel.getMarkerTagId())
-//                .removeValue(new DatabaseReference.CompletionListener() {
-//            @Override
-//            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-//                // update MarkerTagList with SingleEventListener
-//                updateMarkerTagLists();
-//            }
-//        });
     }
 
     /**
@@ -161,156 +97,16 @@ public class FirebaseDatabaseHandler {
             // delete MarkerTag
             MarkerTagModel markerTagModel = new MarkerTagModel(markerTags.get(i));
             mDatabase.child(MarkerTagModel.TABLE_NAME_MARKERTAG).child(markerTagModel.getMarkerTagId()).setValue(null);
+
+            Log.d(TAG, i + ": deleted Marker Tag " + markerTagModel.getMarkerTagId() + " with title "
+                    + markerTagModel.getTitle());
         }
-
-        // update MarkerTagList with SingleEventListener
-        updateMarkerTagLists();
     }
 
-    /**
-     * update all MarkerTag lists (global variables)
-     */
-    private void updateMarkerTagLists() {
-        readMyMarkerTagListUnsorted();
-        readMyMarkerTagListSortByTitle();
-        readMyMarkerTagListSortByDate();
-        readMyMarkerTagListSortByLocation();
-        readPublicMarkerTagList();
-
+    public DatabaseReference getDatabase() {
+        return mDatabase;
     }
-
-    /**
-     * read and update the MarkerTag list sorted by title
-     */
-    private void readMyMarkerTagListSortByTitle() {
-        final List<MarkerTag> markerTagList = new ArrayList<>(); // empty MarkerTag list
-        mDatabase.child(MarkerTagModel.TABLE_NAME_MARKERTAG)
-                .orderByChild(MarkerTagModel.CHILD_NAME_TITLE)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Log.d(TAG, "TITLE SORT onDataChange");
-                        for (DataSnapshot noteSnapshot: dataSnapshot.getChildren()){
-                            MarkerTagModel markerTagModel = noteSnapshot.getValue(MarkerTagModel.class);
-                            if (markerTagModel.getUserId().equals(mUserId)) {
-                                markerTagList.add(new MarkerTag((markerTagModel)));
-                                Log.d(TAG, "TITLE SORT " + markerTagModel.getTitle());
-                            }
-                        }
-                        mMarkerTagListByTitle = markerTagList;
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.d(TAG, "TITLE SORT " + databaseError.getMessage());
-                    }
-                });
+    public String getUserId() {
+        return mUserId;
     }
-
-    /**
-     * read and update the MarkerTag list sorted by date
-     */
-    private void readMyMarkerTagListSortByDate() {
-        final List<MarkerTag> markerTagList = new ArrayList<>(); // empty MarkerTag list
-        mDatabase.child(MarkerTagModel.TABLE_NAME_MARKERTAG)
-                .orderByChild(MarkerTagModel.CHILD_NAME_DATE)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Log.d(TAG, "DATE SORT onDataChange");
-                        for (DataSnapshot noteSnapshot: dataSnapshot.getChildren()){
-                            MarkerTagModel markerTagModel = noteSnapshot.getValue(MarkerTagModel.class);
-                            if (markerTagModel.getUserId().equals(mUserId)) {
-                                markerTagList.add(new MarkerTag((markerTagModel)));
-                                Log.d(TAG, "Date SORT " + markerTagModel.getTitle());
-                            }
-                        }
-                        mMarkerTagListByDate = markerTagList;
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.d(TAG, "DATE SORT " + databaseError.getMessage());
-                    }
-                });
-    }
-
-    /**
-     * read and update the MarkerTag list sorted by location
-     */
-    private void readMyMarkerTagListSortByLocation() {
-        final List<MarkerTag> markerTagList = new ArrayList<>(); // empty MarkerTag list
-        mDatabase.child(MarkerTagModel.TABLE_NAME_MARKERTAG)
-                .orderByChild(MarkerTagModel.CHILD_NAME_LOCATION)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Log.d(TAG, "LOCATION SORT onDataChange");
-                        for (DataSnapshot noteSnapshot: dataSnapshot.getChildren()){
-                            MarkerTagModel markerTagModel = noteSnapshot.getValue(MarkerTagModel.class);
-                            if (markerTagModel.getUserId().equals(mUserId)) {
-                                markerTagList.add(new MarkerTag((markerTagModel)));
-                                Log.d(TAG, "LOCATION SORT " + markerTagModel.getTitle());
-                            }
-                        }
-                        mMarkerTagListByLocation = markerTagList;
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.d(TAG, "LOCATION SORT " + databaseError.getMessage());
-                    }
-                });
-    }
-
-    /**
-     * read and update the MarkerTag list unsorted
-     */
-    private void readMyMarkerTagListUnsorted() {
-        final List<MarkerTag> markerTagList = new ArrayList<>(); // empty MarkerTag list
-        mDatabase.child(MarkerTagModel.TABLE_NAME_MARKERTAG)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot noteSnapshot: dataSnapshot.getChildren()){
-                    MarkerTagModel markerTagModel = noteSnapshot.getValue(MarkerTagModel.class);
-                    if (markerTagModel.getUserId().equals(mUserId)) {
-                        markerTagList.add(new MarkerTag((markerTagModel)));
-                        Log.d(TAG, "QUERY ALL " + markerTagModel.getTitle());
-                    }
-                }
-                mMarkerTagList = markerTagList;
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.d(TAG, "QUERY ALL " + databaseError.getMessage());
-            }
-        });
-    }
-
-    private void readPublicMarkerTagList() {
-        final List<MarkerTag> markerTagList = new ArrayList<>(); // empty MarkerTag list
-        //TODO potentially sort and limit by publicMarkerTag field
-        mDatabase.child(MarkerTagModel.TABLE_NAME_MARKERTAG)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        for (DataSnapshot noteSnapshot: dataSnapshot.getChildren()){
-                            MarkerTagModel markerTagModel = noteSnapshot.getValue(MarkerTagModel.class);
-                            if (markerTagModel.isPublicMarkerTag()) {
-                                markerTagList.add(new MarkerTag((markerTagModel)));
-                                Log.d(TAG, "QUERY PUBLIC " + markerTagModel.getTitle());
-                            }
-                        }
-                        mPublicMarkerTagList = markerTagList;
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.d(TAG, "QUERY PUBLIC " + databaseError.getMessage());
-                    }
-                });
-    }
-
 }

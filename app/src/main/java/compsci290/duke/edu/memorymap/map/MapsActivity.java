@@ -31,9 +31,15 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.location.LocationServices;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import compsci290.duke.edu.memorymap.firebase.database.MarkerTagModel;
 import compsci290.duke.edu.memorymap.memory.MarkerTag;
 import compsci290.duke.edu.memorymap.R;
 import compsci290.duke.edu.memorymap.firebase.database.FirebaseDatabaseHandler;
@@ -42,7 +48,6 @@ public class MapsActivity extends AppCompatActivity
         implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        //GoogleMap.OnMapLongClickListener,
         GoogleMap.InfoWindowAdapter{
 
     protected GoogleMap mMap;
@@ -72,7 +77,7 @@ public class MapsActivity extends AppCompatActivity
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.map);
+                .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
         //Initializing mGoogleApiClient
@@ -123,18 +128,19 @@ public class MapsActivity extends AppCompatActivity
         mMap.setInfoWindowAdapter(this);
         //mMap.setOnInfoWindowLongClickListener(this);
 
-        //restore all markers
-        mTagList = mDbHandler.queryAllMarkerTags();
-        for(MarkerTag tag : mTagList){
-            addMarkerFromTag(tag);
-        }
+        queryPublicMarkerTagList();
+//        //restore all markers
+//        mTagList = mDbHandler.queryAllMarkerTags();
+//        for (MarkerTag tag : mTagList) {
+//            addMarkerFromTag(tag);
+//        }
     }
 
     /**
      * Creates the options menu
      *
-     * @param  menu the latlng to include in the intent
-     * @return      true on successful handling
+     * @param menu the latlng to include in the intent
+     * @return true on successful handling
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -147,18 +153,17 @@ public class MapsActivity extends AppCompatActivity
     /**
      * Describes on how to handle each menu item being clicked.
      *
-     * @param  item the clicked menu item
-     * @return      true on successful handling
+     * @param item the clicked menu item
+     * @return true on successful handling
      */
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_get_current_location:
                 getCurrentLocation();
-                if(userCurrLatLng != null){
-                    Log.d(TAG,"moving camera to user current location (by menu seleciton)");
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userCurrLatLng,ZOOM));
+                if (userCurrLatLng != null) {
+                    Log.d(TAG, "moving camera to user current location (by menu seleciton)");
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userCurrLatLng, ZOOM));
                 }
                 return true;
             default:
@@ -170,8 +175,8 @@ public class MapsActivity extends AppCompatActivity
      * Placeholder function in order to use the "getInfoContents" method,
      * as it only gets called when this function returns null.
      *
-     * @param  m    the marker about which the InfoWindow is concerned
-     * @return      returns the InfoWindow view
+     * @param m the marker about which the InfoWindow is concerned
+     * @return returns the InfoWindow view
      */
     @Override
     public View getInfoWindow(Marker m) {
@@ -181,8 +186,8 @@ public class MapsActivity extends AppCompatActivity
     /**
      * Defines the content of the InfoWindow
      *
-     * @param  m    the marker about which the InfoWindow contents are concerned
-     * @return      returns the InfoWindow view
+     * @param m the marker about which the InfoWindow contents are concerned
+     * @return returns the InfoWindow view
      */
     @Override
     public View getInfoContents(Marker m) {
@@ -191,7 +196,7 @@ public class MapsActivity extends AppCompatActivity
         View v = View.inflate(this,R.layout.infowindowlayout, null);
         MarkerTag markerTag = (MarkerTag) m.getTag();
 
-        if(markerTag == null){ //use default window if markerTag is null
+        if (markerTag == null) { //use default window if markerTag is null
             return null;
         }
         TextView titleView = (TextView) v.findViewById(R.id.infowin_title);
@@ -205,13 +210,12 @@ public class MapsActivity extends AppCompatActivity
     }
 
 
-
     /**
      * Attempts to update the variables userCurrLocation and userCurrLatLng
      * by using LocationServices (which requires the Google API client)
      */
     protected void getCurrentLocation() {
-        Log.d(TAG,"Attempting to get current location");
+        Log.d(TAG, "Attempting to get current location");
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
@@ -221,23 +225,23 @@ public class MapsActivity extends AppCompatActivity
         mMap.setMyLocationEnabled(true);
         userCurrLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (userCurrLocation != null) {
-            Log.d(TAG,"Got current location successfully");
-            userCurrLatLng = new LatLng(userCurrLocation.getLatitude(),userCurrLocation.getLongitude());
-        }else{
-            Log.d(TAG,"userCurrLocation == null :(");
+            Log.d(TAG, "Got current location successfully");
+            userCurrLatLng = new LatLng(userCurrLocation.getLatitude(), userCurrLocation.getLongitude());
+        } else {
+            Log.d(TAG, "userCurrLocation == null :(");
         }
     }
-
 
 
     /**
      * Occurs when the the GoogleApiClient becomes connected
      *
-     * @param  bundle   bundle passed, not used
+     * @param bundle bundle passed, not used
      */
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         getCurrentLocation();
+      
         if(mCameraPosition != null){
             mMap.moveCamera(CameraUpdateFactory.newCameraPosition(mCameraPosition));
         }else{
@@ -261,7 +265,7 @@ public class MapsActivity extends AppCompatActivity
      */
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.d(TAG,"Google API Client connection failed.");
+        Log.d(TAG, "Google API Client connection failed.");
     }
 
     /**
@@ -285,27 +289,62 @@ public class MapsActivity extends AppCompatActivity
     /**
      * Adds a marker to the mMap from MarkerTag's information
      *
-     * @param  markerTag    MarkerTag object containing all info needed
-     *                      to create a marker
+     * @param markerTag MarkerTag object containing all info needed
+     *                  to create a marker
      */
-    protected void addMarkerFromTag(MarkerTag markerTag){
+    protected void addMarkerFromTag(MarkerTag markerTag) {
         Bitmap img = markerTag.getImg();
         Double latitude = markerTag.getLatitude();
         Double longitude = markerTag.getLongitude();
-        LatLng latLng = new LatLng(latitude,longitude);
+        LatLng latLng = new LatLng(latitude, longitude);
         Marker marker;
-        if(img != null){
+        if (img != null) {
             marker = mMap.addMarker(new MarkerOptions()
                     .position(latLng)
                     .icon(BitmapDescriptorFactory.fromBitmap(img)));
             marker.setTag(markerTag);
-        }
-        else{
+        } else {
             marker = mMap.addMarker(new MarkerOptions()
                     .position(latLng));
             marker.setTag(markerTag);
         }
     }
+
+    private void queryPublicMarkerTagList() {
+        final List<MarkerTag> markerTagList = new ArrayList<>(); // empty MarkerTag list
+        // Query for most recent 20 public MarkerTag
+        mDbHandler.getDatabase().child(MarkerTagModel.TABLE_NAME_MARKERTAG)
+                .orderByChild(MarkerTagModel.CHILD_NAME_PUBLICMARKERTAG)
+                .equalTo(true).limitToFirst(20)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot noteSnapshot: dataSnapshot.getChildren()){
+                            MarkerTagModel markerTagModel = noteSnapshot.getValue(MarkerTagModel.class);
+                            // filter public MarkerTag only (most recent 20)
+//                            if (markerTagModel.isPublicMarkerTag()) {
+                                markerTagList.add(new MarkerTag((markerTagModel)));
+                                Log.d(TAG, "QUERIED MarkerTag " + markerTagModel.getTitle());
+//                            }
+                        }
+
+                        //restore all markers
+                        mTagList = markerTagList;
+                        for (MarkerTag tag : mTagList) {
+                            addMarkerFromTag(tag);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.d(TAG, "Error Querying Data: " + databaseError.getMessage());
+                        // TODO what do you want to do when an error occurs?
+                    }
+                });
+    }
+
+}
+
 
     /**
     * Saves the state of this activity, including the date,
