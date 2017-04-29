@@ -59,7 +59,6 @@ public class MapsActivity extends AppCompatActivity
     protected GoogleApiClient mGoogleApiClient;
     private static final String TAG = "MapsActivity";
 
-    //MarkerTagDbHandler mDbHandler = new MarkerTagDbHandler();
     protected FirebaseDatabaseHandler mDbHandler;
     protected static List<MarkerTag> mTagList;
 
@@ -308,8 +307,7 @@ public class MapsActivity extends AppCompatActivity
     }
 
     /**
-    * Saves the state of this activity, including the date,
-    * details, title, and image (if the image has been set).
+    * Saves the state of this activity, which includes only the camera position
     *
     * @param  outState  bundle containing state
     */

@@ -218,6 +218,9 @@ public class MemoryActivity extends AppCompatActivity {
         mImageView.setScaleType(ImageView.ScaleType.FIT_XY);
     }
 
+    /**
+     * Puts the user-entered information into the MarkerTag mTag
+     */
     private void putFieldsInTag(){/*image not included because don't want to include default picture*/
         mTag.setDate(mDateView.getText().toString());
         mTag.setTitle(mTitleView.getText().toString());
@@ -225,6 +228,9 @@ public class MemoryActivity extends AppCompatActivity {
         mTag.setIsPublic(mToggleButton.isChecked());
     }
 
+    /**
+     * sets the views with the information from the MarkerTag mTag
+     */
     private void setFieldsFromTag(){
         mPic = mTag.getImg();
         if(mPic == null){
