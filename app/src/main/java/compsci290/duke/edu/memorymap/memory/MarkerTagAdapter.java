@@ -1,4 +1,4 @@
-package compsci290.duke.edu.memorymap;
+package compsci290.duke.edu.memorymap.memory;
 
 /**
  * Created by taranagar on 4/14/17.
@@ -13,9 +13,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-
 import java.util.ArrayList;
+
+import compsci290.duke.edu.memorymap.R;
 
 public class MarkerTagAdapter extends RecyclerView.Adapter<MarkerTagAdapter.MarkerTagHolder> {
 

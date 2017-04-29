@@ -9,8 +9,7 @@ import android.graphics.BitmapFactory;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
-import compsci290.duke.edu.memorymap.MarkerTag;
-import compsci290.duke.edu.memorymap.MyApplication;
+import compsci290.duke.edu.memorymap.memory.MarkerTag;
 
 /**
  * Handles CRUD operations on SQLite database for MarkerTag

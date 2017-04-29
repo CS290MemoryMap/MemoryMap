@@ -1,4 +1,4 @@
-package compsci290.duke.edu.memorymap;
+package compsci290.duke.edu.memorymap.memory;
 
 
 import android.app.Activity;
@@ -22,6 +22,8 @@ import android.widget.ToggleButton;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Calendar;
+
+import compsci290.duke.edu.memorymap.R;
 
 public class MemoryActivity extends AppCompatActivity {
     private static final int SELECT_PICTURE = 1;

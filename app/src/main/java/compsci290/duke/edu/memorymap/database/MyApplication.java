@@ -1,4 +1,4 @@
-package compsci290.duke.edu.memorymap;
+package compsci290.duke.edu.memorymap.database;
 
 import android.app.Application;
 import android.content.Context;

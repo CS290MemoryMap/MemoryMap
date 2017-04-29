@@ -1,7 +1,8 @@
-package compsci290.duke.edu.memorymap;
+package compsci290.duke.edu.memorymap.map;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.support.annotation.NonNull;
@@ -25,12 +26,15 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.location.LocationServices;
 
 import java.util.List;
 
+import compsci290.duke.edu.memorymap.memory.MarkerTag;
+import compsci290.duke.edu.memorymap.R;
 import compsci290.duke.edu.memorymap.firebase.database.FirebaseDatabaseHandler;
 
 public class MapsActivity extends AppCompatActivity
@@ -90,6 +94,21 @@ public class MapsActivity extends AppCompatActivity
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
+        try {
+            // Customise the styling of the base map using a JSON object defined
+            // in a raw resource file.
+            boolean success = googleMap.setMapStyle(
+                    MapStyleOptions.loadRawResourceStyle(
+                            this, R.raw.style_json));
+
+            if (!success) {
+                Log.e(TAG, "Style parsing failed.");
+            }
+        } catch (Resources.NotFoundException e) {
+            Log.e(TAG, "Can't find style. Error: ", e);
+        }
+
 
         // Set up UI
         UiSettings settings = mMap.getUiSettings();

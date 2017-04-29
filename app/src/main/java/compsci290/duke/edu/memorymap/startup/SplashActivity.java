@@ -1,4 +1,4 @@
-package compsci290.duke.edu.memorymap;
+package compsci290.duke.edu.memorymap.startup;
 
 /**
  * Created by taranagar on 4/10/17.
@@ -8,6 +8,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+
+import compsci290.duke.edu.memorymap.R;
 
 public class SplashActivity extends Activity {
 
