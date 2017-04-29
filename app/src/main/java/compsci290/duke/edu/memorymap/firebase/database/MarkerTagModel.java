@@ -20,11 +20,11 @@ import compsci290.duke.edu.memorymap.memory.MarkerTag;
  */
 
 public class MarkerTagModel {
-    static final String TABLE_NAME_MARKERTAG = "markertags";
-    static final String CHILD_NAME_TITLE = "title";
-    static final String CHILD_NAME_DATE = "date";
+    public static final String TABLE_NAME_MARKERTAG = "markertags";
+    public static final String CHILD_NAME_TITLE = "title";
+    public static final String CHILD_NAME_DATE = "date";
     // TODO change this String value to "location" when available
-    static final String CHILD_NAME_LOCATION = "latitude";
+    public static final String CHILD_NAME_LOCATION = "latitude";
 
     private String markerTagId;
     private String title;

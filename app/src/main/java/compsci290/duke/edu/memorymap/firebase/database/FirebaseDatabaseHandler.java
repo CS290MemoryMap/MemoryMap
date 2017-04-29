@@ -313,4 +313,10 @@ public class FirebaseDatabaseHandler {
                 });
     }
 
+    public DatabaseReference getDatabase() {
+        return mDatabase;
+    }
+    public String getUserId() {
+        return mUserId;
+    }
 }
