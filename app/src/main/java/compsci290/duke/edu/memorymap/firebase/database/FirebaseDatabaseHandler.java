@@ -18,7 +18,6 @@ import compsci290.duke.edu.memorymap.MarkerTag;
  */
 
 public class FirebaseDatabaseHandler {
-//    private static final String TABLE_NAME_MARKERTAG = "markertags";
     private static final String TAG = "DB_HANDLER"; // TAG for Logging
 
     private DatabaseReference mDatabase;
@@ -102,7 +101,7 @@ public class FirebaseDatabaseHandler {
         // convert MarkerTag to MarkerTagModel
         MarkerTagModel markerTagModel = new MarkerTagModel(markerTag);
         // Write a MarkerTag to the database
-        mDatabase.child(MarkerTagModel.TABLE_NAME_MARKERTAG).child(markerTagModel.getId()).setValue(markerTagModel);
+        mDatabase.child(MarkerTagModel.TABLE_NAME_MARKERTAG).child(markerTagModel.getMarkerTagId()).setValue(markerTagModel);
 
         // update MarkerTagList with SingleEventListener
         updateMarkerTagLists();
@@ -117,12 +116,12 @@ public class FirebaseDatabaseHandler {
     public void deleteMarkerTag(MarkerTag markerTag) {
         // delete MarkerTag
         MarkerTagModel markerTagModel = new MarkerTagModel(markerTag);
-        mDatabase.child(MarkerTagModel.TABLE_NAME_MARKERTAG).child(markerTagModel.getId()).setValue(null);
+        mDatabase.child(MarkerTagModel.TABLE_NAME_MARKERTAG).child(markerTagModel.getMarkerTagId()).setValue(null);
 
         // update MarkerTagList with SingleEventListener
         updateMarkerTagLists();
 
-//        mDatabase.child(MarkerTagModel.TABLE_NAME_MARKERTAG).child(markerTagModel.getId())
+//        mDatabase.child(MarkerTagModel.TABLE_NAME_MARKERTAG).child(markerTagModel.getMarkerTagId())
 //                .removeValue(new DatabaseReference.CompletionListener() {
 //            @Override
 //            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
@@ -140,7 +139,7 @@ public class FirebaseDatabaseHandler {
         for (int i=0; i<markerTags.size(); i++) {
             // delete MarkerTag
             MarkerTagModel markerTagModel = new MarkerTagModel(markerTags.get(i));
-            mDatabase.child(MarkerTagModel.TABLE_NAME_MARKERTAG).child(markerTagModel.getId()).setValue(null);
+            mDatabase.child(MarkerTagModel.TABLE_NAME_MARKERTAG).child(markerTagModel.getMarkerTagId()).setValue(null);
         }
 
         // update MarkerTagList with SingleEventListener
