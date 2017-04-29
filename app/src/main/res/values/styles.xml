@@ -15,7 +15,7 @@
         <item name="android:datePickerMode">spinner</item>
     </style>
 
-    <style name="myDialog" parent="Theme.AppCompat.Dialog">
+    <style name="myDialog" parent="AppTheme">
         <item name="android:windowNoTitle">true</item>
     </style>
 
