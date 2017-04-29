@@ -25,6 +25,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
@@ -47,19 +48,18 @@ public class MapsActivity extends AppCompatActivity
         implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        //GoogleMap.OnMapLongClickListener,
-        GoogleMap.InfoWindowAdapter
-        //GoogleMap.OnInfoWindowLongClickListener
-{
+        GoogleMap.InfoWindowAdapter{
 
     protected GoogleMap mMap;
     protected static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     protected static final int CREATE_MEMORY = 1;
     protected static final int EDIT_MEMORY = 2;
     protected static final String MARKERTAG = "markertag";
+    protected static final String CAMERAPOS = "camerapos";
     protected static final float ZOOM = 13;
     protected Location userCurrLocation = null;
     protected LatLng userCurrLatLng = null;
+    protected CameraPosition mCameraPosition = null;
 
     protected GoogleApiClient mGoogleApiClient;
     private static final String TAG = "MapsActivity";
@@ -75,7 +75,6 @@ public class MapsActivity extends AppCompatActivity
         setContentView(R.layout.activity_maps);
         mDbHandler = new FirebaseDatabaseHandler();
 
-        //TODO: saveInstanceState (need to save current camera position)
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -87,6 +86,9 @@ public class MapsActivity extends AppCompatActivity
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
+        if(savedInstanceState != null){
+            mCameraPosition = savedInstanceState.getParcelable(CAMERAPOS);
+        }
     }
 
     /**
@@ -119,7 +121,7 @@ public class MapsActivity extends AppCompatActivity
         // Set up UI
         UiSettings settings = mMap.getUiSettings();
         settings.setZoomControlsEnabled(true);
-        settings.setMyLocationButtonEnabled(false);//TODO: make so this is true AND it works :(
+        settings.setMyLocationButtonEnabled(false);
 
         // Set up listeners and adapters
         //mMap.setOnMapLongClickListener(this);
@@ -191,7 +193,7 @@ public class MapsActivity extends AppCompatActivity
     public View getInfoContents(Marker m) {
 
         // Getting view from the layout file info_window_layout
-        View v = getLayoutInflater().inflate(R.layout.infowindowlayout, null);
+        View v = View.inflate(this,R.layout.infowindowlayout, null);
         MarkerTag markerTag = (MarkerTag) m.getTag();
 
         if (markerTag == null) { //use default window if markerTag is null
@@ -239,10 +241,16 @@ public class MapsActivity extends AppCompatActivity
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         getCurrentLocation();
-        Log.d(TAG, "moving camera to user current location");
-        if (userCurrLatLng != null) {
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userCurrLatLng, ZOOM));
+      
+        if(mCameraPosition != null){
+            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(mCameraPosition));
+        }else{
+            if(userCurrLatLng != null){
+                Log.d(TAG,"moving camera to user current location");
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userCurrLatLng,ZOOM));
+            }
         }
+
     }
 
     /**
@@ -335,4 +343,19 @@ public class MapsActivity extends AppCompatActivity
                 });
     }
 
+}
+
+
+    /**
+    * Saves the state of this activity, including the date,
+    * details, title, and image (if the image has been set).
+    *
+    * @param  outState  bundle containing state
+    */
+    @Override
+    protected void onSaveInstanceState (Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mCameraPosition = mMap.getCameraPosition();
+        outState.putParcelable(CAMERAPOS, mCameraPosition);
+    }
 }

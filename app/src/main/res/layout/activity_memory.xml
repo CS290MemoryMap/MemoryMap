@@ -5,16 +5,26 @@
     android:weightSum="1">
 
     <!-- media upload space -->
-    <ImageView
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="75dp"
-        android:id="@+id/image_upload"
-        android:adjustViewBounds="true"
-        android:scaleType="center"
-        android:layout_weight="0.58"
-        android:onClick="onClickImageUpload"/>
+        android:layout_height="187dp"
+        android:layout_weight="0.49">
+
+        <ImageView
+            android:id="@+id/image_upload"
+            android:layout_width="250dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.47"
+            android:adjustViewBounds="true"
+            android:onClick="onClickImageUpload"
+            android:scaleType="center"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+    </RelativeLayout>
 
     <!--  type in title space -->
+
     <EditText
         android:id="@+id/editor_title"
         android:layout_width="fill_parent"
@@ -41,20 +51,36 @@
         android:hint="Memory Details"/>
 
     <!-- button to toggle private/public memory -->
-    <ToggleButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/button_toggle"
-        android:textOn="Public"
-        android:textOff="Private"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ToggleButton
+            android:id="@+id/button_toggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:background="@color/colorPrimary"
+            android:checked="false"
+            android:textColor="@android:color/white"
+            android:textOff="Private"
+            android:textOn="Public"
+            android:theme="@style/AppTheme" />
+
+    </RelativeLayout>
 
     <!-- button to create memorylist -->
+
     <Button
+        android:id="@+id/button_createmem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/button_createmem"
+        android:background="@color/colorAccent"
+        android:onClick="onClickConfirmMemory"
         android:text="Confirm Memory"
-        android:onClick="onClickConfirmMemory"/>
+        android:textColor="@android:color/white" />
 
 
 </LinearLayout>
