@@ -48,6 +48,7 @@ public class EditableMapsActivity extends MapsActivity
     protected LatLng mNewMarkerLatLng;
     protected boolean mSeeNewMarker = false;
     private Marker markerToRemove = null;
+    private static List<MarkerTag> mTagList;
 
 
     /**
