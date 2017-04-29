@@ -69,7 +69,7 @@ public class MapsActivity extends AppCompatActivity
     private static final String TAG = "MapsActivity";
 
     protected FirebaseDatabaseHandler mDbHandler;
-    protected static List<MarkerTag> mTagList;
+    private static List<MarkerTag> mTagList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
