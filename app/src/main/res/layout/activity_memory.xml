@@ -29,7 +29,7 @@
         android:layout_height="wrap_content"
         android:onClick="onClickSetDate"
         android:calendarViewShown="false"
-        android:text="Date"/>
+        android:hint="Memory Date"/>
 
     <!-- type in details space -->
     <EditText

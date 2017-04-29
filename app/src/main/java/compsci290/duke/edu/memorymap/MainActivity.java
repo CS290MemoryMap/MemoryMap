@@ -265,7 +265,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void onClickMapBtn(View v)
     {
-        Intent intent = new Intent(this, MapsActivity.class);
+        Intent intent = new Intent(this, EditableMapsActivity.class);
         startActivity(intent);
     }
 

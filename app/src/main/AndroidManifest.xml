@@ -36,6 +36,13 @@ package="compsci290.duke.edu.memorymap">
             android:theme="@style/Theme.AppCompat.Light"
             android:label="@string/title_activity_maps">
         </activity>
+
+        <!-- EditableMapsActivity -->
+        <activity
+            android:name="compsci290.duke.edu.memorymap.EditableMapsActivity"
+            android:theme="@style/Theme.AppCompat.Light"
+            android:label="@string/title_activity_maps">
+        </activity>
       
         <!-- MemoryActivity -->
         <activity 

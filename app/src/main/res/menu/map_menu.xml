@@ -2,8 +2,4 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item android:id="@+id/menu_get_current_location"
         android:title="Get Current Location" />
-    <item android:id="@+id/menu_search_address"
-        android:title="Create Memory at Address" />
-    <item android:id="@+id/menu_create_memory_at_location"
-        android:title="Create Memory at My Location" />
 </menu>

@@ -240,11 +240,11 @@ public class MemoryActivity extends AppCompatActivity {
             mImageView.setAdjustViewBounds(true);
         }
         String title = mTag.getTitle();
-        if(title != "" && title != null) mTitleView.setText(title);
+        if(!title.equals("") && title != null) mTitleView.setText(title);
         String date = mTag.getDate();
-        if(date != null) mDateView.setText(date);
+        if(date != (null)) mDateView.setText(date);
         String details = mTag.getDetails();
-        if(details != "" && details != null) mDetailsView.setText(details);
+        if(!details.equals("") && details != null) mDetailsView.setText(details);
         Boolean checked = mTag.getIsPublic();
         if(checked != null) mToggleButton.setChecked(checked);
     }
