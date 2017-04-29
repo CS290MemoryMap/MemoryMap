@@ -20,7 +20,9 @@
             android:onClick="onClickImageUpload"
             android:scaleType="center"
             android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            android:contentDescription="@string/memory_img_desc"/>
+                                  
     </RelativeLayout>
 
     <!--  type in title space -->
@@ -29,7 +31,7 @@
         android:id="@+id/editor_title"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:hint="Memory Title"
+        android:hint="@string/memory_title"
         android:inputType="text" />
 
     <!--  type in date space -->
@@ -39,7 +41,7 @@
         android:layout_height="wrap_content"
         android:onClick="onClickSetDate"
         android:calendarViewShown="false"
-        android:hint="Memory Date"/>
+        android:hint="@string/memory_date"/>
 
     <!-- type in details space -->
     <EditText
@@ -48,7 +50,7 @@
         android:layout_height="wrap_content"
         android:inputType="text"
         android:layout_weight="0.42"
-        android:hint="Memory Details"/>
+        android:hint="@string/memory_details"/>
 
     <!-- button to toggle private/public memory -->
 
@@ -65,8 +67,8 @@
             android:background="@color/colorPrimary"
             android:checked="false"
             android:textColor="@android:color/white"
-            android:textOff="Private"
-            android:textOn="Public"
+            android:textOff="@string/memory_private"
+            android:textOn="@string/memory_public"
             android:theme="@style/AppTheme" />
 
     </RelativeLayout>
@@ -79,7 +81,7 @@
         android:layout_height="wrap_content"
         android:background="@color/colorAccent"
         android:onClick="onClickConfirmMemory"
-        android:text="Confirm Memory"
+        android:text="@string/memory_confirm"
         android:textColor="@android:color/white" />
 
 
