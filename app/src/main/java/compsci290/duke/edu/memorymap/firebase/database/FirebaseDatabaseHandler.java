@@ -105,6 +105,14 @@ public class FirebaseDatabaseHandler {
     }
 
     /**
+     * return a list of the most recent public MarkerTag objects
+     * @return MarkerTag list
+     */
+    public List<MarkerTag> queryRecentPublic() {
+        return mPublicMarkerTagList;
+    }
+
+    /**
      * updates an existing MarkerTag in the database (object ID must exist in database,
      * otherwise will add a new MarkerTag to database)
      * @param markerTag a MarkerTag object with the updated data
