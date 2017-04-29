@@ -36,8 +36,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import compsci290.duke.edu.memorymap.firebase.database.MarkerTagModel;
 import compsci290.duke.edu.memorymap.memory.MarkerTag;
@@ -201,7 +205,9 @@ public class MapsActivity extends AppCompatActivity
         TextView titleView = (TextView) v.findViewById(R.id.infowin_title);
         titleView.setText(markerTag.getTitle());
         TextView dateView = (TextView) v.findViewById(R.id.infowin_date);
-        dateView.setText(markerTag.getDate());
+        Date date = markerTag.getDateDate();
+        DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
+        dateView.setText(format.format(date));
         TextView detailsView = (TextView) v.findViewById(R.id.infowin_details);
         detailsView.setText(markerTag.getDetails());
 

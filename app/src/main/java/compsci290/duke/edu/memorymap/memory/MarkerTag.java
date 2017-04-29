@@ -68,6 +68,13 @@ public class MarkerTag implements Parcelable {
         this.ID = markerTagModel.getMarkerTagId();
         this.title = markerTagModel.getTitle();
         this.dateStr = markerTagModel.getDate();
+        DateFormat format = new SimpleDateFormat("yyyy, MM dd", Locale.ENGLISH);
+        try{
+            this.date = format.parse(dateStr);
+        }catch(ParseException pe){
+            Log.d(TAG, "Failed to parse the date");
+            this.date = null;
+        }
         this.details = markerTagModel.getDetails();
         this.img = base64ToBitmap(markerTagModel.getImgBase64());
         this.latitude = markerTagModel.getLatitude();
