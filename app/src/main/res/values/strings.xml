@@ -24,4 +24,18 @@
     <string name="hint_password">Password</string>
     <string name="desc_firebase_lockup">Firebase logo and name</string>
     <string name="auth_failed">Authentication failed</string>
+
+    <!-- activity_memory strings -->
+    <string name="memory_title">Memory Title</string>
+    <string name="memory_details">Memory Details</string>
+    <string name="memory_date">Memory Date</string>
+    <string name="memory_private">Private</string>
+    <string name="memory_public">Public</string>
+    <string name="memory_confirm">Confirm Memory</string>
+    <string name="memory_img_desc">Memory Picture</string>
+
+    <!-- map menu strings -->
+    <string name="menu_get_curr_loc">Get Current Location</string>
+    <string name="menu_create_at_address">Create Memory At Address</string>
+    <string name="menu_create_at_curr_loc">Create Memory at My Location</string>
 </resources>
