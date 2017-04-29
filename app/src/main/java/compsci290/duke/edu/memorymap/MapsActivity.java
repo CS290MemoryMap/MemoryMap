@@ -50,13 +50,9 @@ public class MapsActivity extends AppCompatActivity
     protected static final float ZOOM = 13;
     protected Location userCurrLocation = null;
     protected LatLng userCurrLatLng = null;
-    protected String userInputAddress = "";
+
     protected GoogleApiClient mGoogleApiClient;
     private static final String TAG = "MapsActivity";
-
-    protected LatLng mNewMarkerLatLng;
-    protected boolean mSeeNewMarker = false;
-
 
     //MarkerTagDbHandler mDbHandler = new MarkerTagDbHandler();
     protected FirebaseDatabaseHandler mDbHandler;
@@ -220,15 +216,9 @@ public class MapsActivity extends AppCompatActivity
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         getCurrentLocation();
-        if(mSeeNewMarker && (mNewMarkerLatLng != null)){
-            Log.d(TAG,"moving camera to user's new marker");
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mNewMarkerLatLng,ZOOM));
-            mSeeNewMarker = false;
-        }else{
-            Log.d(TAG,"moving camera to user current location");
-            if(userCurrLatLng != null){
+        Log.d(TAG,"moving camera to user current location");
+        if(userCurrLatLng != null){
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userCurrLatLng,ZOOM));
-            }
         }
     }
 

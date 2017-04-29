@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ContextThemeWrapper;
 import android.text.InputType;
@@ -28,15 +29,14 @@ import java.util.Locale;
 
 import compsci290.duke.edu.memorymap.MapsActivity;
 
-/**
- * Created by Alex on 4/29/2017.
- */
-
 public class EditableMapsActivity extends MapsActivity
         implements GoogleMap.OnMapLongClickListener,
         GoogleMap.OnInfoWindowLongClickListener{
 
     private static final String TAG = "EditableMapsActivity";
+    protected String userInputAddress = "";
+    protected LatLng mNewMarkerLatLng;
+    protected boolean mSeeNewMarker = false;
 
 
     /**
@@ -159,26 +159,30 @@ public class EditableMapsActivity extends MapsActivity
                 final Bundle extras = data.getExtras();
                 if(extras != null){
                     MarkerTag markerTag = extras.getParcelable(MARKERTAG);
-                    mDbHandler.updateMarkerTag(markerTag);
-                    for(MarkerTag tag : mTagList){
-                        if(tag.getID() == markerTag.getID()){
-                            mTagList.remove(tag);
-                            mTagList.add(markerTag);
+                    if(markerTag != null) {
+                        mDbHandler.updateMarkerTag(markerTag);
+                        for (MarkerTag tag : mTagList) {
+                            if (tag.getID().equals(markerTag.getID())) {
+                                mTagList.remove(tag);
+                                mTagList.add(markerTag);
+                            }
                         }
-                    }
-                    Marker newMarker;
-                    if(markerTag.getImg() == null){
-                        newMarker = mMap.addMarker(new MarkerOptions()
-                                .position(mNewMarkerLatLng));
-                        newMarker.setTag(markerTag);
+                        Marker newMarker;
+                        if (markerTag.getImg() == null) {
+                            newMarker = mMap.addMarker(new MarkerOptions()
+                                    .position(mNewMarkerLatLng));
+                            newMarker.setTag(markerTag);
 
+                        } else {
+                            newMarker = mMap.addMarker(new MarkerOptions()
+                                    .position(mNewMarkerLatLng)
+                                    .icon(BitmapDescriptorFactory.fromBitmap(markerTag.getImg())));
+                            newMarker.setTag(markerTag);
+                        }
+                        mSeeNewMarker = true;
                     }else{
-                        newMarker = mMap.addMarker(new MarkerOptions()
-                                .position(mNewMarkerLatLng)
-                                .icon(BitmapDescriptorFactory.fromBitmap(markerTag.getImg())));
-                        newMarker.setTag(markerTag);
+                        Log.d(TAG, "MarkerTag in extras was null");
                     }
-                    mSeeNewMarker = true;
                 }else{
                     Log.d(TAG, "Result from EDIT_MEMORY extras == null");
                 }
@@ -343,5 +347,25 @@ public class EditableMapsActivity extends MapsActivity
         });
         builder.setNegativeButton("Cancel", null);
         builder.show();
+    }
+
+    /**
+     * Occurs when the the GoogleApiClient becomes connected
+     *
+     * @param  bundle   bundle passed, not used
+     */
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        getCurrentLocation();
+        if(mSeeNewMarker && (mNewMarkerLatLng != null)){
+            Log.d(TAG,"moving camera to user's new marker");
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mNewMarkerLatLng,ZOOM));
+            mSeeNewMarker = false;
+        }else{
+            Log.d(TAG,"moving camera to user current location");
+            if(userCurrLatLng != null){
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userCurrLatLng,ZOOM));
+            }
+        }
     }
 }
