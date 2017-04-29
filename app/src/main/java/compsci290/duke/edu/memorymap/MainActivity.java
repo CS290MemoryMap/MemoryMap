@@ -128,8 +128,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         hideProgressDialog();
     }
 
-    public void onClickMapBtn(View v) {
-        Intent intent = new Intent(this, MapsActivity.class);
+    public void onClickMapBtn(View v)
+    {
+        Intent intent = new Intent(this, EditableMapsActivity.class);
         startActivity(intent);
     }
 

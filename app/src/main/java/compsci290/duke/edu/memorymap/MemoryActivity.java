@@ -25,13 +25,6 @@ import java.util.Calendar;
 
 public class MemoryActivity extends AppCompatActivity {
     private static final int SELECT_PICTURE = 1;
-    private static final String DATE = "date";
-    private static final String DETAILS = "details";
-    private static final String TITLE = "title";
-    private static final String BITMAP = "bitmap";
-    private static final String LATLNG = "latlng";
-    private static final String BUNDLE = "bundle";
-    private static final String ISPUBLIC = "ispublic";
     private static final String MARKERTAG = "markertag";
 
     private static TextView mDateView;
@@ -240,11 +233,11 @@ public class MemoryActivity extends AppCompatActivity {
             mImageView.setAdjustViewBounds(true);
         }
         String title = mTag.getTitle();
-        if(title != "" && title != null) mTitleView.setText(title);
+        if(!title.equals("") && title != null) mTitleView.setText(title);
         String date = mTag.getDate();
-        if(date != null) mDateView.setText(date);
+        if(date != (null)) mDateView.setText(date);
         String details = mTag.getDetails();
-        if(details != "" && details != null) mDetailsView.setText(details);
+        if(!details.equals("") && details != null) mDetailsView.setText(details);
         Boolean checked = mTag.getIsPublic();
         if(checked != null) mToggleButton.setChecked(checked);
     }
