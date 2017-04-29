@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import compsci290.duke.edu.memorymap.map.MapsActivity;
 import compsci290.duke.edu.memorymap.memory.MemoryList;
 import compsci290.duke.edu.memorymap.R;
 import compsci290.duke.edu.memorymap.map.EditableMapsActivity;
@@ -66,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void updateUI(FirebaseUser user) {
         hideProgressDialog();
         if (user != null) {
-            mStatusTextView.setText(getString(R.string.emailpassword_status_fmt, user.getEmail(), user.isEmailVerified()));
+            mStatusTextView.setText(getString(R.string.emailpassword_status_fmt, user.getEmail()/*, user.isEmailVerified()*/));
 
 
             findViewById(R.id.email_password_buttons).setVisibility(View.GONE);
@@ -111,15 +112,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         hideProgressDialog();
     }
 
-    public void onClickMapBtn(View v)
+    public void onClickPersonalMapBtn(View v)
     {
         Intent intent = new Intent(this, EditableMapsActivity.class);
         startActivity(intent);
     }
 
-    public void onClickListBtn(View v) {
+    public void onClickPersonalListBtn(View v) {
         Intent intent = new Intent(this, MemoryList.class);
         startActivity(intent);
+    }
+
+    public void onClickPublicMapBtn(View v)
+    {
+        Intent intent = new Intent(this, MapsActivity.class);
+        startActivity(intent);
+    }
+
+    public void onClickPublicListBtn(View v) {
+        // TODO update Intent with public MemoryList class
+//        Intent intent = new Intent(this, MemoryList.class);
+//        startActivity(intent);
     }
 
     class AsyncActivity extends AsyncTask  {

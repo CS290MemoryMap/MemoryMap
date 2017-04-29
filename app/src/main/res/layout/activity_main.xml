@@ -92,12 +92,12 @@
         android:layout_weight="0.17" />
 
     <Button
-        android:id="@+id/buttonToMap"
+        android:id="@+id/buttonToPersonalMap"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorAccent"
-        android:onClick="onClickMapBtn"
-        android:text="Go to map"
+        android:onClick="onClickPersonalMapBtn"
+        android:text="Personal Map"
         android:textColor="@android:color/white" />
 
     <Space
@@ -105,12 +105,38 @@
         android:layout_height="29dp" />
 
     <Button
-        android:id="@+id/buttonToList"
+        android:id="@+id/buttonToPersonalList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorAccent"
-        android:onClick="onClickListBtn"
-        android:text="Go to list of memories"
+        android:onClick="onClickPersonalListBtn"
+        android:text="Personal Memory List"
+        android:textColor="@android:color/white" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="29dp" />
+
+    <Button
+        android:id="@+id/buttonToPublicMap"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorAccent"
+        android:onClick="onClickPublicMapBtn"
+        android:text="Public Map"
+        android:textColor="@android:color/white" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="29dp" />
+
+    <Button
+        android:id="@+id/buttonToPublicList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorAccent"
+        android:onClick="onClickPublicListBtn"
+        android:text="Public Memory List"
         android:textColor="@android:color/white" />
 
 </LinearLayout>
