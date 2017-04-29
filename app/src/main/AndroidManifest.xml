@@ -12,7 +12,7 @@ package="compsci290.duke.edu.memorymap">
         android:value="AIzaSyAdqbh2xBrLpMYnHvwKvc8Ud4pdsHbwaR0" />
 
         <!-- MainActivity -->
-        <activity android:name=".startup.MainActivity" android:theme="@style/Theme.AppCompat.Light">
+        <activity android:name=".startup.MainActivity" >
 
         </activity>
 
