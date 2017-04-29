@@ -11,13 +11,15 @@ package="compsci290.duke.edu.memorymap">
     <meta-data android:name="com.google.android.geo.API_KEY"
         android:value="AIzaSyAdqbh2xBrLpMYnHvwKvc8Ud4pdsHbwaR0" />
 
+        \
+
         <!-- MainActivity -->
-        <activity android:name=".MainActivity" android:theme="@style/Theme.AppCompat.Light">
+        <activity android:name=".MainActivity" >
 
         </activity>
 
 
-
+        <!-- SignInActivity -->
     <activity android:name=".SignInActivity"
         android:label="@string/app_name">
         <intent-filter>
@@ -28,19 +30,16 @@ package="compsci290.duke.edu.memorymap">
     </activity>
 
 
-
-
         <!-- SplashActivity -->
         <activity
             android:name="compsci290.duke.edu.memorymap.SplashActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar" >
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>jdberm
+        </activity>
 
         <!-- MapsActivity -->
         <activity

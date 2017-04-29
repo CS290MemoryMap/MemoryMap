@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final String TAG = "MainActivity";
 
     private TextView mStatusTextView;
-    private TextView mDetailTextView;
+
 
 
     // [START declare_auth]
@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // Views
         mStatusTextView = (TextView) findViewById(R.id.status);
-        mDetailTextView = (TextView) findViewById(R.id.detail);
+
 
 
         // [START initialize_auth]
@@ -82,9 +82,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void updateUI(FirebaseUser user) {
         hideProgressDialog();
         if (user != null) {
-            mStatusTextView.setText(getString(R.string.emailpassword_status_fmt,
-                    user.getEmail(), user.isEmailVerified()));
-            mDetailTextView.setText(getString(R.string.firebase_status_fmt, user.getUid()));
+            mStatusTextView.setText(getString(R.string.emailpassword_status_fmt, user.getEmail(), user.isEmailVerified()));
+
 
             findViewById(R.id.email_password_buttons).setVisibility(View.GONE);
             findViewById(R.id.email_password_fields).setVisibility(View.GONE);
@@ -155,14 +154,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         protected Object doInBackground(Object[] params) {
             long sum = 0;
-            for (long i = 0; i < 1000000000; i++){
-                sum+=1;
-            }
-            for (long i = 0; i < 1000000000; i++){
-                sum+=1;
-            }
-            for (long i = 0; i < 1000000000; i++){
-                sum+=1;
+            for (long i = 0; i < 100; i++) {
+                sum += 1;
             }
             return sum;
         }

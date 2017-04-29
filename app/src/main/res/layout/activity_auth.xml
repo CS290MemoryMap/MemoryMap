@@ -9,25 +9,31 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="compsci290.duke.edu.memorymap.MainActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:weightSum="1">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="354dp"
         android:layout_height="wrap_content"
-        android:text="@string/intro" />
+        android:text="@string/intro"
+        android:textAlignment="center"
+        android:textSize="14sp" />
 
 
     <TextView
         android:id="@+id/status"
+        android:layout_width="356dp"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="@string/signed_out" />
+        android:text="@string/signed_out"
+        android:textAlignment="center" />
 
     <TextView
         android:id="@+id/detail"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        tools:text="Firebase User ID: 123456789abc" />
+        android:textAlignment="center"
+        tools:text="Firebase User ID: 123456789abc"
+        android:layout_weight="0.12" />
 
     <LinearLayout
         android:id="@+id/email_password_fields"
@@ -68,14 +74,19 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/sign_in" />
+            android:background="@color/colorAccent"
+            android:text="@string/sign_in"
+            android:textColor="@android:color/white" />
 
         <Button
             android:id="@+id/email_create_account_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/create_account"/>
+            android:background="@color/colorAccent"
+            android:backgroundTint="@color/colorPrimary"
+            android:text="@string/create_account"
+            android:textColor="@android:color/white" />
     </LinearLayout>
 
     <LinearLayout
