@@ -7,12 +7,14 @@
 
     <ImageView
         android:id="@+id/imgLogo"
-        android:layout_width="wrap_content"
+        android:layout_width="288dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
+        android:layout_column="1"
         android:layout_marginTop="29dp"
-        android:src="@drawable/icon" />
+        android:layout_row="0"
+        android:src="@drawable/icon"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:id="@+id/textView"
@@ -23,6 +25,7 @@
         android:layout_marginBottom="72dp"
         android:gravity="center_horizontal"
         android:text="@string/app_name"
+        android:textAlignment="center"
         android:textColor="#e5c100"
         android:textSize="40sp"
         android:textStyle="bold" />
