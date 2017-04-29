@@ -155,14 +155,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         protected Object doInBackground(Object[] params) {
             long sum = 0;
-            for (long i = 0; i < 1000000000; i++){
-                sum+=1;
-            }
-            for (long i = 0; i < 1000000000; i++){
-                sum+=1;
-            }
-            for (long i = 0; i < 1000000000; i++){
-                sum+=1;
+            for (long i = 0; i < 100; i++) {
+                sum += 1;
             }
             return sum;
         }
