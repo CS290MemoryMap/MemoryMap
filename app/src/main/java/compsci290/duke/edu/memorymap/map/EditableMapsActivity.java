@@ -61,6 +61,7 @@ public class EditableMapsActivity extends MapsActivity
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        Log.d(TAG, "onMapReady.......");
         mMap = googleMap;
         //super.onMapReady(mMap);
         //begin testing
@@ -187,40 +188,44 @@ public class EditableMapsActivity extends MapsActivity
         }
         else if(requestCode == EDIT_MEMORY){
             if(resultCode == RESULT_OK){
-                final Bundle extras = data.getExtras();
-                if(extras != null){
-                    MarkerTag markerTag = extras.getParcelable(MARKERTAG);
-                    if(markerTag != null) {
-                        markerTag = mDbHandler.updateMarkerTag(markerTag);
-                        mNewMarkerLatLng = new LatLng(markerTag.getLatitude(),markerTag.getLongitude());
-                        for (MarkerTag tag : mTagList) {
-                            if (tag.getID().equals(markerTag.getID())) {
-                                mTagList.remove(tag);
-                                mTagList.add(markerTag);
+                if(mMap == null){
+                    final Bundle extras = data.getExtras();
+                    if(extras != null){
+                        MarkerTag markerTag = extras.getParcelable(MARKERTAG);
+                        if(markerTag != null) {
+                            markerTag = mDbHandler.updateMarkerTag(markerTag);
+                            mNewMarkerLatLng = new LatLng(markerTag.getLatitude(),markerTag.getLongitude());
+                            for (MarkerTag tag : mTagList) {
+                                if (tag.getID().equals(markerTag.getID())) {
+                                    mTagList.remove(tag);
+                                    mTagList.add(markerTag);
+                                }
                             }
-                        }
-                        Marker newMarker;
-                        if (markerTag.getImg() == null) {
-                            newMarker = mMap.addMarker(new MarkerOptions()
-                                    .position(mNewMarkerLatLng));
-                            newMarker.setTag(markerTag);
+                            Marker newMarker;
+                            if (markerTag.getImg() == null) {
+                                newMarker = mMap.addMarker(new MarkerOptions()
+                                        .position(mNewMarkerLatLng));
+                                newMarker.setTag(markerTag);
 
-                        } else {
-                            newMarker = mMap.addMarker(new MarkerOptions()
-                                    .position(mNewMarkerLatLng)
-                                    .icon(BitmapDescriptorFactory.fromBitmap(markerTag.getImg())));
-                            newMarker.setTag(markerTag);
-                        }
-                        mSeeNewMarker = true;
-                        if(markerToRemove != null){
-                            markerToRemove.remove();
-                            markerToRemove = null;
+                            } else {
+                                newMarker = mMap.addMarker(new MarkerOptions()
+                                        .position(mNewMarkerLatLng)
+                                        .icon(BitmapDescriptorFactory.fromBitmap(markerTag.getImg())));
+                                newMarker.setTag(markerTag);
+                            }
+                            mSeeNewMarker = true;
+                            if(markerToRemove != null){
+                                markerToRemove.remove();
+                                markerToRemove = null;
+                            }
+                        }else{
+                            Log.d(TAG, "MarkerTag in extras was null");
                         }
                     }else{
-                        Log.d(TAG, "MarkerTag in extras was null");
+                        Log.d(TAG, "Result from EDIT_MEMORY extras == null");
                     }
                 }else{
-                    Log.d(TAG, "Result from EDIT_MEMORY extras == null");
+                    Log.d(TAG, "mMap was null");
                 }
             }else{
                 markerToRemove = null;

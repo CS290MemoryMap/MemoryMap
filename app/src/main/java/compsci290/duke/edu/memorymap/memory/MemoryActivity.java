@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,8 +19,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
-
-import com.google.android.gms.maps.model.LatLng;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -42,10 +41,7 @@ public class MemoryActivity extends AppCompatActivity {
     private static final String TAG = "MemoryActivity";
 
     private Bitmap mPic;
-    private LatLng mLatLng;
-    //private Bundle mToMapsBundle;
     private MarkerTag mTag;
-    private boolean mIsPublic;
 
     /**
      * onCreate sets the content view, gets all of the views,
@@ -121,7 +117,7 @@ public class MemoryActivity extends AppCompatActivity {
                 final Bundle extras = data.getExtras();
                 if (extras != null) {
                     //Get image
-                    Bitmap mPic = extras.getParcelable("data");
+                    mPic = extras.getParcelable("data");
                     //Put image in imageview
                     mImageView.setImageBitmap(mPic);
                     mImageView.setScaleType(ImageView.ScaleType.FIT_XY);
@@ -157,6 +153,7 @@ public class MemoryActivity extends AppCompatActivity {
          * @return      the created dialog
          */
         @Override
+        @NonNull
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Use the current date as the default date in the picker
             final Calendar c = Calendar.getInstance();
@@ -175,7 +172,7 @@ public class MemoryActivity extends AppCompatActivity {
          * @param  day      day chosen
          */
         public void onDateSet(DatePicker view, int year, int month, int day) {
-            String str = String.format("%d/%d/%d",month,day,year);
+            String str = String.format(Locale.ENGLISH,"%d/%d/%d",month,day,year);
             mDateView.setText(str);
         }
     }
@@ -245,14 +242,14 @@ public class MemoryActivity extends AppCompatActivity {
             mImageView.setAdjustViewBounds(true);
         }
         String title = mTag.getTitle();
-        if(!title.equals("") && title != null) mTitleView.setText(title);
+        if(!title.equals("")) mTitleView.setText(title);
         Date date = mTag.getDateDate();
         if(date != (null)){
             DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
             mDateView.setText(format.format(date));
         }
         String details = mTag.getDetails();
-        if(!details.equals("") && details != null) mDetailsView.setText(details);
+        if(!details.equals("")) mDetailsView.setText(details);
         Boolean checked = mTag.getIsPublic();
         if(checked != null) mToggleButton.setChecked(checked);
     }
