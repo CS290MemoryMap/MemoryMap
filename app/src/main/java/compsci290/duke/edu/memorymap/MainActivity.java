@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -28,8 +29,10 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = "MainActivity";
 
@@ -51,8 +54,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mDetailTextView = (TextView) findViewById(R.id.detail);
 
 
-
-
         // [START initialize_auth]
         mAuth = FirebaseAuth.getInstance();
         // [END initialize_auth]
@@ -62,8 +63,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onStart() {
         super.onStart();
+
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
+        new AsyncActivity().execute();
+
         updateUI(currentUser);
     }
     // [END on_start_check_user]
@@ -73,7 +77,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mAuth.signOut();
         updateUI(null);
     }
-
 
 
     private void updateUI(FirebaseUser user) {
@@ -86,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             findViewById(R.id.email_password_buttons).setVisibility(View.GONE);
             findViewById(R.id.email_password_fields).setVisibility(View.GONE);
             findViewById(R.id.signed_in_buttons).setVisibility(View.VISIBLE);
-            
+
         } else {
             Intent intent = new Intent(this, SignInActivity.class);
             startActivity(intent);
@@ -125,8 +128,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         hideProgressDialog();
     }
 
-    public void onClickMapBtn(View v)
-    {
+    public void onClickMapBtn(View v) {
         Intent intent = new Intent(this, MapsActivity.class);
         startActivity(intent);
     }
@@ -134,5 +136,47 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClickListBtn(View v) {
         Intent intent = new Intent(this, MemoryList.class);
         startActivity(intent);
+    }
+
+    class AsyncActivity extends AsyncTask  {
+
+        ProgressDialog pdLoading = new ProgressDialog(MainActivity.this);
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            //this method will be running on UI thread
+            pdLoading.setMessage("\tLoading...");
+            pdLoading.show();
+        }
+
+        @Override
+        protected Object doInBackground(Object[] params) {
+            long sum = 0;
+            for (long i = 0; i < 1000000000; i++){
+                sum+=1;
+            }
+            for (long i = 0; i < 1000000000; i++){
+                sum+=1;
+            }
+            for (long i = 0; i < 1000000000; i++){
+                sum+=1;
+            }
+            return sum;
+        }
+
+
+        @Override
+        protected void onPostExecute(Object result) {
+            super.onPostExecute(result);
+
+            //this method will be running on UI thread
+
+            pdLoading.dismiss();
+        }
+
+
+
     }
 }
