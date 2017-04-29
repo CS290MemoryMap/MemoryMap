@@ -25,13 +25,6 @@ import java.util.Calendar;
 
 public class MemoryActivity extends AppCompatActivity {
     private static final int SELECT_PICTURE = 1;
-    private static final String DATE = "date";
-    private static final String DETAILS = "details";
-    private static final String TITLE = "title";
-    private static final String BITMAP = "bitmap";
-    private static final String LATLNG = "latlng";
-    private static final String BUNDLE = "bundle";
-    private static final String ISPUBLIC = "ispublic";
     private static final String MARKERTAG = "markertag";
 
     private static TextView mDateView;
