@@ -36,10 +36,16 @@ package="compsci290.duke.edu.memorymap">
             android:theme="@style/Theme.AppCompat.Light"
             android:label="@string/title_activity_maps">
         </activity>
-      
+
         <!-- MemoryActivity -->
+        <activity
+            android:name="compsci290.duke.edu.memorymap.MemoryActivity"
+            android:theme="@style/Theme.AppCompat.Light">
+        </activity>
+
+        <!-- EditableMemoryActivity -->
         <activity 
-            android:name="compsci290.duke.edu.memorymap.MemoryActivity" 
+            android:name="compsci290.duke.edu.memorymap.EditableMemoryActivity"
             android:theme="@style/Theme.AppCompat.Light"> 
         </activity>
 
@@ -48,6 +54,6 @@ package="compsci290.duke.edu.memorymap">
             android:name="compsci290.duke.edu.memorymap.MemoryListActivity"
             android:theme="@style/Theme.AppCompat.Light">
         </activity>
-        
+
     </application>
 </manifest>

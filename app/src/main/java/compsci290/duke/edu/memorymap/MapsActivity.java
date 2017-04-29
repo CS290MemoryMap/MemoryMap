@@ -38,11 +38,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.location.LocationServices;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import compsci290.duke.edu.memorymap.database.MarkerTagDbHandler;
 import compsci290.duke.edu.memorymap.firebase.database.FirebaseDatabaseHandler;
 
 public class MapsActivity extends AppCompatActivity
@@ -129,7 +127,7 @@ public class MapsActivity extends AppCompatActivity
 
     /* Activated when the user clicks on the map.
      * Asks the user if they would like to create a memory at the clicked location.
-     * Upon answering yes, MemoryActivity is started
+     * Upon answering yes, EditableMemoryActivity is started
      *
      * @param  latLng  LatLng of clicked location
      */
@@ -140,7 +138,7 @@ public class MapsActivity extends AppCompatActivity
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Intent intent = createIntentWithLatLng(latLng,MemoryActivity.class);
+                        Intent intent = createIntentWithLatLng(latLng,EditableMemoryActivity.class);
                         startActivityForResult(intent, CREATE_MEMORY);
                     }
                 })
@@ -190,7 +188,7 @@ public class MapsActivity extends AppCompatActivity
                             Toast.LENGTH_LONG).show();
                 }
                 else{
-                    Intent intent = createIntentWithLatLng(userCurrLatLng,MemoryActivity.class);
+                    Intent intent = createIntentWithLatLng(userCurrLatLng,EditableMemoryActivity.class);
                     startActivityForResult(intent, CREATE_MEMORY);
                 }
                 return true;
@@ -266,7 +264,7 @@ public class MapsActivity extends AppCompatActivity
 
     /**
      * Handles the result from an activity.
-     * Currently defined only for MemoryActivity passing a result
+     * Currently defined only for EditableMemoryActivity passing a result
      *
      * @param  requestCode  code identifying the previous activity
      * @param  resultCode   describes if the previous activity was a success
@@ -321,7 +319,7 @@ public class MapsActivity extends AppCompatActivity
             mDbHandler.insertMarkerTag(markerTag);
 
         }else{
-            Log.d(TAG,"MarkerTag from previous MemoryActivity is null. Not adding marker.");
+            Log.d(TAG,"MarkerTag from previous EditableMemoryActivity is null. Not adding marker.");
         }
     }
 
@@ -391,7 +389,7 @@ public class MapsActivity extends AppCompatActivity
 
     /**
      * Creates a dialog that asks the user to input an address. Attempts to convert
-     * the address to a LatLng and then starts MemoryActivity with that information.
+     * the address to a LatLng and then starts EditableMemoryActivity with that information.
      * Upon failure to convert the address, this method makes a toast to alert the user
      * that their address could not be converted.
      */
@@ -412,7 +410,7 @@ public class MapsActivity extends AppCompatActivity
                 userInputAddress = input.getText().toString();
                 LatLng latLng = addressToLatLng(userInputAddress);
                 if(latLng != null){
-                    Intent intent = createIntentWithLatLng(latLng,MemoryActivity.class);
+                    Intent intent = createIntentWithLatLng(latLng,EditableMemoryActivity.class);
                     startActivityForResult(intent, CREATE_MEMORY);
                 }else{
                     Log.d(TAG,"failed to create memory with user input address");

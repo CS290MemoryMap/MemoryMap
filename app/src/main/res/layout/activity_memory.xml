@@ -46,15 +46,15 @@
         android:layout_height="wrap_content"
         android:id="@+id/button_toggle"
         android:textOn="Public"
-        android:textOff="Private"/>
+        android:textOff="Private"
+        android:visibility="gone"/>
 
     <!-- button to create memorylist -->
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/button_createmem"
-        android:text="Confirm Memory"
-        android:onClick="onClickConfirmMemory"/>
+        android:id="@+id/button_memory"
+        android:onClick="onClickMemory"/>
 
 
 </LinearLayout>

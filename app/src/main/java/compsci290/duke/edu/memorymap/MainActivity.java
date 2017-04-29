@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /*public void onClickCreateMemory(View v){
-        Intent intent = new Intent(this, MemoryActivity.class);
+        Intent intent = new Intent(this, EditableMemoryActivity.class);
         startActivity(intent);
     }*/
 
