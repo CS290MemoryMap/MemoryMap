@@ -26,6 +26,7 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
@@ -54,36 +55,9 @@ public class EditableMapsActivity extends MapsActivity
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-        try {
-            // Customise the styling of the base map using a JSON object defined
-            // in a raw resource file.
-            boolean success = googleMap.setMapStyle(
-                    MapStyleOptions.loadRawResourceStyle(
-                            this, R.raw.style_json));
-
-            if (!success) {
-                Log.e(TAG, "Style parsing failed.");
-            }
-        } catch (Resources.NotFoundException e) {
-            Log.e(TAG, "Can't find style. Error: ", e);
-        }
-
-        // Set up UI
-        UiSettings settings = mMap.getUiSettings();
-        settings.setZoomControlsEnabled(true);
-        settings.setMyLocationButtonEnabled(false);//TODO: make so this is true AND it works :(
-
-        // Set up listeners and adapters
+        super.onMapReady(mMap);
         mMap.setOnMapLongClickListener(this);
-        mMap.setInfoWindowAdapter(this);
         mMap.setOnInfoWindowLongClickListener(this);
-
-        //restore all markers
-        mTagList = mDbHandler.queryAllMarkerTags();
-        for(MarkerTag tag : mTagList){
-            addMarkerFromTag(tag);
-        }
     }
 
 
@@ -306,8 +280,8 @@ public class EditableMapsActivity extends MapsActivity
             addresses = geo.getFromLocationName(address,1);
             address1 = addresses.get(0);
             latLng = new LatLng(address1.getLatitude(),address1.getLongitude());
-        }catch (Exception e){//TODO: make this more specific
-            e.printStackTrace();
+        }catch (IOException e){
+            Log.d(TAG, "Could not convert address to latlng. Error: "+e);
             latLng = null;
         }
         return latLng;
@@ -374,16 +348,11 @@ public class EditableMapsActivity extends MapsActivity
      */
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        getCurrentLocation();
-        if(mSeeNewMarker && (mNewMarkerLatLng != null)){
-            Log.d(TAG,"moving camera to user's new marker");
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mNewMarkerLatLng,ZOOM));
+        super.onConnected(bundle);
+        if(mSeeNewMarker && (mNewMarkerLatLng != null)) {
+            Log.d(TAG, "moving camera to user's new marker");
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mNewMarkerLatLng, ZOOM));
             mSeeNewMarker = false;
-        }else{
-            Log.d(TAG,"moving camera to user current location");
-            if(userCurrLatLng != null){
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userCurrLatLng,ZOOM));
-            }
         }
     }
 }
