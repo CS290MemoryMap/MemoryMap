@@ -28,7 +28,7 @@ public class MarkerTag implements Parcelable {
     /*new fields*/
     private Boolean isPublic = false;
     private String ID = "";
-    //TODO: get rid of this constructor that doesn't have the isPublic boolean and the ID int
+    //TODO: get rid of this constructor that doesn't have the isPublicMarkerTag boolean and the ID int
     public MarkerTag(String title, String date, String details, Bitmap img, Double latitude, Double longitude){
         if(title != null) this.title = title;
         if(!date.equals("Date")){
@@ -65,13 +65,14 @@ public class MarkerTag implements Parcelable {
      * @param markerTagModel firebase database MarkerTag model
      */
     public MarkerTag(MarkerTagModel markerTagModel) {
-        this.ID = markerTagModel.getId();
+        this.ID = markerTagModel.getMarkerTagId();
         this.title = markerTagModel.getTitle();
         this.dateStr = markerTagModel.getDate();
         this.details = markerTagModel.getDetails();
         this.img = base64ToBitmap(markerTagModel.getImgBase64());
         this.latitude = markerTagModel.getLatitude();
         this.longitude = markerTagModel.getLongitude();
+        this.isPublic = markerTagModel.isPublicMarkerTag();
     }
 
     public Date createDateFromString(String date){
