@@ -13,10 +13,22 @@ package="compsci290.duke.edu.memorymap">
 
         <!-- MainActivity -->
         <activity android:name=".MainActivity" android:theme="@style/Theme.AppCompat.Light">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
+
         </activity>
+
+
+
+    <activity android:name=".SignInActivity"
+        android:label="@string/app_name">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            
+        </intent-filter>
+
+    </activity>
+
+
+
 
         <!-- SplashActivity -->
         <activity
@@ -28,7 +40,7 @@ package="compsci290.duke.edu.memorymap">
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
+        </activity>jdberm
 
         <!-- MapsActivity -->
         <activity
