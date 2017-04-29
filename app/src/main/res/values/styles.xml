@@ -8,6 +8,7 @@
         <item name="android:datePickerStyle">@style/MyDatePickerStyle</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:navigationBarColor">@color/colorPrimary</item>
+        <item name="android:colorForeground">@android:color/white</item>
     </style>
 
     <style name="MyDatePickerStyle" parent="@android:style/Widget.Material.DatePicker">
