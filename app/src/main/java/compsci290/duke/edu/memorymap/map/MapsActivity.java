@@ -337,7 +337,6 @@ public class MapsActivity extends AppCompatActivity
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                         Log.d(TAG, "Error Querying Data: " + databaseError.getMessage());
-                        // TODO what do you want to do when an error occurs?
                     }
                 });
     }
