@@ -75,7 +75,7 @@ public class EditableMapsActivity extends MapsActivity
 
     /* Activated when the user long clicks on the map.
      * Asks the user if they would like to create a memory at the clicked location.
-     * Upon answering yes, MemoryActivity is started
+     * Upon answering yes, EditableMemoryActivity is started
      *
      * @param  latLng  LatLng of clicked location
      */
@@ -86,7 +86,7 @@ public class EditableMapsActivity extends MapsActivity
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Intent intent = createIntentWithLatLng(latLng,MemoryActivity.class);
+                        Intent intent = createIntentWithLatLng(latLng,EditableMemoryActivity.class);
                         startActivityForResult(intent, CREATE_MEMORY);
                     }
                 })
@@ -243,7 +243,7 @@ public class EditableMapsActivity extends MapsActivity
                             Toast.LENGTH_LONG).show();
                 }
                 else{
-                    Intent intent = createIntentWithLatLng(userCurrLatLng,MemoryActivity.class);
+                    Intent intent = createIntentWithLatLng(userCurrLatLng,EditableMemoryActivity.class);
                     startActivityForResult(intent, CREATE_MEMORY);
                 }
                 return true;
@@ -277,7 +277,7 @@ public class EditableMapsActivity extends MapsActivity
             markerTag = mDbHandler.insertMarkerTag(markerTag);
             mTagList.add(markerTag);
         }else{
-            Log.d(TAG,"MarkerTag from previous MemoryActivity is null. Not adding marker.");
+            Log.d(TAG,"MarkerTag from previous EditableMemoryActivity is null. Not adding marker.");
         }
     }
 
@@ -325,7 +325,7 @@ public class EditableMapsActivity extends MapsActivity
 
     /**
      * Creates a dialog that asks the user to input an address. Attempts to convert
-     * the address to a LatLng and then starts MemoryActivity with that information.
+     * the address to a LatLng and then starts EditableMemoryActivity with that information.
      * Upon failure to convert the address, this method makes a toast to alert the user
      * that their address could not be converted.
      */
@@ -346,7 +346,7 @@ public class EditableMapsActivity extends MapsActivity
                 userInputAddress = input.getText().toString();
                 LatLng latLng = addressToLatLng(userInputAddress);
                 if(latLng != null){
-                    Intent intent = createIntentWithLatLng(latLng,MemoryActivity.class);
+                    Intent intent = createIntentWithLatLng(latLng,EditableMemoryActivity.class);
                     startActivityForResult(intent, CREATE_MEMORY);
                 }else{
                     Log.d(TAG,"failed to create memory with user input address");
