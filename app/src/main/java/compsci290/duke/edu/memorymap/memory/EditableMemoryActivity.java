@@ -37,19 +37,7 @@ public class EditableMemoryActivity extends MemoryActivity {
     private static final String ISPUBLIC = "ispublic";
     //private static final String MARKERTAG = "markertag";
 
-    //private static TextView mDateView;
-    //private EditText mTitleView;
-    //private EditText mDetailsView;
-    //private ImageView mImageView;
-    //private ToggleButton mToggleButton;
-
     private static final String TAG = "EditableMemoryActivity";
-
-    //private Bitmap mPic;
-    //private LatLng mLatLng;
-    //private Bundle mToMapsBundle;
-    //private MarkerTag mTag;
-    //private boolean mIsPublic;
 
     /**
      * onCreate sets the content view, gets all of the views,

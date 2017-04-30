@@ -40,7 +40,6 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
 
     private List<MarkerTag> mMarkerTagList;
     private RecyclerView mRecyclerView;
-    private MarkerTagDbHandler mDbHandler;
     private MarkerTagAdapter mAdapter;
 
     public ProgressDialog mProgressDialog;
@@ -55,7 +54,6 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
         mRecyclerView = (RecyclerView) findViewById(R.id.rv);
 
         // get MarkerTag set from database, convert to ArrayList
-        mDbHandler = new MarkerTagDbHandler();
         /* added for firebase database code */
         mFirebaseDbHandler = new FirebaseDatabaseHandler();
         mMarkerTagList = Collections.emptyList();
@@ -68,30 +66,6 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
         mRecyclerView.setHasFixedSize(true);
     }
 
-    /*
-        Used for testing
-     */
-    private void addToDatabase() {
-        Bitmap img = BitmapFactory.decodeResource(getResources(), R.drawable.uploadmedia);
-
-        double lat = 123456789;
-        double lon = 987654321;
-        /*TODO: uncomment MarkerTag markerTag = new MarkerTag("tag 1", "Apr 16, 2017", "Details of this tag", img, lat, lon);
-        long id = mDbHandler.insertMarkerTag(markerTag);*/
-        //CharSequence text = "Inserted ID " + id;
-
-        lat = 123456789;
-        lon = 887654321;
-        /*TODO: uncomment markerTag = new MarkerTag("tag 2", "Apr 16, 2017", "Details of this tag", img, lat, lon);
-        id = mDbHandler.insertMarkerTag(markerTag);
-
-        lat = 987654321;
-        lon = 123456789;
-        markerTag = new MarkerTag("tag 3", "Apr 18, 2017", "Details of this tag", img, lat, lon);
-        id = mDbHandler.insertMarkerTag(markerTag);*/
-
-    }
-
     private void initializeAdapter() {
         mAdapter = new MarkerTagAdapter(mMarkerTagList, this, this);
         if (mMarkerTagList.size() == 0) {
@@ -102,9 +76,15 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
         mRecyclerView.setAdapter(mAdapter);
     }
 
-    public void updateList(List<MarkerTag> newList) {
-        mMarkerTagList = newList;
-        mAdapter.swap(mMarkerTagList);
+    private void updateList(List<MarkerTag> newList) {
+        if (mMarkerTagList != null && newList != null) {
+            mMarkerTagList = newList;
+            mAdapter.swap(mMarkerTagList);
+        } else if (newList != null) {
+            mMarkerTagList = Collections.emptyList();
+            mMarkerTagList = newList;
+            Log.d(TAG, "newList is null");
+        }
     }
 
     @Override
@@ -130,15 +110,7 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
         else if (menuString.equals(getResources().getString(R.string.date_sort))) {
             queryMyMarkerTagListByDate();
         }
-        //mAdapter.swap(mMarkerTagList);
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onDestroy() {
-        // mDbHandler.deleteMarkerTagList(mMarkerTagList);
-        mDbHandler.closeDatabase();
-        super.onDestroy();
+            return super.onOptionsItemSelected(item);
     }
 
     public void showProgressDialog() {
@@ -290,37 +262,6 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
                 });
     }
 
-    private void queryPublicMarkerTagList() {
-        showProgressDialog();
-        final List<MarkerTag> markerTagList = new ArrayList<>(); // empty MarkerTag list
-        // Query for most recent 20 public MarkerTag
-        mFirebaseDbHandler.getDatabase().child(MarkerTagModel.TABLE_NAME_MARKERTAG)
-                .orderByChild(MarkerTagModel.CHILD_NAME_PUBLICMARKERTAG)
-                .equalTo(true).limitToFirst(20)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        for (DataSnapshot noteSnapshot: dataSnapshot.getChildren()){
-                            MarkerTagModel markerTagModel = noteSnapshot.getValue(MarkerTagModel.class);
-                            // filter public MarkerTag only (most recent 20)
-//                            if (markerTagModel.isPublicMarkerTag()) {
-                            markerTagList.add(new MarkerTag((markerTagModel)));
-                            Log.d(TAG, "QUERIED MarkerTag " + markerTagModel.getTitle());
-//                            }
-                        }
-
-                        // MarkerTag list save in local variable markerTagList
-                        hideProgressDialog();
-                        updateList(markerTagList);
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.d(TAG, "Error Querying Data: " + databaseError.getMessage());
-                    }
-                });
-    }
-
     @Override
     public void recyclerViewListClicked(View v, int position) {
         // Retrieve MarkerTag to open in MemoryActivity
@@ -339,27 +280,6 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
         //Intent intent = listToMemoryIntent(mMarkerTag, MemoryActivity.class);
         //startActivityForResult(intent, OPEN_MEMORY);
     }
-
-    /**
-     * Returns an intent to a specified class that has a bundle with a MarkerTag
-     * parcelable object already inside it
-     *
-     * @param  mTag  the MarkerTag to include in the intent
-     * @param  toClass the class to which the intent will be passed
-     * @return      the intent
-     */
-
-    private Intent listToMemoryIntent(MarkerTag mTag, Class<?> toClass) {
-        Intent intent = new Intent(MemoryListActivity.this, toClass);
-        Bundle bundle = new Bundle();
-        if (mTag == null) {
-            Log.d(TAG, "listToMemoryIntent mTag is null");
-        }
-        bundle.putParcelable(MARKERTAG, mTag);
-        intent.putExtras(bundle);
-        return intent;
-    }
-
 
     /**
      * Handles the result from an activity.

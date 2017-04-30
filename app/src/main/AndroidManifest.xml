@@ -68,5 +68,10 @@
             android:name="compsci290.duke.edu.memorymap.memory.MemoryListActivity">
         </activity>
 
+        <!-- PublicMemoryListActivity -->
+        <activity
+            android:name="compsci290.duke.edu.memorymap.memory.PublicMemoryListActivity">
+        </activity>
+
     </application>
 </manifest>

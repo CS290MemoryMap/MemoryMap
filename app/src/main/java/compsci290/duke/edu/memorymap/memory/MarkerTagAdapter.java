@@ -60,7 +60,7 @@ public class MarkerTagAdapter extends RecyclerView.Adapter<MarkerTagAdapter.Mark
         the view that is has changed
      */
     public void swap(List<MarkerTag> datas) {
-        if(mMemoryList .size() != 0) {
+        if(mMemoryList.size() != 0) {
             mMemoryList.clear();
             mMemoryList.addAll(datas);
         } else {
@@ -71,7 +71,7 @@ public class MarkerTagAdapter extends RecyclerView.Adapter<MarkerTagAdapter.Mark
 
     public static class MarkerTagHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-        CardView cv;
+        static CardView cv;
         ImageView mMemImage;
         TextView mMemTitle;
         TextView mMemDate;

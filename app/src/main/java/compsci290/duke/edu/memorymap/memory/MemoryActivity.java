@@ -15,10 +15,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 
 import java.util.Calendar;
 
 import compsci290.duke.edu.memorymap.R;
+import compsci290.duke.edu.memorymap.firebase.database.FirebaseDatabaseHandler;
 
 public class MemoryActivity extends AppCompatActivity {
 
@@ -37,6 +39,9 @@ public class MemoryActivity extends AppCompatActivity {
     protected LatLng mLatLng;
     protected MarkerTag mTag;
     protected boolean mIsPublic;
+    protected boolean publicList;
+
+    private FirebaseDatabaseHandler mFirebaseDbHandler;
 
     /**
      * onCreate sets the content view, gets all of the views,
@@ -47,6 +52,7 @@ public class MemoryActivity extends AppCompatActivity {
         Log.d(TAG, "Starting MemoryActivity...");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memory);
+        mFirebaseDbHandler = new FirebaseDatabaseHandler();
 
         /* get all views */
         mDateView = (TextView) findViewById(R.id.text_date);
@@ -61,6 +67,7 @@ public class MemoryActivity extends AppCompatActivity {
 
         Bundle data = getIntent().getExtras();
         mTag = data.getParcelable(MARKERTAG);
+        publicList = data.getBoolean("PublicList");
 
         if (mTag != null) {
              /* set data of elements */
@@ -83,10 +90,16 @@ public class MemoryActivity extends AppCompatActivity {
             mImageView.setScaleType(ImageView.ScaleType.FIT_XY);
             mImageView.setAdjustViewBounds(true);
 
-            mButton.setText(getResources().getString(R.string.memory_edit));
+            if (publicList) {
+                mButton.setVisibility(View.INVISIBLE);
+            } else {
+                mButton.setText(getResources().getString(R.string.memory_edit));
+            }
 
             /* hide ToggleButton */
             mToggleButton.setVisibility(View.GONE);
+        } else {
+            Log.d(TAG, "MarkerTag is null");
         }
 
 
@@ -112,28 +125,14 @@ public class MemoryActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 final Bundle extras = data.getExtras();
                 //Get MarkerTag
-                mTag = extras.getParcelable(MARKERTAG);
+                if (extras != null) {
+                    MarkerTag mMarkerTag = extras.getParcelable(MARKERTAG);
+                    if (mMarkerTag != null) {
+                        mMarkerTag = mFirebaseDbHandler.updateMarkerTag(mMarkerTag);
 
-                mDateView.setText(mTag.getDate(), TextView.BufferType.EDITABLE);
-                mDateView.setEnabled(false);
-                mDateView.setTextColor(Color.BLACK);
+                    }
+                }
 
-                mTitleView.setText(mTag.getTitle(), TextView.BufferType.EDITABLE);
-                mTitleView.setEnabled(false);
-                mTitleView.setTextColor(Color.BLACK);
-
-                mDetailsView.setText(mTag.getDetails(), TextView.BufferType.EDITABLE);
-                mDetailsView.setEnabled(false);
-                mDetailsView.setTextColor(Color.BLACK);
-
-                mImageView.setImageBitmap(mTag.getImg());
-                mImageView.setScaleType(ImageView.ScaleType.FIT_XY);
-                mImageView.setAdjustViewBounds(true);
-
-                mButton.setText(getResources().getString(R.string.memory_edit));
-
-                /* hide ToggleButton */
-                mToggleButton.setVisibility(View.GONE);
             }
         }
     }

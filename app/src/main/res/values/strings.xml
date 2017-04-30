@@ -2,12 +2,12 @@
     <string name="app_name">MemoryMap</string>
     <string name="intro">Keep all of your memories in one place.</string>
     <string name="title_activity_maps">Map</string>
+
     <string name="location_sort">Sort by Location</string>
     <string name="time_sort">Sort by Time Added</string>
-
     <string name="title_sort">Sort by Title</string>
     <string name="date_sort">Sort by Date</string>
-
+    <string name="public_sort">View Public Memories</string>
     <string name="emailpassword_status_fmt">%1$s</string>
     <string name="emailpassword_title_text">Email and Password</string>
 
