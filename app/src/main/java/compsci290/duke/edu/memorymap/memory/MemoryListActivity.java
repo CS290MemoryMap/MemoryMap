@@ -1,5 +1,6 @@
 package compsci290.duke.edu.memorymap.memory;
 
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import compsci290.duke.edu.memorymap.R;
@@ -28,13 +30,15 @@ import compsci290.duke.edu.memorymap.memory.MarkerTagAdapter;
  * Created by taranagar on 4/13/17.
  */
 
-public class MemoryList extends AppCompatActivity {
-    private static final String TAG = "MemoryList";
+public class MemoryListActivity extends AppCompatActivity {
+    private static final String TAG = "MemoryListActivity";
 
-    private ArrayList<MarkerTag> mMarkerTagList;
+    private List<MarkerTag> mMarkerTagList;
     private RecyclerView mRecyclerView;
     private MarkerTagDbHandler mDbHandler;
     private MarkerTagAdapter mAdapter;
+
+    public ProgressDialog mProgressDialog;
 
     /* added for firebase database code */
     private FirebaseDatabaseHandler mFirebaseDbHandler;
@@ -49,14 +53,14 @@ public class MemoryList extends AppCompatActivity {
         mDbHandler = new MarkerTagDbHandler();
         /* added for firebase database code */
         mFirebaseDbHandler = new FirebaseDatabaseHandler();
+        mMarkerTagList = Collections.emptyList();
+        queryMyMarkerTagList();
         // addToDatabase();
-        mMarkerTagList = mDbHandler.queryAllMarkerTags();
+        //mMarkerTagList = mDbHandler.queryAllMarkerTags();
 
         LinearLayoutManager llm = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(llm);
         mRecyclerView.setHasFixedSize(true);
-
-        initializeAdapter();
     }
 
     /*
@@ -85,7 +89,17 @@ public class MemoryList extends AppCompatActivity {
 
     private void initializeAdapter() {
         mAdapter = new MarkerTagAdapter(mMarkerTagList, this);
+        if (mMarkerTagList.size() == 0) {
+            Log.d(TAG, "MarkerTag list empty.");
+        } else {
+            Log.d(TAG, "MarkerTag list populated.");
+        }
         mRecyclerView.setAdapter(mAdapter);
+    }
+
+    public void updateList(List<MarkerTag> newList) {
+        mMarkerTagList = newList;
+        mAdapter.swap(mMarkerTagList);
     }
 
     @Override
@@ -98,12 +112,20 @@ public class MemoryList extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         String menuString = (String) item.getTitle();
         if(menuString.equals(getResources().getString(R.string.location_sort))) {
-            mMarkerTagList = mDbHandler.querySortByLongLat();
+            //mMarkerTagList = mDbHandler.querySortByLongLat();
+            queryMyMarkerTagListByLocation();
         }
         else if (menuString.equals(getResources().getString(R.string.time_sort))) {
-            mMarkerTagList = mDbHandler.queryAllMarkerTags();
+            //mMarkerTagList = mDbHandler.queryAllMarkerTags();
+            queryMyMarkerTagList();
         }
-        mAdapter.swap(mMarkerTagList);
+        else if (menuString.equals(getResources().getString(R.string.title_sort))) {
+            queryMyMarkerTagListByTitle();
+        }
+        else if (menuString.equals(getResources().getString(R.string.date_sort))) {
+            queryMyMarkerTagListByDate();
+        }
+        //mAdapter.swap(mMarkerTagList);
         return super.onOptionsItemSelected(item);
     }
 
@@ -114,8 +136,31 @@ public class MemoryList extends AppCompatActivity {
         super.onDestroy();
     }
 
+    public void showProgressDialog() {
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(this);
+            mProgressDialog.setMessage(getString(R.string.loading));
+            mProgressDialog.setIndeterminate(true);
+        }
+
+        mProgressDialog.show();
+    }
+
+    public void hideProgressDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        hideProgressDialog();
+    }
+
     private void queryMyMarkerTagListByTitle() {
         Log.d(TAG, "Query by title called");
+        showProgressDialog();
         final List<MarkerTag> markerTagList = new ArrayList<>(); // empty MarkerTag list
         mFirebaseDbHandler.getDatabase().child(MarkerTagModel.TABLE_NAME_MARKERTAG)
                 .orderByChild(MarkerTagModel.CHILD_NAME_TITLE)
@@ -132,9 +177,9 @@ public class MemoryList extends AppCompatActivity {
                             }
                         }
 
-                        // TODO: call a method to update your list
                         // MarkerTag list save in local variable markerTagList
-                        // e.g. updateList(markerTagList)
+                        hideProgressDialog();
+                        updateList(markerTagList);
                     }
 
                     @Override
@@ -147,6 +192,7 @@ public class MemoryList extends AppCompatActivity {
 
     private void queryMyMarkerTagListByDate() {
         Log.d(TAG, "Query by date called");
+        showProgressDialog();
         final List<MarkerTag> markerTagList = new ArrayList<>(); // empty MarkerTag list
         mFirebaseDbHandler.getDatabase().child(MarkerTagModel.TABLE_NAME_MARKERTAG)
                 .orderByChild(MarkerTagModel.CHILD_NAME_DATE)
@@ -163,9 +209,9 @@ public class MemoryList extends AppCompatActivity {
                             }
                         }
 
-                        // TODO: call a method to update your list
                         // MarkerTag list save in local variable markerTagList
-                        // e.g. updateList(markerTagList)
+                        hideProgressDialog();
+                        updateList(markerTagList);
                     }
 
                     @Override
@@ -178,6 +224,7 @@ public class MemoryList extends AppCompatActivity {
 
     private void queryMyMarkerTagListByLocation() {
         Log.d(TAG, "Query by location called");
+        showProgressDialog();
         final List<MarkerTag> markerTagList = new ArrayList<>(); // empty MarkerTag list
         mFirebaseDbHandler.getDatabase().child(MarkerTagModel.TABLE_NAME_MARKERTAG)
                 .orderByChild(MarkerTagModel.CHILD_NAME_LOCATION)
@@ -194,9 +241,9 @@ public class MemoryList extends AppCompatActivity {
                             }
                         }
 
-                        // TODO: call a method to update your list
                         // MarkerTag list save in local variable markerTagList
-                        // e.g. updateList(markerTagList)
+                        hideProgressDialog();
+                        updateList(markerTagList);
                     }
 
                     @Override
@@ -207,5 +254,65 @@ public class MemoryList extends AppCompatActivity {
                 });
     }
 
+    private void queryMyMarkerTagList() {
+        showProgressDialog();
+        final List<MarkerTag> markerTagList = new ArrayList<>(); // empty MarkerTag list
+        mFirebaseDbHandler.getDatabase().child(MarkerTagModel.TABLE_NAME_MARKERTAG)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot noteSnapshot: dataSnapshot.getChildren()){
+                            MarkerTagModel markerTagModel = noteSnapshot.getValue(MarkerTagModel.class);
+                            // filter user MarkerTag only
+                            if (markerTagModel.getUserId().equals(mFirebaseDbHandler.getUserId())) {
+                                markerTagList.add(new MarkerTag((markerTagModel)));
+                                Log.d(TAG, "QUERIED MarkerTag " + markerTagModel.getTitle());
+                            }
+                        }
 
+                        // MarkerTag list save in local variable markerTagList
+                        hideProgressDialog();
+                        if (mMarkerTagList.size() == 0) {
+                            initializeAdapter();
+                        }
+                        updateList(markerTagList);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.d(TAG, "Error Querying Data: " + databaseError.getMessage());
+                    }
+                });
+    }
+
+    private void queryPublicMarkerTagList() {
+        showProgressDialog();
+        final List<MarkerTag> markerTagList = new ArrayList<>(); // empty MarkerTag list
+        // Query for most recent 20 public MarkerTag
+        mFirebaseDbHandler.getDatabase().child(MarkerTagModel.TABLE_NAME_MARKERTAG)
+                .orderByChild(MarkerTagModel.CHILD_NAME_PUBLICMARKERTAG)
+                .equalTo(true).limitToFirst(20)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot noteSnapshot: dataSnapshot.getChildren()){
+                            MarkerTagModel markerTagModel = noteSnapshot.getValue(MarkerTagModel.class);
+                            // filter public MarkerTag only (most recent 20)
+//                            if (markerTagModel.isPublicMarkerTag()) {
+                            markerTagList.add(new MarkerTag((markerTagModel)));
+                            Log.d(TAG, "QUERIED MarkerTag " + markerTagModel.getTitle());
+//                            }
+                        }
+
+                        // MarkerTag list save in local variable markerTagList
+                        hideProgressDialog();
+                        updateList(markerTagList);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.d(TAG, "Error Querying Data: " + databaseError.getMessage());
+                    }
+                });
+    }
 }

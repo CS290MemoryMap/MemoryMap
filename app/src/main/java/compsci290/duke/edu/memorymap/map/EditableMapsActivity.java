@@ -37,6 +37,7 @@ import java.util.Locale;
 import compsci290.duke.edu.memorymap.firebase.database.MarkerTagModel;
 import compsci290.duke.edu.memorymap.memory.MarkerTag;
 import compsci290.duke.edu.memorymap.memory.MemoryActivity;
+import compsci290.duke.edu.memorymap.memory.EditableMemoryActivity;
 import compsci290.duke.edu.memorymap.R;
 
 public class EditableMapsActivity extends MapsActivity
@@ -103,7 +104,7 @@ public class EditableMapsActivity extends MapsActivity
 
     /* Activated when the user long clicks on the map.
      * Asks the user if they would like to create a memory at the clicked location.
-     * Upon answering yes, MemoryActivity is started
+     * Upon answering yes, EditableMemoryActivity is started
      *
      * @param  latLng  LatLng of clicked location
      */
@@ -114,7 +115,7 @@ public class EditableMapsActivity extends MapsActivity
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Intent intent = createIntentWithLatLng(latLng,MemoryActivity.class);
+                        Intent intent = createIntentWithLatLng(latLng,EditableMemoryActivity.class);
                         startActivityForResult(intent, CREATE_MEMORY);
                     }
                 })
@@ -144,7 +145,7 @@ public class EditableMapsActivity extends MapsActivity
                 .setNeutralButton("Edit", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         MarkerTag markerTag = (MarkerTag) marker.getTag();
-                        Intent intent = new Intent(EditableMapsActivity.this, MemoryActivity.class);
+                        Intent intent = new Intent(EditableMapsActivity.this, EditableMemoryActivity.class);
                         Bundle bundle = new Bundle();
                         bundle.putParcelable(MARKERTAG, markerTag);
                         intent.putExtras(bundle);
@@ -158,7 +159,7 @@ public class EditableMapsActivity extends MapsActivity
 
     /**
      * Handles the result from an activity.
-     * Currently defined only for MemoryActivity passing a result
+     * Currently defined only for EditableMemoryActivity passing a result
      *
      * @param  requestCode  code identifying the previous activity
      * @param  resultCode   describes if the previous activity was a success
@@ -276,7 +277,7 @@ public class EditableMapsActivity extends MapsActivity
                             Toast.LENGTH_LONG).show();
                 }
                 else{
-                    Intent intent = createIntentWithLatLng(userCurrLatLng,MemoryActivity.class);
+                    Intent intent = createIntentWithLatLng(userCurrLatLng,EditableMemoryActivity.class);
                     startActivityForResult(intent, CREATE_MEMORY);
                 }
                 return true;
@@ -358,7 +359,7 @@ public class EditableMapsActivity extends MapsActivity
 
     /**
      * Creates a dialog that asks the user to input an address. Attempts to convert
-     * the address to a LatLng and then starts MemoryActivity with that information.
+     * the address to a LatLng and then starts EditableMemoryActivity with that information.
      * Upon failure to convert the address, this method makes a toast to alert the user
      * that their address could not be converted.
      */
@@ -379,7 +380,7 @@ public class EditableMapsActivity extends MapsActivity
                 userInputAddress = input.getText().toString();
                 LatLng latLng = addressToLatLng(userInputAddress);
                 if(latLng != null){
-                    Intent intent = createIntentWithLatLng(latLng,MemoryActivity.class);
+                    Intent intent = createIntentWithLatLng(latLng,EditableMemoryActivity.class);
                     startActivityForResult(intent, CREATE_MEMORY);
                 }else{
                     Log.d(TAG,"failed to create memory with user input address");

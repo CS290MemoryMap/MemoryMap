@@ -70,7 +70,7 @@
             android:textOff="@string/memory_private"
             android:textOn="@string/memory_public"
             android:theme="@style/AppTheme"
-            android:visibility="gone"/>
+            android:visibility="visible"/>
 
     </RelativeLayout>
 

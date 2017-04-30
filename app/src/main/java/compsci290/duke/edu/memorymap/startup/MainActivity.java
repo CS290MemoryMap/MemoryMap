@@ -12,7 +12,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import compsci290.duke.edu.memorymap.map.MapsActivity;
-import compsci290.duke.edu.memorymap.memory.MemoryList;
+import compsci290.duke.edu.memorymap.memory.MemoryListActivity;
 import compsci290.duke.edu.memorymap.R;
 import compsci290.duke.edu.memorymap.map.EditableMapsActivity;
 
@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void onClickPersonalListBtn(View v) {
-        Intent intent = new Intent(this, MemoryList.class);
+        Intent intent = new Intent(this, MemoryListActivity.class);
         startActivity(intent);
     }
 
@@ -130,8 +130,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void onClickPublicListBtn(View v) {
-        // TODO update Intent with public MemoryList class
-//        Intent intent = new Intent(this, MemoryList.class);
+        // TODO update Intent with public MemoryListActivity class
+//        Intent intent = new Intent(this, MemoryListActivity.class);
 //        startActivity(intent);
     }
 

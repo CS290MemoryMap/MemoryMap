@@ -1,9 +1,5 @@
 package compsci290.duke.edu.memorymap.memory;
 
-/**
- * Created by taranagar on 4/14/17.
- */
-
 import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -35,8 +31,7 @@ public class MarkerTagAdapter extends RecyclerView.Adapter<MarkerTagAdapter.Mark
     @Override
     public MarkerTagHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.memorylist, parent, false);
-        MarkerTagHolder mth = new MarkerTagHolder(v);
-        return mth;
+        return new MarkerTagHolder(v);
     }
 
     @Override
@@ -57,7 +52,7 @@ public class MarkerTagAdapter extends RecyclerView.Adapter<MarkerTagAdapter.Mark
         the view that is has changed
      */
     public void swap(List<MarkerTag> datas) {
-        if(mMemoryList != null) {
+        if(mMemoryList .size() != 0) {
             mMemoryList.clear();
             mMemoryList.addAll(datas);
         } else {

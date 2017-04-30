@@ -1,4 +1,4 @@
-package compsci290.duke.edu.memorymap;
+package compsci290.duke.edu.memorymap.memory;
 
 
 import android.app.Activity;
@@ -12,6 +12,7 @@ import android.support.v4.app.DialogFragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -21,6 +22,9 @@ import android.widget.ToggleButton;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Calendar;
+
+import compsci290.duke.edu.memorymap.R;
+import compsci290.duke.edu.memorymap.memory.MemoryActivity;
 
 public class EditableMemoryActivity extends MemoryActivity {
     private static final int SELECT_PICTURE = 1;
@@ -51,6 +55,7 @@ public class EditableMemoryActivity extends MemoryActivity {
      * onCreate sets the content view, gets all of the views,
      * and restores state if necessary.
      */
+    @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memory);
@@ -60,7 +65,8 @@ public class EditableMemoryActivity extends MemoryActivity {
         mTitleView = (EditText) findViewById(R.id.editor_title);
         mDetailsView = (EditText) findViewById(R.id.editor_details);
         mImageView = (ImageView) findViewById(R.id.image_upload);
-        mButton.setText("Confirm Memory");
+        mButton = (Button) findViewById(R.id.button_memory);
+        mButton.setText(getResources().getString(R.string.memory_confirm));
         mToggleButton = (ToggleButton) findViewById(R.id.button_toggle);
 
         if (savedInstanceState != null) {

@@ -19,10 +19,6 @@ import java.util.Calendar;
 
 import compsci290.duke.edu.memorymap.R;
 
-/**
- * Created by taranagar on 4/29/17.
- */
-
 public class MemoryActivity extends AppCompatActivity {
 
     protected static final String MARKERTAG = "markertag";
@@ -43,6 +39,7 @@ public class MemoryActivity extends AppCompatActivity {
      * onCreate sets the content view, gets all of the views,
      * and restores state if necessary.
      */
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memory);
@@ -52,20 +49,27 @@ public class MemoryActivity extends AppCompatActivity {
         mTitleView = (EditText) findViewById(R.id.editor_title);
         mDetailsView = (EditText) findViewById(R.id.editor_details);
         mImageView = (ImageView) findViewById(R.id.image_upload);
+        mButton = (Button) findViewById(R.id.button_memory);
 
         /* don't allow users to upload a new photo */
         mImageView.setClickable(false);
 
-        /* set data of elements */
-        mTag = savedInstanceState.getParcelable(MARKERTAG);
-        mDateView.setText(mTag.getDate(), TextView.BufferType.EDITABLE);
-        mTitleView.setText(mTag.getTitle(), TextView.BufferType.EDITABLE);
-        mDetailsView.setText(mTag.getDetails(), TextView.BufferType.EDITABLE);
-        mImageView.setImageBitmap(mTag.getImg());
-        mButton.setText("Edit Memory");
 
-        /* hide ToggleButton */
-        mToggleButton.setVisibility(View.GONE);
+
+        if (savedInstanceState != null) {
+             /* set data of elements */
+            mTag = savedInstanceState.getParcelable(MARKERTAG);
+            mDateView.setText(mTag.getDate(), TextView.BufferType.EDITABLE);
+            mTitleView.setText(mTag.getTitle(), TextView.BufferType.EDITABLE);
+            mDetailsView.setText(mTag.getDetails(), TextView.BufferType.EDITABLE);
+            mImageView.setImageBitmap(mTag.getImg());
+            mButton.setText(getResources().getString(R.string.memory_edit));
+
+            /* hide ToggleButton */
+            mToggleButton.setVisibility(View.GONE);
+        }
+
+
     }
 
     /**

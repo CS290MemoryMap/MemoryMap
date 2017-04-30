@@ -35,6 +35,7 @@
     <string name="memory_private">Private</string>
     <string name="memory_public">Public</string>
     <string name="memory_confirm">Confirm Memory</string>
+    <string name="memory_edit">Edit Memory</string>
     <string name="memory_img_desc">Memory Picture</string>
 
     <!-- map menu strings -->
