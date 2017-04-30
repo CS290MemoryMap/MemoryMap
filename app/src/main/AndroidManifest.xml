@@ -53,7 +53,8 @@ package="compsci290.duke.edu.memorymap">
       
         <!-- MemoryActivity -->
         <activity 
-            android:name="compsci290.duke.edu.memorymap.memory.MemoryActivity">
+            android:name="compsci290.duke.edu.memorymap.memory.MemoryActivity"
+            android:screenOrientation="portrait">
         </activity>
 
         <!-- MemoryListActivity -->
