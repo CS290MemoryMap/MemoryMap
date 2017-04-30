@@ -261,7 +261,11 @@ public class MemoryActivity extends AppCompatActivity {
     public boolean onTouchEvent(MotionEvent event) {
         InputMethodManager imm = (InputMethodManager)getSystemService(Context.
                 INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        View v = getCurrentFocus();
+        if (v != null) {
+            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+        }
+
         return true;
     }
 }
