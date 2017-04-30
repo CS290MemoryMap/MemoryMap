@@ -1,8 +1,6 @@
 package compsci290.duke.edu.memorymap.startup;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -22,12 +20,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final String TAG = "MainActivity";
 
     private TextView mStatusTextView;
-
-
-
-    // [START declare_auth]
     private FirebaseAuth mAuth;
-    // [END declare_auth]
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,25 +30,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Views
         mStatusTextView = (TextView) findViewById(R.id.status);
 
-
-
-        // [START initialize_auth]
         mAuth = FirebaseAuth.getInstance();
-        // [END initialize_auth]
     }
 
-    // [START on_start_check_user]
     @Override
     public void onStart() {
         super.onStart();
 
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        new AsyncActivity().execute();
-
         updateUI(currentUser);
     }
-    // [END on_start_check_user]
 
 
     private void signOut() {
@@ -65,7 +50,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     private void updateUI(FirebaseUser user) {
-        hideProgressDialog();
         if (user != null) {
             mStatusTextView.setText(getString(R.string.emailpassword_status_fmt, user.getEmail()/*, user.isEmailVerified()*/));
 
@@ -88,28 +72,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public ProgressDialog mProgressDialog;
-
-    public void showProgressDialog() {
-        if (mProgressDialog == null) {
-            mProgressDialog = new ProgressDialog(this);
-            mProgressDialog.setMessage(getString(R.string.loading));
-            mProgressDialog.setIndeterminate(true);
-        }
-
-        mProgressDialog.show();
-    }
-
-    public void hideProgressDialog() {
-        if (mProgressDialog != null && mProgressDialog.isShowing()) {
-            mProgressDialog.dismiss();
-        }
-    }
-
     @Override
     public void onStop() {
         super.onStop();
-        hideProgressDialog();
     }
 
     public void onClickPersonalMapBtn(View v)
@@ -135,39 +100,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        startActivity(intent);
     }
 
-    class AsyncActivity extends AsyncTask  {
-
-        ProgressDialog pdLoading = new ProgressDialog(MainActivity.this);
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            //this method will be running on UI thread
-            pdLoading.setMessage("\tLoading...");
-            pdLoading.show();
-        }
-
-        @Override
-        protected Object doInBackground(Object[] params) {
-            long sum = 0;
-            for (long i = 0; i < 100; i++) {
-                sum += 1;
-            }
-            return sum;
-        }
-
-
-        @Override
-        protected void onPostExecute(Object result) {
-            super.onPostExecute(result);
-
-            //this method will be running on UI thread
-
-            pdLoading.dismiss();
-        }
-
-
-
-    }
 }
