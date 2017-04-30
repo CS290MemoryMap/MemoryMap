@@ -3,9 +3,12 @@ package compsci290.duke.edu.memorymap.memory;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -18,6 +21,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import compsci290.duke.edu.memorymap.R;
 import compsci290.duke.edu.memorymap.firebase.database.FirebaseDatabaseHandler;
@@ -42,6 +47,7 @@ public class MemoryActivity extends AppCompatActivity {
     protected boolean publicList;
 
     private FirebaseDatabaseHandler mFirebaseDbHandler;
+
 
     /**
      * onCreate sets the content view, gets all of the views,
@@ -101,8 +107,6 @@ public class MemoryActivity extends AppCompatActivity {
         } else {
             Log.d(TAG, "MarkerTag is null");
         }
-
-
     }
 
     /**

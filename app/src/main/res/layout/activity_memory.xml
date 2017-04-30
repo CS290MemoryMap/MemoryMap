@@ -32,25 +32,34 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:hint="@string/memory_title"
-        android:inputType="text" />
+        android:inputType="text"
+        android:textStyle="bold"
+        android:layout_weight="0.15" />
 
     <!--  type in date space -->
     <TextView
         android:id="@+id/text_date"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:onClick="onClickSetDate"
+        android:layout_weight="0.10"
         android:calendarViewShown="false"
-        android:hint="@string/memory_date"/>
+        android:hint="@string/memory_date"
+        android:lineSpacingExtra="8sp"
+        android:onClick="onClickSetDate"
+        android:textAlignment="center"
+        android:textAllCaps="false"
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
     <!-- type in details space -->
     <EditText
         android:id="@+id/editor_details"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="0.22"
+        android:hint="@string/memory_details"
         android:inputType="text"
-        android:layout_weight="0.42"
-        android:hint="@string/memory_details"/>
+        android:textStyle="bold" />
 
     <!-- button to toggle private/public memory -->
 
@@ -74,8 +83,11 @@
 
     </RelativeLayout>
 
-    <!-- button to create memorylist -->
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="5dp" />
 
+    <!-- button to create memorylist -->
     <Button
         android:id="@+id/button_memory"
         android:layout_width="match_parent"

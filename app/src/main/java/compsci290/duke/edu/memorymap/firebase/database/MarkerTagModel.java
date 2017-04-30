@@ -3,15 +3,13 @@ package compsci290.duke.edu.memorymap.firebase.database;
 import android.graphics.Bitmap;
 import android.util.Base64;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-
 import java.io.ByteArrayOutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import compsci290.duke.edu.memorymap.database.MyApplication;
 import compsci290.duke.edu.memorymap.memory.MarkerTag;
 
 /**
@@ -26,14 +24,14 @@ public class MarkerTagModel {
     public static final String CHILD_NAME_LOCATION = "latitude";
     public static final String CHILD_NAME_PUBLICMARKERTAG = "publicMarkerTag";
 
-    private String markerTagId;
+    private String markerTagId; // MarkerTag unique ID
     private String title;
     private String date;
     private String details;
     private String imgBase64;
     private Double latitude;
     private Double longitude;
-    private String userId;
+    private String userId; // authenticated user ID
     private boolean publicMarkerTag;
 
     /**
@@ -44,19 +42,22 @@ public class MarkerTagModel {
         // This is intentionally left empty
     }
 
+    /**
+     * Constructor
+     * @param markerTag a MarkerTag object used to construct the MArkerTagModel object
+     */
     MarkerTagModel(MarkerTag markerTag) {
         this.markerTagId = markerTag.getID();
         this.title = markerTag.getTitle();
+        // convert date to year, month day for sorting purposes
         this.date = convertDateToString(markerTag.getDateDate());
         this.details = markerTag.getDetails();
+        // convert Bitmap to Base64 to store in firebase
         this.imgBase64 = bitmapToBase64(markerTag.getImg());
         this.latitude = markerTag.getLatitude();
         this.longitude = markerTag.getLongitude();
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null)
-            this.userId = user.getUid();
-        else
-            this.userId = "anonymous";
+        // get current authenticated user
+        this.userId = new MyApplication().getUserId();
         this.publicMarkerTag = markerTag.getIsPublic();
     }
 
@@ -74,7 +75,6 @@ public class MarkerTagModel {
         // used for database object creation
         return userId;
     }
-
     public boolean isPublicMarkerTag() {
         return publicMarkerTag;
     }
@@ -91,7 +91,6 @@ public class MarkerTagModel {
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
-//        img.recycle();
         byte[] byteArray = stream.toByteArray();
 
         return Base64.encodeToString(byteArray, Base64.DEFAULT);

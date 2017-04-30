@@ -2,6 +2,7 @@ package compsci290.duke.edu.memorymap.startup;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import compsci290.duke.edu.memorymap.R;
+import compsci290.duke.edu.memorymap.database.MyApplication;
 
 
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener{
@@ -198,8 +200,16 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     private void updateUI(FirebaseUser user) {
         hideProgressDialog();
-        if (user != null) {
+        // SharedPreferences editor to stop user ID
+        SharedPreferences.Editor editor = getSharedPreferences(
+                MyApplication.MY_PREFS_NAME, MODE_PRIVATE).edit();
 
+        if (user != null) {
+            // store user ID locally
+            editor.putString(MyApplication.MY_USER_ID, user.getUid());
+            editor.apply();
+
+            // move to MainActivity
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
 
@@ -214,6 +224,11 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 //
 //            findViewById(R.id.verify_email_button).setEnabled(!user.isEmailVerified());
         } else {
+            // remove user ID locally
+            editor.putString(MyApplication.MY_USER_ID, MyApplication.GUEST_ID);
+            editor.apply();
+
+            // setup sign-in view
             mStatusTextView.setText(R.string.signed_out);
             mDetailTextView.setText(null);
 
