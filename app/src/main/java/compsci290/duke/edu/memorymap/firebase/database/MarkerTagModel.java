@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import compsci290.duke.edu.memorymap.database.MyApplication;
 import compsci290.duke.edu.memorymap.memory.MarkerTag;
 
 /**
@@ -58,12 +59,8 @@ public class MarkerTagModel {
         this.imgBase64 = bitmapToBase64(markerTag.getImg());
         this.latitude = markerTag.getLatitude();
         this.longitude = markerTag.getLongitude();
-        // user must always be logged in (but just in case)
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null)
-            this.userId = user.getUid();
-        else
-            this.userId = "anonymous";
+        // get current authenticated user
+        this.userId = new MyApplication().getUserId();
         this.publicMarkerTag = markerTag.getIsPublic();
     }
 

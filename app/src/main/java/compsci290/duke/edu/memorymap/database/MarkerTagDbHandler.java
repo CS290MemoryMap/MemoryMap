@@ -16,7 +16,7 @@ import compsci290.duke.edu.memorymap.memory.MarkerTag;
  */
 
 public class MarkerTagDbHandler {
-    private MarkerTagDbHelper mDbHelper = new MarkerTagDbHelper(MyApplication.getAppContext());
+    private MarkerTagDbHelper mDbHelper = new MarkerTagDbHelper(new MyApplication().getAppContext());
 
     /**
      * insert a MarkerTag row into the Marker Tag Table
