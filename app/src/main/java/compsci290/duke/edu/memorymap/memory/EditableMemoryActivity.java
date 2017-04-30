@@ -218,6 +218,9 @@ public class EditableMemoryActivity extends MemoryActivity {
         mImageView.setScaleType(ImageView.ScaleType.FIT_XY);
     }
 
+    /**
+     * Put updated fields into MarkerTag
+     **/
     private void putFieldsInTag(){/*image not included because don't want to include default picture*/
         mTag.setDate(mDateView.getText().toString());
         mTag.setTitle(mTitleView.getText().toString());
@@ -225,6 +228,9 @@ public class EditableMemoryActivity extends MemoryActivity {
         mTag.setIsPublic(mToggleButton.isChecked());
     }
 
+    /**
+     * Sets fields of MemoryActivity UI components from MarkerTag
+     **/
     private void setFieldsFromTag(){
         mPic = mTag.getImg();
         if(mPic == null){

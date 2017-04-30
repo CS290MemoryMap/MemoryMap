@@ -47,6 +47,10 @@ public class PublicMemoryListActivity extends AppCompatActivity implements Recyc
     /* added for firebase database code */
     protected FirebaseDatabaseHandler mFirebaseDbHandler;
 
+    /**
+     * Sets the layout and initializes a Firebase handler
+     * Query public MarkerTags to be displayed in RecyclerView
+     **/
     @Override
     public void onCreate(Bundle onSavedInstanceState) {
         super.onCreate(onSavedInstanceState);
@@ -66,11 +70,19 @@ public class PublicMemoryListActivity extends AppCompatActivity implements Recyc
         mRecyclerView.setHasFixedSize(true);
     }
 
+    /**
+     * Initialize and set custom adapter for RecyclerView
+     **/
     private void initializeAdapter() {
         mAdapter = new MarkerTagAdapter(mMarkerTagList, this, this);
         mRecyclerView.setAdapter(mAdapter);
     }
 
+    /**
+     * Updates RecyclerView in MemoryList
+     *
+     * @param  newList  the updated list to be shown after a new query
+     **/
     private void updateList(List<MarkerTag> newList) {
         if (mMarkerTagList != null && newList != null) {
             mMarkerTagList = newList;
@@ -82,6 +94,9 @@ public class PublicMemoryListActivity extends AppCompatActivity implements Recyc
         }
     }
 
+    /**
+     * Defines showing ProgressDialog as database is being queried
+     **/
     public void showProgressDialog() {
         if (mProgressDialog == null) {
             mProgressDialog = new ProgressDialog(this);
@@ -92,6 +107,9 @@ public class PublicMemoryListActivity extends AppCompatActivity implements Recyc
         mProgressDialog.show();
     }
 
+    /**
+     * Defines hiding Progress Dialog
+     **/
     public void hideProgressDialog() {
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
@@ -104,6 +122,10 @@ public class PublicMemoryListActivity extends AppCompatActivity implements Recyc
         hideProgressDialog();
     }
 
+    /**
+     * queries first 20 public MarkerTags from Firebase Database
+     * displays in RecyclerView
+     **/
     protected void queryPublicMarkerTagList() {
         showProgressDialog();
         final List<MarkerTag> markerTagList = new ArrayList<>(); // empty MarkerTag list
@@ -138,6 +160,12 @@ public class PublicMemoryListActivity extends AppCompatActivity implements Recyc
                 });
     }
 
+    /**
+     * Send MarkerTag to be displayed in view-only MemoryActivity
+     *
+     * @param  v  View of item clicked
+     * @param position  position of item clicked
+     **/
     @Override
     public void recyclerViewListClicked(View v, int position) {
         // Retrieve MarkerTag to open in MemoryActivity

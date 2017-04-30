@@ -47,6 +47,10 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
     /* added for firebase database code */
     private FirebaseDatabaseHandler mFirebaseDbHandler;
 
+    /**
+     * Sets the layout and initializes a Firebase handler
+     * Query user's MarkerTags to be displayed in RecyclerView on start-up
+     **/
     @Override
     public void onCreate(Bundle onSavedInstanceState) {
         super.onCreate(onSavedInstanceState);
@@ -66,6 +70,9 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
         mRecyclerView.setHasFixedSize(true);
     }
 
+    /**
+     * Initialize and set custom adapter for RecyclerView
+     **/
     private void initializeAdapter() {
         mAdapter = new MarkerTagAdapter(mMarkerTagList, this, this);
         if (mMarkerTagList.size() == 0) {
@@ -76,6 +83,11 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
         mRecyclerView.setAdapter(mAdapter);
     }
 
+    /**
+     * Updates RecyclerView in MemoryList
+     *
+     * @param  newList  the updated list to be shown after a new query
+     **/
     private void updateList(List<MarkerTag> newList) {
         if (mMarkerTagList != null && newList != null) {
             mMarkerTagList = newList;
@@ -87,12 +99,20 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
         }
     }
 
+    /**
+     * Creates menu from layout file
+     **/
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.list_menu, menu);
         return true;
     }
 
+    /**
+     * Defines menu actions
+     *
+     * @param  item  item from menu selected by user
+     **/
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         String menuString = (String) item.getTitle();
@@ -113,6 +133,9 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
             return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Defines showing ProgressDialog as database is being queried
+     **/
     public void showProgressDialog() {
         if (mProgressDialog == null) {
             mProgressDialog = new ProgressDialog(this);
@@ -123,6 +146,9 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
         mProgressDialog.show();
     }
 
+    /**
+     * Defines hiding Progress Dialog
+     **/
     public void hideProgressDialog() {
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
@@ -135,6 +161,10 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
         hideProgressDialog();
     }
 
+    /**
+     * Queries user's MarkerTags by title
+     * Displays in RecyclerView
+     **/
     private void queryMyMarkerTagListByTitle() {
         Log.d(TAG, "Query by title called");
         showProgressDialog();
@@ -167,6 +197,10 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
                 });
     }
 
+    /**
+     * Queries user's MarkerTags by date
+     * Displays in RecyclerView
+     **/
     private void queryMyMarkerTagListByDate() {
         Log.d(TAG, "Query by date called");
         showProgressDialog();
@@ -199,6 +233,10 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
                 });
     }
 
+    /**
+     * Queries user's MarkerTags by location
+     * Displays in RecyclerView
+     **/
     private void queryMyMarkerTagListByLocation() {
         Log.d(TAG, "Query by location called");
         showProgressDialog();
@@ -231,6 +269,10 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
                 });
     }
 
+    /**
+     * Queries user's MarkerTags
+     * Displays in RecyclerView
+     **/
     private void queryMyMarkerTagList() {
         showProgressDialog();
         final List<MarkerTag> markerTagList = new ArrayList<>(); // empty MarkerTag list
@@ -261,7 +303,12 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
                     }
                 });
     }
-
+    /**
+     * Send MarkerTag to be displayed in view-only MemoryActivity
+     *
+     * @param  v  View of item clicked
+     * @param position  position of item clicked
+     **/
     @Override
     public void recyclerViewListClicked(View v, int position) {
         // Retrieve MarkerTag to open in MemoryActivity
@@ -289,7 +336,6 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
      * @param  resultCode   describes if the previous activity was a success
      * @param  data         intent from the previous activity
      */
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // if startActivityForResult requested opening memory

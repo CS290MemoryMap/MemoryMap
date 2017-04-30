@@ -27,6 +27,10 @@ import java.util.Locale;
 import compsci290.duke.edu.memorymap.R;
 import compsci290.duke.edu.memorymap.firebase.database.FirebaseDatabaseHandler;
 
+/**
+ * Activity for View-Only memories
+ **/
+
 public class MemoryActivity extends AppCompatActivity {
 
     protected static final String MARKERTAG = "markertag";
@@ -51,7 +55,7 @@ public class MemoryActivity extends AppCompatActivity {
 
     /**
      * onCreate sets the content view, gets all of the views,
-     * and restores state if necessary.
+     * sets views with information, and restores state if necessary.
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -77,9 +81,6 @@ public class MemoryActivity extends AppCompatActivity {
 
         if (mTag != null) {
              /* set data of elements */
-            //mTag = savedInstanceState.getParcelable(MARKERTAG);
-            //Bundle data = getIntent().getExtras();
-            //mTag = data.getParcelable(MARKERTAG);
             mDateView.setText(mTag.getDate(), TextView.BufferType.EDITABLE);
             mDateView.setEnabled(false);
             mDateView.setTextColor(Color.BLACK);
@@ -123,6 +124,13 @@ public class MemoryActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    /**
+     * describes what to do on an activity returning with a result
+     *
+     * @param  requestCode  denotes which activity we're returning from
+     * @param  resultCode   denotes success of the previous activity
+     * @param  data         Intent from the previous activity
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == EDIT_MEMORY) {
@@ -132,7 +140,7 @@ public class MemoryActivity extends AppCompatActivity {
                 if (extras != null) {
                     MarkerTag mMarkerTag = extras.getParcelable(MARKERTAG);
                     if (mMarkerTag != null) {
-                        mMarkerTag = mFirebaseDbHandler.updateMarkerTag(mMarkerTag);
+                        //mMarkerTag = mFirebaseDbHandler.updateMarkerTag(mMarkerTag);
 
                     }
                 }

@@ -13,7 +13,7 @@ import java.util.List;
 
 import compsci290.duke.edu.memorymap.R;
 
-public class MarkerTagAdapter extends RecyclerView.Adapter<MarkerTagAdapter.MarkerTagHolder> {
+class MarkerTagAdapter extends RecyclerView.Adapter<MarkerTagAdapter.MarkerTagHolder> {
 
     private static RecyclerViewClickListener mListener;
 
@@ -21,11 +21,14 @@ public class MarkerTagAdapter extends RecyclerView.Adapter<MarkerTagAdapter.Mark
     private Context mContext;
     private MarkerTagAdapter.OnItemClickListener mOnItemClickListener;
 
-    public interface OnItemClickListener {
+    /**
+     * public interface for RecyclerView ClickListener
+     **/
+    interface OnItemClickListener {
         void onItemClick(View view, int position);
     }
 
-    public MarkerTagAdapter(List<MarkerTag> list, Context c, RecyclerViewClickListener itemClickListener) {
+    MarkerTagAdapter(List<MarkerTag> list, Context c, RecyclerViewClickListener itemClickListener) {
         this.mMemoryList = list;
         this.mContext = c;
         mListener = itemClickListener;
@@ -59,7 +62,7 @@ public class MarkerTagAdapter extends RecyclerView.Adapter<MarkerTagAdapter.Mark
         Updates the data in the MarkerTagAdapter and notifies
         the view that is has changed
      */
-    public void swap(List<MarkerTag> datas) {
+    void swap(List<MarkerTag> datas) {
         if(mMemoryList.size() != 0) {
             mMemoryList.clear();
             mMemoryList.addAll(datas);
@@ -69,9 +72,9 @@ public class MarkerTagAdapter extends RecyclerView.Adapter<MarkerTagAdapter.Mark
         notifyDataSetChanged();
     }
 
-    public static class MarkerTagHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    class MarkerTagHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-        static CardView cv;
+        CardView cv;
         ImageView mMemImage;
         TextView mMemTitle;
         TextView mMemDate;
@@ -88,6 +91,9 @@ public class MarkerTagAdapter extends RecyclerView.Adapter<MarkerTagAdapter.Mark
             cv.setOnClickListener(this);
         }
 
+        /**
+         * defines onClick for RecyclerView used in MemoryList
+         **/
         @Override
         public void onClick(View v) {
             mListener.recyclerViewListClicked(v, getLayoutPosition());
