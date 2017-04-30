@@ -48,7 +48,7 @@ public class FirebaseDatabaseHandler {
         mDatabase.child(MarkerTagModel.TABLE_NAME_MARKERTAG).child(key).setValue(markerTagModel);
 
         Log.d(TAG, "inserted Marker Tag " + markerTagModel.getMarkerTagId() + " with title "
-        + markerTagModel.getTitle());
+                + markerTagModel.getTitle());
 
         return markerTag;
     }

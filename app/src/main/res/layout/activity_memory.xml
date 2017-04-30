@@ -78,7 +78,8 @@
             android:textColor="@android:color/white"
             android:textOff="@string/memory_private"
             android:textOn="@string/memory_public"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"
+            android:visibility="visible"/>
 
     </RelativeLayout>
 
@@ -88,13 +89,12 @@
 
     <!-- button to create memorylist -->
     <Button
-        android:id="@+id/button_createmem"
+        android:id="@+id/button_memory"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorAccent"
-        android:onClick="onClickConfirmMemory"
-        android:text="@string/memory_confirm"
-        android:textColor="@android:color/white" />
+        android:onClick="onClickMemory"
+        android:textColor="@android:color/white"/>
 
 
 </LinearLayout>

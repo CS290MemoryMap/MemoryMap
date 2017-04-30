@@ -1,9 +1,5 @@
 package compsci290.duke.edu.memorymap.memory;
 
-/**
- * Created by taranagar on 4/14/17.
- */
-
 import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -13,18 +9,29 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import compsci290.duke.edu.memorymap.R;
 
-public class MarkerTagAdapter extends RecyclerView.Adapter<MarkerTagAdapter.MarkerTagHolder> {
+class MarkerTagAdapter extends RecyclerView.Adapter<MarkerTagAdapter.MarkerTagHolder> {
 
-    private ArrayList<MarkerTag> mMemoryList;
+    private static RecyclerViewClickListener mListener;
+
+    private List<MarkerTag> mMemoryList;
     private Context mContext;
+    private MarkerTagAdapter.OnItemClickListener mOnItemClickListener;
 
-    public MarkerTagAdapter(ArrayList<MarkerTag> list, Context c) {
+    /**
+     * public interface for RecyclerView ClickListener
+     **/
+    interface OnItemClickListener {
+        void onItemClick(View view, int position);
+    }
+
+    MarkerTagAdapter(List<MarkerTag> list, Context c, RecyclerViewClickListener itemClickListener) {
         this.mMemoryList = list;
         this.mContext = c;
+        mListener = itemClickListener;
     }
 
     @Override
@@ -35,8 +42,7 @@ public class MarkerTagAdapter extends RecyclerView.Adapter<MarkerTagAdapter.Mark
     @Override
     public MarkerTagHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.memorylist, parent, false);
-        MarkerTagHolder mth = new MarkerTagHolder(v);
-        return mth;
+        return new MarkerTagHolder(v);
     }
 
     @Override
@@ -52,8 +58,12 @@ public class MarkerTagAdapter extends RecyclerView.Adapter<MarkerTagAdapter.Mark
         return mMemoryList.size();
     }
 
-    public void swap(ArrayList<MarkerTag> datas) {
-        if(mMemoryList != null) {
+    /*
+        Updates the data in the MarkerTagAdapter and notifies
+        the view that is has changed
+     */
+    void swap(List<MarkerTag> datas) {
+        if(mMemoryList.size() != 0) {
             mMemoryList.clear();
             mMemoryList.addAll(datas);
         } else {
@@ -62,7 +72,7 @@ public class MarkerTagAdapter extends RecyclerView.Adapter<MarkerTagAdapter.Mark
         notifyDataSetChanged();
     }
 
-    public static class MarkerTagHolder extends RecyclerView.ViewHolder {
+    class MarkerTagHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         CardView cv;
         ImageView mMemImage;
@@ -77,6 +87,16 @@ public class MarkerTagAdapter extends RecyclerView.Adapter<MarkerTagAdapter.Mark
             mMemTitle = (TextView) itemView.findViewById(R.id.mem_title);
             mMemDate = (TextView) itemView.findViewById(R.id.mem_date);
             mMemDescription = (TextView) itemView.findViewById(R.id.mem_description);
+
+            cv.setOnClickListener(this);
+        }
+
+        /**
+         * defines onClick for RecyclerView used in MemoryList
+         **/
+        @Override
+        public void onClick(View v) {
+            mListener.recyclerViewListClicked(v, getLayoutPosition());
         }
     }
 

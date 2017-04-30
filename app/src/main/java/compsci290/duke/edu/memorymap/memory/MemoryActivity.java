@@ -1,17 +1,10 @@
 package compsci290.duke.edu.memorymap.memory;
 
-
 import android.app.Activity;
-import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AppCompatActivity;
+import android.graphics.Color;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -22,85 +15,114 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.Button;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
 import compsci290.duke.edu.memorymap.R;
+import compsci290.duke.edu.memorymap.firebase.database.FirebaseDatabaseHandler;
+
+/**
+ * Activity for View-Only memories
+ **/
 
 public class MemoryActivity extends AppCompatActivity {
-    private static final int SELECT_PICTURE = 1;
-    private static final String MARKERTAG = "markertag";
 
-    private static TextView mDateView;
-    private EditText mTitleView;
-    private EditText mDetailsView;
-    private ImageView mImageView;
-    private ToggleButton mToggleButton;
-
+    protected static final String MARKERTAG = "markertag";
     private static final String TAG = "MemoryActivity";
+    private static final int EDIT_MEMORY = 1;
 
-    private Bitmap mPic;
-    private MarkerTag mTag;
+    protected static TextView mDateView;
+    protected EditText mTitleView;
+    protected EditText mDetailsView;
+    protected ImageView mImageView;
+    protected Button mButton;
+    protected ToggleButton mToggleButton;
+
+    protected Bitmap mPic;
+    protected LatLng mLatLng;
+    protected MarkerTag mTag;
+    protected boolean mIsPublic;
+    protected boolean publicList;
+
+    private FirebaseDatabaseHandler mFirebaseDbHandler;
+
 
     /**
      * onCreate sets the content view, gets all of the views,
-     * and restores state if necessary.
+     * sets views with information, and restores state if necessary.
      */
-    public void onCreate(Bundle savedInstanceState){
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "Starting MemoryActivity...");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memory);
+        mFirebaseDbHandler = new FirebaseDatabaseHandler();
 
         /* get all views */
         mDateView = (TextView) findViewById(R.id.text_date);
         mTitleView = (EditText) findViewById(R.id.editor_title);
         mDetailsView = (EditText) findViewById(R.id.editor_details);
         mImageView = (ImageView) findViewById(R.id.image_upload);
+        mButton = (Button) findViewById(R.id.button_memory);
         mToggleButton = (ToggleButton) findViewById(R.id.button_toggle);
 
-        if (savedInstanceState != null) {
-            mTag = savedInstanceState.getParcelable(MARKERTAG);//getBundle(BUNDLE);
-            if(mTag != null) {
-                setFieldsFromTag();
-            } else{
-                Log.d(TAG,"mTag was null.");
-            }
-        }else{
-            Bundle prevBundle = getIntent().getExtras();
-            if(prevBundle != null){
-                mTag = prevBundle.getParcelable(MARKERTAG);
-            }
-            if(mTag == null){
-                Log.d(TAG,"savedInstanceState and prevBundle both did not contain a markertag");
-            /* set the default camera upload picture */
-                displayDefaultPicture();
-            }else{
-                setFieldsFromTag();
-            }
-        }
+        /* don't allow users to upload a new photo */
+        mImageView.setClickable(false);
 
+        Bundle data = getIntent().getExtras();
+        mTag = data.getParcelable(MARKERTAG);
+        publicList = data.getBoolean("PublicList");
+
+        if (mTag != null) {
+             /* set data of elements */
+            mDateView.setText(mTag.getDate(), TextView.BufferType.EDITABLE);
+            mDateView.setEnabled(false);
+            mDateView.setTextColor(Color.BLACK);
+
+            mTitleView.setText(mTag.getTitle(), TextView.BufferType.EDITABLE);
+            mTitleView.setEnabled(false);
+            mTitleView.setTextColor(Color.BLACK);
+
+            mDetailsView.setText(mTag.getDetails(), TextView.BufferType.EDITABLE);
+            mDetailsView.setEnabled(false);
+            mDetailsView.setTextColor(Color.BLACK);
+
+            mImageView.setImageBitmap(mTag.getImg());
+            mImageView.setScaleType(ImageView.ScaleType.FIT_XY);
+            mImageView.setAdjustViewBounds(true);
+
+            if (publicList) {
+                mButton.setVisibility(View.INVISIBLE);
+            } else {
+                mButton.setText(getResources().getString(R.string.memory_edit));
+            }
+
+            /* hide ToggleButton */
+            mToggleButton.setVisibility(View.GONE);
+        } else {
+            Log.d(TAG, "MarkerTag is null");
+        }
     }
 
     /**
-     * Creates intent and starts activity for choosing a photo to upload
+     * Defines the "Edit Memory" button's functionality
+     *  passes the current MarkerTag to be edited
      *
-     * @param  view  unused parameter. is the button view
-     */
-    public void onClickImageUpload(View view){
-        Intent pickIntent = new Intent();
-        pickIntent.setType("image/*");
-        pickIntent.setAction(Intent.ACTION_GET_CONTENT);
-
-        Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-        String pickTitle = "Select or take a new picture"; // Or get from strings.xml
-        Intent chooserIntent = Intent.createChooser(pickIntent, pickTitle);
-        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS,new Intent[] { takePhotoIntent });
-
-        startActivityForResult(chooserIntent, SELECT_PICTURE);
+     *  @param  view  unused button view parameter
+     **/
+    public void onClickMemory(View view) {
+        Intent intent = new Intent(this, EditableMemoryActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(MARKERTAG, mTag);
+        intent.putExtras(bundle);
+        startActivityForResult(intent, EDIT_MEMORY);
     }
 
     /**
@@ -112,160 +134,38 @@ public class MemoryActivity extends AppCompatActivity {
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // Check which request we're responding to
-        if (requestCode == SELECT_PICTURE) {
-            // Make sure the request was successful
+        if (requestCode == EDIT_MEMORY) {
             if (resultCode == RESULT_OK) {
-                // The user picked a picture to put on the marker (I think?)
+                Log.d(TAG, "Returned to MemoryActivity");
                 final Bundle extras = data.getExtras();
+                //Get MarkerTag
                 if (extras != null) {
-                    //Get image
-                    mPic = extras.getParcelable("data");
-                    //Put image in imageview
-                    mImageView.setImageBitmap(mPic);
-                    mImageView.setScaleType(ImageView.ScaleType.FIT_XY);
-                    mImageView.setAdjustViewBounds(true);
-                    //also put image in mToMapsBundle
-                    mTag.setImg(mPic);
+                    MarkerTag markerTag = extras.getParcelable(MARKERTAG);
+                    if (markerTag != null) {
+                        markerTag = mFirebaseDbHandler.updateMarkerTag(markerTag);
+                        mTag = markerTag;
 
+                        mDateView.setText(mTag.getDate(), TextView.BufferType.EDITABLE);
+                        mDateView.setEnabled(false);
+                        mDateView.setTextColor(Color.BLACK);
+
+                        mTitleView.setText(mTag.getTitle(), TextView.BufferType.EDITABLE);
+                        mTitleView.setEnabled(false);
+                        mTitleView.setTextColor(Color.BLACK);
+
+                        mDetailsView.setText(mTag.getDetails(), TextView.BufferType.EDITABLE);
+                        mDetailsView.setEnabled(false);
+                        mDetailsView.setTextColor(Color.BLACK);
+
+                        mImageView.setImageBitmap(mTag.getImg());
+                        mImageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                        mImageView.setAdjustViewBounds(true);
+
+                        mButton.setText(getResources().getString(R.string.memory_edit));
+                    }
                 }
+
             }
         }
-    }
-
-    /**
-     * Defines the Date TextView onClick method
-     *
-     * @param  view     unused button view parameter
-     */
-    public void onClickSetDate(View view){
-        DialogFragment newFragment = new DatePickerFragment();
-        newFragment.show((this.getSupportFragmentManager()), "datePicker");
-    }
-
-    /**
-     * Class that enables the user to pick a date
-     */
-    public static class DatePickerFragment extends DialogFragment
-            implements DatePickerDialog.OnDateSetListener {
-
-        /**
-         * Creates the dialog that enables the user to pick a date.
-         *
-         * @param  savedInstanceState  bundle containing saved state
-         * @return      the created dialog
-         */
-        @Override
-        @NonNull
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            // Use the current date as the default date in the picker
-            final Calendar c = Calendar.getInstance();
-            int year = c.get(Calendar.YEAR);
-            int month = c.get(Calendar.MONTH);
-            int day = c.get(Calendar.DAY_OF_MONTH);
-            return new DatePickerDialog(getActivity(), R.style.MyDatePickerStyle,this, year, month, day);
-        }
-
-        /**
-         * Defines what to do after the date has been set.
-         *
-         * @param  view     the DatePicker view
-         * @param  year     year chosen
-         * @param  month    month chosen
-         * @param  day      day chosen
-         */
-        public void onDateSet(DatePicker view, int year, int month, int day) {
-            String str = String.format(Locale.ENGLISH,"%d/%d/%d",month,day,year);
-            mDateView.setText(str);
-        }
-    }
-
-    /**
-     * Defines the "Confirm Memory" button's functionality.
-     * Puts the MarkerTag in a bundle
-     * and passes them back to MapsActivity
-     *
-     * @param  view  unused button view parameter
-     */
-    public void onClickConfirmMemory(View view){
-        Intent toMapsIntent = new Intent();
-        Bundle bundle = new Bundle();
-        putFieldsInTag();
-        bundle.putParcelable(MARKERTAG,mTag);
-        toMapsIntent.putExtras(bundle);
-        setResult(Activity.RESULT_OK, toMapsIntent);
-        finish();
-    }
-
-    /**
-     * Saves the state of this activity, including the date,
-     * details, title, and image (if the image has been set).
-     *
-     * @param  outState  bundle containing state
-     */
-    @Override
-    protected void onSaveInstanceState (Bundle outState) {
-        super.onSaveInstanceState(outState);
-        //outState.putCharSequence(KEY_TEXT_VALUE, mTextView.getText());
-        /* mToMapsBundle already has picture if it has been chosen */
-        putFieldsInTag();
-        outState.putParcelable(MARKERTAG, mTag);
-    }
-
-    /**
-     * Sets the image view to display the default picture
-     */
-    private void displayDefaultPicture(){
-        /* set imageview to uploadmedia.png */
-        Drawable res = getResources().getDrawable(R.drawable.uploadmedia,getTheme());
-        mImageView.setImageDrawable(res);
-        mImageView.setScaleType(ImageView.ScaleType.FIT_XY);
-    }
-
-    /**
-     * Puts the user-entered information into the MarkerTag mTag
-     */
-    private void putFieldsInTag(){/*image not included because don't want to include default picture*/
-        mTag.setDate(mDateView.getText().toString());
-        mTag.setTitle(mTitleView.getText().toString());
-        mTag.setDetails(mDetailsView.getText().toString());
-        mTag.setIsPublic(mToggleButton.isChecked());
-    }
-
-    /**
-     * sets the views with the information from the MarkerTag mTag
-     */
-    private void setFieldsFromTag(){
-        mPic = mTag.getImg();
-        if(mPic == null){
-            displayDefaultPicture();
-        }else{
-            mImageView.setImageBitmap(mPic);
-            mImageView.setScaleType(ImageView.ScaleType.FIT_XY);
-            mImageView.setAdjustViewBounds(true);
-        }
-        String title = mTag.getTitle();
-        if(!title.equals("")) mTitleView.setText(title);
-        Date date = mTag.getDateDate();
-        if(date != (null)){
-            DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
-            mDateView.setText(format.format(date));
-        }
-        String details = mTag.getDetails();
-        if(!details.equals("")) mDetailsView.setText(details);
-        Boolean checked = mTag.getIsPublic();
-        if(checked != null) mToggleButton.setChecked(checked);
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        InputMethodManager imm = (InputMethodManager)getSystemService(Context.
-                INPUT_METHOD_SERVICE);
-        View v = getCurrentFocus();
-        if (v != null) {
-            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-        }
-
-        return true;
     }
 }
