@@ -1,5 +1,6 @@
 package compsci290.duke.edu.memorymap.memory;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -121,7 +122,7 @@ public class MemoryActivity extends AppCompatActivity {
         Bundle bundle = new Bundle();
         bundle.putParcelable(MARKERTAG, mTag);
         intent.putExtras(bundle);
-        startActivity(intent);
+        startActivityForResult(intent, EDIT_MEMORY);
     }
 
     /**
@@ -135,13 +136,32 @@ public class MemoryActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == EDIT_MEMORY) {
             if (resultCode == RESULT_OK) {
+                Log.d(TAG, "Returned to MemoryActivity");
                 final Bundle extras = data.getExtras();
                 //Get MarkerTag
                 if (extras != null) {
-                    MarkerTag mMarkerTag = extras.getParcelable(MARKERTAG);
-                    if (mMarkerTag != null) {
-                        //mMarkerTag = mFirebaseDbHandler.updateMarkerTag(mMarkerTag);
+                    MarkerTag markerTag = extras.getParcelable(MARKERTAG);
+                    if (markerTag != null) {
+                        markerTag = mFirebaseDbHandler.updateMarkerTag(markerTag);
+                        mTag = markerTag;
 
+                        mDateView.setText(mTag.getDate(), TextView.BufferType.EDITABLE);
+                        mDateView.setEnabled(false);
+                        mDateView.setTextColor(Color.BLACK);
+
+                        mTitleView.setText(mTag.getTitle(), TextView.BufferType.EDITABLE);
+                        mTitleView.setEnabled(false);
+                        mTitleView.setTextColor(Color.BLACK);
+
+                        mDetailsView.setText(mTag.getDetails(), TextView.BufferType.EDITABLE);
+                        mDetailsView.setEnabled(false);
+                        mDetailsView.setTextColor(Color.BLACK);
+
+                        mImageView.setImageBitmap(mTag.getImg());
+                        mImageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                        mImageView.setAdjustViewBounds(true);
+
+                        mButton.setText(getResources().getString(R.string.memory_edit));
                     }
                 }
 

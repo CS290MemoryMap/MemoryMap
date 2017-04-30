@@ -33,7 +33,7 @@ import compsci290.duke.edu.memorymap.memory.MarkerTagAdapter;
  * TODO: rotating app when different sort selected does not save
  **/
 
-public class MemoryListActivity extends AppCompatActivity implements RecyclerViewClickListener{
+public class MemoryListActivity extends AppCompatActivity implements RecyclerViewClickListener {
     private static final String MARKERTAG = "markertag";
     private static final int OPEN_MEMORY = 1;
     private static final String TAG = "MemoryListActivity";
@@ -41,6 +41,8 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
     private List<MarkerTag> mMarkerTagList;
     private RecyclerView mRecyclerView;
     private MarkerTagAdapter mAdapter;
+
+    private int method;
 
     public ProgressDialog mProgressDialog;
 
@@ -70,6 +72,23 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
         mRecyclerView.setHasFixedSize(true);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (method > 0) {
+            showProgressDialog();
+            if (method == 1) {
+                queryMyMarkerTagList();
+            } else if (method == 2) {
+                queryMyMarkerTagListByTitle();
+            } else if (method == 3) {
+                queryMyMarkerTagListByDate();
+            } else if (method == 4) {
+                queryMyMarkerTagListByLocation();
+            } hideProgressDialog();
+        }
+    }
+
     /**
      * Initialize and set custom adapter for RecyclerView
      **/
@@ -86,7 +105,7 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
     /**
      * Updates RecyclerView in MemoryList
      *
-     * @param  newList  the updated list to be shown after a new query
+     * @param newList the updated list to be shown after a new query
      **/
     private void updateList(List<MarkerTag> newList) {
         if (mMarkerTagList != null && newList != null) {
@@ -111,26 +130,23 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
     /**
      * Defines menu actions
      *
-     * @param  item  item from menu selected by user
+     * @param item item from menu selected by user
      **/
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         String menuString = (String) item.getTitle();
-        if(menuString.equals(getResources().getString(R.string.location_sort))) {
+        if (menuString.equals(getResources().getString(R.string.location_sort))) {
             //mMarkerTagList = mDbHandler.querySortByLongLat();
             queryMyMarkerTagListByLocation();
-        }
-        else if (menuString.equals(getResources().getString(R.string.time_sort))) {
+        } else if (menuString.equals(getResources().getString(R.string.time_sort))) {
             //mMarkerTagList = mDbHandler.queryAllMarkerTags();
             queryMyMarkerTagList();
-        }
-        else if (menuString.equals(getResources().getString(R.string.title_sort))) {
+        } else if (menuString.equals(getResources().getString(R.string.title_sort))) {
             queryMyMarkerTagListByTitle();
-        }
-        else if (menuString.equals(getResources().getString(R.string.date_sort))) {
+        } else if (menuString.equals(getResources().getString(R.string.date_sort))) {
             queryMyMarkerTagListByDate();
         }
-            return super.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -175,7 +191,7 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         Log.d(TAG, "Query by title onDataChange");
-                        for (DataSnapshot noteSnapshot: dataSnapshot.getChildren()){
+                        for (DataSnapshot noteSnapshot : dataSnapshot.getChildren()) {
                             MarkerTagModel markerTagModel = noteSnapshot.getValue(MarkerTagModel.class);
                             // filter user MarkerTag only
                             if (markerTagModel.getUserId().equals(mFirebaseDbHandler.getUserId())) {
@@ -186,6 +202,7 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
 
                         // MarkerTag list save in local variable markerTagList
                         hideProgressDialog();
+                        method = 2;
                         updateList(markerTagList);
                     }
 
@@ -211,7 +228,7 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         Log.d(TAG, "Query by date onDataChange");
-                        for (DataSnapshot noteSnapshot: dataSnapshot.getChildren()){
+                        for (DataSnapshot noteSnapshot : dataSnapshot.getChildren()) {
                             MarkerTagModel markerTagModel = noteSnapshot.getValue(MarkerTagModel.class);
                             // filter user MarkerTag only
                             if (markerTagModel.getUserId().equals(mFirebaseDbHandler.getUserId())) {
@@ -222,6 +239,7 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
 
                         // MarkerTag list save in local variable markerTagList
                         hideProgressDialog();
+                        method = 3;
                         updateList(markerTagList);
                     }
 
@@ -247,7 +265,7 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         Log.d(TAG, "Query by location onDataChange");
-                        for (DataSnapshot noteSnapshot: dataSnapshot.getChildren()){
+                        for (DataSnapshot noteSnapshot : dataSnapshot.getChildren()) {
                             MarkerTagModel markerTagModel = noteSnapshot.getValue(MarkerTagModel.class);
                             // filter user MarkerTag only
                             if (markerTagModel.getUserId().equals(mFirebaseDbHandler.getUserId())) {
@@ -258,6 +276,7 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
 
                         // MarkerTag list save in local variable markerTagList
                         hideProgressDialog();
+                        method = 4;
                         updateList(markerTagList);
                     }
 
@@ -280,7 +299,7 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        for (DataSnapshot noteSnapshot: dataSnapshot.getChildren()){
+                        for (DataSnapshot noteSnapshot : dataSnapshot.getChildren()) {
                             MarkerTagModel markerTagModel = noteSnapshot.getValue(MarkerTagModel.class);
                             // filter user MarkerTag only
                             if (markerTagModel.getUserId().equals(mFirebaseDbHandler.getUserId())) {
@@ -291,6 +310,7 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
 
                         // MarkerTag list save in local variable markerTagList
                         hideProgressDialog();
+                        method = 1;
                         if (mMarkerTagList.size() == 0) {
                             initializeAdapter();
                         }
@@ -303,11 +323,12 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
                     }
                 });
     }
+
     /**
      * Send MarkerTag to be displayed in view-only MemoryActivity
      *
-     * @param  v  View of item clicked
-     * @param position  position of item clicked
+     * @param v        View of item clicked
+     * @param position position of item clicked
      **/
     @Override
     public void recyclerViewListClicked(View v, int position) {
@@ -323,24 +344,8 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
         }
         bundle.putParcelable(MARKERTAG, mMarkerTag);
         intent.putExtras(bundle);
-        startActivity(intent);
+        startActivityForResult(intent, OPEN_MEMORY);
         //Intent intent = listToMemoryIntent(mMarkerTag, MemoryActivity.class);
         //startActivityForResult(intent, OPEN_MEMORY);
-    }
-
-    /**
-     * Handles the result from an activity.
-     * Currently defined only for MemoryActivity passing a result
-     *
-     * @param  requestCode  code identifying the previous activity
-     * @param  resultCode   describes if the previous activity was a success
-     * @param  data         intent from the previous activity
-     */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // if startActivityForResult requested opening memory
-        if (requestCode == OPEN_MEMORY) {
-            Toast.makeText(this, "requestCode == OPEN_MEMORY", Toast.LENGTH_SHORT).show();
-        }
     }
 }
