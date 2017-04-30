@@ -82,8 +82,11 @@
 
     </RelativeLayout>
 
-    <!-- button to create memorylist -->
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="5dp" />
 
+    <!-- button to create memorylist -->
     <Button
         android:id="@+id/button_createmem"
         android:layout_width="match_parent"

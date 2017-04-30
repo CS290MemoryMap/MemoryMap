@@ -4,6 +4,7 @@ package compsci290.duke.edu.memorymap.memory;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -13,7 +14,9 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -252,5 +255,17 @@ public class MemoryActivity extends AppCompatActivity {
         if(!details.equals("")) mDetailsView.setText(details);
         Boolean checked = mTag.getIsPublic();
         if(checked != null) mToggleButton.setChecked(checked);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.
+                INPUT_METHOD_SERVICE);
+        View v = getCurrentFocus();
+        if (v != null) {
+            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+        }
+
+        return true;
     }
 }
