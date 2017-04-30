@@ -1,6 +1,7 @@
 package compsci290.duke.edu.memorymap.memory;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -10,6 +11,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -27,10 +30,12 @@ import compsci290.duke.edu.memorymap.memory.MarkerTag;
 import compsci290.duke.edu.memorymap.memory.MarkerTagAdapter;
 
 /**
- * Created by taranagar on 4/13/17.
- */
+ * TODO: rotating app when different sort selected does not save
+ **/
 
-public class MemoryListActivity extends AppCompatActivity {
+public class MemoryListActivity extends AppCompatActivity implements RecyclerViewClickListener{
+    private static final String MARKERTAG = "markertag";
+    private static final int OPEN_MEMORY = 1;
     private static final String TAG = "MemoryListActivity";
 
     private List<MarkerTag> mMarkerTagList;
@@ -88,7 +93,7 @@ public class MemoryListActivity extends AppCompatActivity {
     }
 
     private void initializeAdapter() {
-        mAdapter = new MarkerTagAdapter(mMarkerTagList, this);
+        mAdapter = new MarkerTagAdapter(mMarkerTagList, this, this);
         if (mMarkerTagList.size() == 0) {
             Log.d(TAG, "MarkerTag list empty.");
         } else {
@@ -314,5 +319,62 @@ public class MemoryListActivity extends AppCompatActivity {
                         Log.d(TAG, "Error Querying Data: " + databaseError.getMessage());
                     }
                 });
+    }
+
+    @Override
+    public void recyclerViewListClicked(View v, int position) {
+        // Retrieve MarkerTag to open in MemoryActivity
+        MarkerTag mMarkerTag = mMarkerTagList.get(position);
+        if (mMarkerTag == null) {
+            Log.d(TAG, "MarkerTag is null");
+        }
+        Intent intent = new Intent(this, MemoryActivity.class);
+        Bundle bundle = new Bundle();
+        if (mMarkerTag == null) {
+            Log.d(TAG, "listToMemoryIntent mTag is null");
+        }
+        bundle.putParcelable(MARKERTAG, mMarkerTag);
+        intent.putExtras(bundle);
+        startActivity(intent);
+        //Intent intent = listToMemoryIntent(mMarkerTag, MemoryActivity.class);
+        //startActivityForResult(intent, OPEN_MEMORY);
+    }
+
+    /**
+     * Returns an intent to a specified class that has a bundle with a MarkerTag
+     * parcelable object already inside it
+     *
+     * @param  mTag  the MarkerTag to include in the intent
+     * @param  toClass the class to which the intent will be passed
+     * @return      the intent
+     */
+
+    private Intent listToMemoryIntent(MarkerTag mTag, Class<?> toClass) {
+        Intent intent = new Intent(MemoryListActivity.this, toClass);
+        Bundle bundle = new Bundle();
+        if (mTag == null) {
+            Log.d(TAG, "listToMemoryIntent mTag is null");
+        }
+        bundle.putParcelable(MARKERTAG, mTag);
+        intent.putExtras(bundle);
+        return intent;
+    }
+
+
+    /**
+     * Handles the result from an activity.
+     * Currently defined only for MemoryActivity passing a result
+     *
+     * @param  requestCode  code identifying the previous activity
+     * @param  resultCode   describes if the previous activity was a success
+     * @param  data         intent from the previous activity
+     */
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // if startActivityForResult requested opening memory
+        if (requestCode == OPEN_MEMORY) {
+            Toast.makeText(this, "requestCode == OPEN_MEMORY", Toast.LENGTH_SHORT).show();
+        }
     }
 }

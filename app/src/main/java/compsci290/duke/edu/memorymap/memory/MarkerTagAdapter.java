@@ -15,12 +15,20 @@ import compsci290.duke.edu.memorymap.R;
 
 public class MarkerTagAdapter extends RecyclerView.Adapter<MarkerTagAdapter.MarkerTagHolder> {
 
+    private static RecyclerViewClickListener mListener;
+
     private List<MarkerTag> mMemoryList;
     private Context mContext;
+    private MarkerTagAdapter.OnItemClickListener mOnItemClickListener;
 
-    public MarkerTagAdapter(List<MarkerTag> list, Context c) {
+    public interface OnItemClickListener {
+        void onItemClick(View view, int position);
+    }
+
+    public MarkerTagAdapter(List<MarkerTag> list, Context c, RecyclerViewClickListener itemClickListener) {
         this.mMemoryList = list;
         this.mContext = c;
+        mListener = itemClickListener;
     }
 
     @Override
@@ -61,7 +69,7 @@ public class MarkerTagAdapter extends RecyclerView.Adapter<MarkerTagAdapter.Mark
         notifyDataSetChanged();
     }
 
-    public static class MarkerTagHolder extends RecyclerView.ViewHolder {
+    public static class MarkerTagHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         CardView cv;
         ImageView mMemImage;
@@ -76,6 +84,13 @@ public class MarkerTagAdapter extends RecyclerView.Adapter<MarkerTagAdapter.Mark
             mMemTitle = (TextView) itemView.findViewById(R.id.mem_title);
             mMemDate = (TextView) itemView.findViewById(R.id.mem_date);
             mMemDescription = (TextView) itemView.findViewById(R.id.mem_description);
+
+            cv.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            mListener.recyclerViewListClicked(v, getLayoutPosition());
         }
     }
 

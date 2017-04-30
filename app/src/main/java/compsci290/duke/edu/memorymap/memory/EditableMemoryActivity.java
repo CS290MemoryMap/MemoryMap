@@ -200,6 +200,7 @@ public class EditableMemoryActivity extends MemoryActivity {
         putFieldsInTag();
         bundle.putParcelable(MARKERTAG,mTag);
         toMapsIntent.putExtras(bundle);
+        Log.d(TAG, "Sending intent back to MemoryActivity");
         setResult(Activity.RESULT_OK, toMapsIntent);
         finish();
     }
