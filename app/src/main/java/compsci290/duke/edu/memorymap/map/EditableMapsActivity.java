@@ -2,6 +2,7 @@ package compsci290.duke.edu.memorymap.map;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -18,8 +19,10 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.DataSnapshot;
@@ -45,6 +48,7 @@ public class EditableMapsActivity extends MapsActivity
     protected LatLng mNewMarkerLatLng;
     protected boolean mSeeNewMarker = false;
     private Marker markerToRemove = null;
+    private static List<MarkerTag> mTagList;
 
 
     /**
@@ -57,11 +61,35 @@ public class EditableMapsActivity extends MapsActivity
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        Log.d(TAG, "onMapReady.......");
         mMap = googleMap;
-        super.onMapReady(mMap);
+        //super.onMapReady(mMap);
+        //begin testing
+        try {
+            // Customise the styling of the base map using a JSON object defined
+            // in a raw resource file.
+            boolean success = googleMap.setMapStyle(
+                    MapStyleOptions.loadRawResourceStyle(
+                            this, R.raw.style_json));
+
+            if (!success) {
+                Log.e(TAG, "Style parsing failed.");
+            }
+        } catch (Resources.NotFoundException e) {
+            Log.e(TAG, "Can't find style. Error: ", e);
+        }
+
+
+        // Set up UI
+        UiSettings settings = mMap.getUiSettings();
+        settings.setZoomControlsEnabled(true);
+        settings.setMyLocationButtonEnabled(false);
+
+        // Set up listeners and adapters
+
+        mMap.setInfoWindowAdapter(this);
         mMap.setOnMapLongClickListener(this);
         mMap.setOnInfoWindowLongClickListener(this);
-
 
         queryMyMarkerTagList();
 //        //restore all markers
@@ -75,7 +103,7 @@ public class EditableMapsActivity extends MapsActivity
 
     /* Activated when the user long clicks on the map.
      * Asks the user if they would like to create a memory at the clicked location.
-     * Upon answering yes, EditableMemoryActivity is started
+     * Upon answering yes, MemoryActivity is started
      *
      * @param  latLng  LatLng of clicked location
      */
@@ -86,7 +114,7 @@ public class EditableMapsActivity extends MapsActivity
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Intent intent = createIntentWithLatLng(latLng,EditableMemoryActivity.class);
+                        Intent intent = createIntentWithLatLng(latLng,MemoryActivity.class);
                         startActivityForResult(intent, CREATE_MEMORY);
                     }
                 })
@@ -160,39 +188,44 @@ public class EditableMapsActivity extends MapsActivity
         }
         else if(requestCode == EDIT_MEMORY){
             if(resultCode == RESULT_OK){
-                final Bundle extras = data.getExtras();
-                if(extras != null){
-                    MarkerTag markerTag = extras.getParcelable(MARKERTAG);
-                    if(markerTag != null) {
-                        markerTag = mDbHandler.updateMarkerTag(markerTag);
-                        for (MarkerTag tag : mTagList) {
-                            if (tag.getID().equals(markerTag.getID())) {
-                                mTagList.remove(tag);
-                                mTagList.add(markerTag);
+                if(mMap == null){
+                    final Bundle extras = data.getExtras();
+                    if(extras != null){
+                        MarkerTag markerTag = extras.getParcelable(MARKERTAG);
+                        if(markerTag != null) {
+                            markerTag = mDbHandler.updateMarkerTag(markerTag);
+                            mNewMarkerLatLng = new LatLng(markerTag.getLatitude(),markerTag.getLongitude());
+                            for (MarkerTag tag : mTagList) {
+                                if (tag.getID().equals(markerTag.getID())) {
+                                    mTagList.remove(tag);
+                                    mTagList.add(markerTag);
+                                }
                             }
-                        }
-                        Marker newMarker;
-                        if (markerTag.getImg() == null) {
-                            newMarker = mMap.addMarker(new MarkerOptions()
-                                    .position(mNewMarkerLatLng));
-                            newMarker.setTag(markerTag);
+                            Marker newMarker;
+                            if (markerTag.getImg() == null) {
+                                newMarker = mMap.addMarker(new MarkerOptions()
+                                        .position(mNewMarkerLatLng));
+                                newMarker.setTag(markerTag);
 
-                        } else {
-                            newMarker = mMap.addMarker(new MarkerOptions()
-                                    .position(mNewMarkerLatLng)
-                                    .icon(BitmapDescriptorFactory.fromBitmap(markerTag.getImg())));
-                            newMarker.setTag(markerTag);
-                        }
-                        mSeeNewMarker = true;
-                        if(markerToRemove != null){
-                            markerToRemove.remove();
-                            markerToRemove = null;
+                            } else {
+                                newMarker = mMap.addMarker(new MarkerOptions()
+                                        .position(mNewMarkerLatLng)
+                                        .icon(BitmapDescriptorFactory.fromBitmap(markerTag.getImg())));
+                                newMarker.setTag(markerTag);
+                            }
+                            mSeeNewMarker = true;
+                            if(markerToRemove != null){
+                                markerToRemove.remove();
+                                markerToRemove = null;
+                            }
+                        }else{
+                            Log.d(TAG, "MarkerTag in extras was null");
                         }
                     }else{
-                        Log.d(TAG, "MarkerTag in extras was null");
+                        Log.d(TAG, "Result from EDIT_MEMORY extras == null");
                     }
                 }else{
-                    Log.d(TAG, "Result from EDIT_MEMORY extras == null");
+                    Log.d(TAG, "mMap was null");
                 }
             }else{
                 markerToRemove = null;
@@ -243,7 +276,7 @@ public class EditableMapsActivity extends MapsActivity
                             Toast.LENGTH_LONG).show();
                 }
                 else{
-                    Intent intent = createIntentWithLatLng(userCurrLatLng,EditableMemoryActivity.class);
+                    Intent intent = createIntentWithLatLng(userCurrLatLng,MemoryActivity.class);
                     startActivityForResult(intent, CREATE_MEMORY);
                 }
                 return true;
@@ -277,7 +310,7 @@ public class EditableMapsActivity extends MapsActivity
             markerTag = mDbHandler.insertMarkerTag(markerTag);
             mTagList.add(markerTag);
         }else{
-            Log.d(TAG,"MarkerTag from previous EditableMemoryActivity is null. Not adding marker.");
+            Log.d(TAG,"MarkerTag from previous MemoryActivity is null. Not adding marker.");
         }
     }
 
@@ -325,7 +358,7 @@ public class EditableMapsActivity extends MapsActivity
 
     /**
      * Creates a dialog that asks the user to input an address. Attempts to convert
-     * the address to a LatLng and then starts EditableMemoryActivity with that information.
+     * the address to a LatLng and then starts MemoryActivity with that information.
      * Upon failure to convert the address, this method makes a toast to alert the user
      * that their address could not be converted.
      */
@@ -346,7 +379,7 @@ public class EditableMapsActivity extends MapsActivity
                 userInputAddress = input.getText().toString();
                 LatLng latLng = addressToLatLng(userInputAddress);
                 if(latLng != null){
-                    Intent intent = createIntentWithLatLng(latLng,EditableMemoryActivity.class);
+                    Intent intent = createIntentWithLatLng(latLng,MemoryActivity.class);
                     startActivityForResult(intent, CREATE_MEMORY);
                 }else{
                     Log.d(TAG,"failed to create memory with user input address");

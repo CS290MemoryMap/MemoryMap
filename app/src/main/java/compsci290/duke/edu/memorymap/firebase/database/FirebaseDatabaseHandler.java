@@ -1,15 +1,13 @@
 package compsci290.duke.edu.memorymap.firebase.database;
 
 import android.util.Log;
-import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 
+import compsci290.duke.edu.memorymap.database.MyApplication;
 import compsci290.duke.edu.memorymap.memory.MarkerTag;
 
 /**
@@ -25,13 +23,8 @@ public class FirebaseDatabaseHandler {
     public FirebaseDatabaseHandler() {
         // retrieve instance of database and reference location for read/write
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        // retrieve authenticated user
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            mUserId = user.getUid();
-        } else {
-            mUserId = ""; // no authenticated user
-        }
+        // retrieve current authenticated user
+        mUserId = new MyApplication().getUserId();
 
         Log.d(TAG, "instantiated handler for user " + mUserId);
     }
@@ -52,7 +45,7 @@ public class FirebaseDatabaseHandler {
         mDatabase.child(MarkerTagModel.TABLE_NAME_MARKERTAG).child(key).setValue(markerTagModel);
 
         Log.d(TAG, "inserted Marker Tag " + markerTagModel.getMarkerTagId() + " with title "
-        + markerTagModel.getTitle());
+                + markerTagModel.getTitle());
 
         return markerTag;
     }
@@ -104,6 +97,7 @@ public class FirebaseDatabaseHandler {
         }
     }
 
+    /* Getters */
     public DatabaseReference getDatabase() {
         return mDatabase;
     }

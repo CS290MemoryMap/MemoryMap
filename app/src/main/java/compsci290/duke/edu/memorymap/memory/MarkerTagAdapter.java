@@ -13,21 +13,16 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import compsci290.duke.edu.memorymap.R;
 
 public class MarkerTagAdapter extends RecyclerView.Adapter<MarkerTagAdapter.MarkerTagHolder> {
 
-    private ArrayList<MarkerTag> mMemoryList;
+    private List<MarkerTag> mMemoryList;
     private Context mContext;
-    private MarkerTagAdapter.OnItemClickListener mOnItemClickListener;
 
-    public interface OnItemClickListener {
-        void onItemClick(View view, int position);
-    }
-
-    public MarkerTagAdapter(ArrayList<MarkerTag> list, Context c) {
+    public MarkerTagAdapter(List<MarkerTag> list, Context c) {
         this.mMemoryList = list;
         this.mContext = c;
     }
