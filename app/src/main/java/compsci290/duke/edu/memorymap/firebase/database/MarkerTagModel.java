@@ -3,9 +3,6 @@ package compsci290.duke.edu.memorymap.firebase.database;
 import android.graphics.Bitmap;
 import android.util.Base64;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-
 import java.io.ByteArrayOutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
