@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="compsci290.duke.edu.memorymap.MainActivity"
+    android:orientation="vertical"
+    android:weightSum="1">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/intro"
+        android:textAlignment="center"
+        android:textSize="18sp" />
+
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="29dp"
+        android:layout_weight="0.07" />
+
+    <LinearLayout
+        android:id="@+id/email_password_fields"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/email_password_buttons"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="75dp">
+
+        <Button
+            android:id="@+id/sign_out_button"
+            android:layout_width="121dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:background="@color/colorPrimary"
+            android:elevation="0dp"
+            android:onClick="onClick"
+            android:text="@string/sign_out"
+            android:textAlignment="center"
+            android:textColor="@android:color/white" />
+
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="195dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:text="@string/signed_out"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/signed_in_buttons"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:visibility="visible"
+        android:weightSum="2.0">
+
+    </LinearLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="29dp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/buttonToPersonalMap"
+            android:layout_width="258dp"
+            android:layout_height="wrap_content"
+            android:background="@color/colorAccent"
+            android:onClick="onClickPersonalMapBtn"
+            android:text="Personal Map"
+            android:textColor="@android:color/white"
+            android:layout_alignParentTop="true"
+            android:layout_alignStart="@+id/buttonToPersonalList"
+            android:layout_alignEnd="@+id/buttonToPersonalList" />
+
+        <Button
+            android:id="@+id/buttonToPersonalList"
+            android:layout_width="230dp"
+            android:layout_height="wrap_content"
+            android:background="@color/colorAccent"
+            android:onClick="onClickPersonalListBtn"
+            android:text="Personal Memory List"
+            android:textColor="@android:color/white"
+            android:layout_below="@+id/buttonToPersonalMap"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="16dp" />
+
+        <Button
+            android:id="@+id/buttonToPublicMap"
+            android:layout_width="258dp"
+            android:layout_height="wrap_content"
+            android:background="@color/colorAccent"
+            android:onClick="onClickPublicMapBtn"
+            android:text="Public Map"
+            android:textColor="@android:color/white"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true" />
+
+        <Button
+            android:id="@+id/buttonToPublicList"
+            android:layout_width="258dp"
+            android:layout_height="wrap_content"
+            android:background="@color/colorAccent"
+            android:onClick="onClickPublicListBtn"
+            android:text="Public Memory List"
+            android:textColor="@android:color/white"
+            android:layout_alignBaseline="@+id/buttonToPersonalList"
+            android:layout_alignBottom="@+id/buttonToPersonalList"
+            android:layout_alignParentEnd="true" />
+
+    </RelativeLayout>
+
+</LinearLayout>
