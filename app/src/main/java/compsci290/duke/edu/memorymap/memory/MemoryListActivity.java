@@ -2,8 +2,6 @@ package compsci290.duke.edu.memorymap.memory;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,11 +21,8 @@ import java.util.Collections;
 import java.util.List;
 
 import compsci290.duke.edu.memorymap.R;
-import compsci290.duke.edu.memorymap.database.MarkerTagDbHandler;
 import compsci290.duke.edu.memorymap.firebase.database.FirebaseDatabaseHandler;
 import compsci290.duke.edu.memorymap.firebase.database.MarkerTagModel;
-import compsci290.duke.edu.memorymap.memory.MarkerTag;
-import compsci290.duke.edu.memorymap.memory.MarkerTagAdapter;
 
 /**
  * TODO: rotating app when different sort selected does not save
@@ -35,6 +30,8 @@ import compsci290.duke.edu.memorymap.memory.MarkerTagAdapter;
 
 public class MemoryListActivity extends AppCompatActivity implements RecyclerViewClickListener {
     private static final String MARKERTAG = "markertag";
+    private static final String SORTINGMETHOD = "SortingMethod";
+    private static final String TAGLIST = "TagList";
     private static final int OPEN_MEMORY = 1;
     private static final String TAG = "MemoryListActivity";
 
@@ -54,27 +51,38 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
      * Query user's MarkerTags to be displayed in RecyclerView on start-up
      **/
     @Override
-    public void onCreate(Bundle onSavedInstanceState) {
+    protected void onCreate(Bundle onSavedInstanceState) {
         super.onCreate(onSavedInstanceState);
         setContentView(R.layout.activity_memorylist);
         mRecyclerView = (RecyclerView) findViewById(R.id.rv);
-
         // get MarkerTag set from database, convert to ArrayList
         /* added for firebase database code */
+        Log.d(TAG, "In onCreate method");
         mFirebaseDbHandler = new FirebaseDatabaseHandler();
-        mMarkerTagList = Collections.emptyList();
-        queryMyMarkerTagList();
-        // addToDatabase();
-        //mMarkerTagList = mDbHandler.queryAllMarkerTags();
 
+        if (onSavedInstanceState == null) {
+            mMarkerTagList = Collections.emptyList();
+            if (method > 0) {
+                updateSortMethod();
+            } else {
+                queryMyMarkerTagList();
+            }
+        } else {
+            method = onSavedInstanceState.getInt(SORTINGMETHOD);
+            updateSortMethod();
+        }
         LinearLayoutManager llm = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(llm);
         mRecyclerView.setHasFixedSize(true);
     }
 
     @Override
-    public void onResume() {
+    protected void onResume() {
         super.onResume();
+        updateSortMethod();
+    }
+
+    private void updateSortMethod() {
         if (method > 0) {
             showProgressDialog();
             if (method == 1) {
@@ -93,7 +101,7 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
      * Initialize and set custom adapter for RecyclerView
      **/
     private void initializeAdapter() {
-        mAdapter = new MarkerTagAdapter(mMarkerTagList, this, this);
+        mAdapter = new MarkerTagAdapter(mMarkerTagList, this);
         if (mMarkerTagList.size() == 0) {
             Log.d(TAG, "MarkerTag list empty.");
         } else {
@@ -110,6 +118,9 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
     private void updateList(List<MarkerTag> newList) {
         if (mMarkerTagList != null && newList != null) {
             mMarkerTagList = newList;
+            if (mAdapter == null) {
+                initializeAdapter();
+            }
             mAdapter.swap(mMarkerTagList);
         } else if (newList != null) {
             mMarkerTagList = Collections.emptyList();
@@ -347,5 +358,31 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
         startActivityForResult(intent, OPEN_MEMORY);
         //Intent intent = listToMemoryIntent(mMarkerTag, MemoryActivity.class);
         //startActivityForResult(intent, OPEN_MEMORY);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState){
+        Log.d(TAG, "Restoring InstanceState");
+        super.onRestoreInstanceState(savedInstanceState);
+        method = savedInstanceState.getInt(SORTINGMETHOD);
+        updateSortMethod();
+    }
+
+    /**
+     * Saves the state of this activity
+     *
+     * @param  outState  bundle containing state
+     */
+    @Override
+    protected void onSaveInstanceState (Bundle outState) {
+        int sortMethod = method;
+        outState.putInt(SORTINGMETHOD, sortMethod);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.d(TAG, "onDestroy");
+        super.onDestroy();
     }
 }
