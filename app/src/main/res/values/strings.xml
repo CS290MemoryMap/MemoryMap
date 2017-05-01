@@ -42,4 +42,6 @@
     <string name="menu_get_curr_loc">Get Current Location</string>
     <string name="menu_create_at_address">Create Memory At Address</string>
     <string name="menu_create_at_curr_loc">Create Memory at My Location</string>
+
+    <string name="map_no_date">No date!</string>
 </resources>

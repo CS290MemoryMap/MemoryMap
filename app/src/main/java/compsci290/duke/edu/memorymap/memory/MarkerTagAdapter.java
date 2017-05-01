@@ -9,7 +9,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import compsci290.duke.edu.memorymap.R;
 
@@ -49,7 +53,9 @@ class MarkerTagAdapter extends RecyclerView.Adapter<MarkerTagAdapter.MarkerTagHo
     public void onBindViewHolder(MarkerTagHolder holder, int i) {
         holder.mMemTitle.setText(mMemoryList.get(i).getTitle());
         holder.mMemDescription.setText(mMemoryList.get(i).getDetails());
-        holder.mMemDate.setText(mMemoryList.get(i).getDate());
+        Date date = mMemoryList.get(i).getDateDate();
+        DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
+        if(date != null) holder.mMemDate.setText(format.format(date));
         holder.mMemImage.setImageBitmap(mMemoryList.get(i).getImg());
     }
 

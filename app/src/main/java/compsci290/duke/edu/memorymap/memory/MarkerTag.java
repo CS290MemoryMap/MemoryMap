@@ -82,7 +82,7 @@ public class MarkerTag implements Parcelable {
         this.isPublic = markerTagModel.isPublicMarkerTag();
     }
 
-    public Date createDateFromString(String date){
+    private Date createDateFromString(String date){
         DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
         try{
             return format.parse(date);
@@ -92,7 +92,7 @@ public class MarkerTag implements Parcelable {
         }
     }
 
-    public String createStringFromDate(Date date){
+    private String createStringFromDate(Date date){
         DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
         return format.format(date);
     }
@@ -110,7 +110,7 @@ public class MarkerTag implements Parcelable {
     /**
      * convert Base64 image String to Bitmap
      * @param imgBase64 image String
-     * @return
+     * @return returns a bitmap of the image
      */
     private Bitmap base64ToBitmap(String imgBase64) {
         if (imgBase64.isEmpty()) {
@@ -134,11 +134,11 @@ public class MarkerTag implements Parcelable {
         this.date = date;
         this.dateStr = createStringFromDate(date);
     }
-    public void setDetails(String details){this.details = details;}
-    public void setImg(Bitmap img){this.img = img;}
+    void setDetails(String details){this.details = details;}
+    void setImg(Bitmap img){this.img = img;}
     public void setLatitude(Double latitude){this.latitude = latitude;}
     public void setLongitude(Double longitude){this.longitude = longitude;}
-    public void setIsPublic(Boolean isPublic){this.isPublic = isPublic;}
+    void setIsPublic(Boolean isPublic){this.isPublic = isPublic;}
     public void setID(String ID){this.ID = ID;}
 
     protected MarkerTag(Parcel in) {

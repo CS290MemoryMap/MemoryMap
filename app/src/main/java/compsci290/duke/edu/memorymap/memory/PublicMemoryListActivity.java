@@ -36,7 +36,7 @@ import compsci290.duke.edu.memorymap.memory.MarkerTagAdapter;
 public class PublicMemoryListActivity extends AppCompatActivity implements RecyclerViewClickListener{
     private static final String MARKERTAG = "markertag";
     private static final int OPEN_MEMORY = 1;
-    private static final String TAG = "PublicMemoryListActivity";
+    private static final String TAG = "PubMemoryListActivity";
 
     protected List<MarkerTag> mMarkerTagList;
     protected RecyclerView mRecyclerView;

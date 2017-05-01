@@ -36,7 +36,6 @@ import java.util.Locale;
 
 import compsci290.duke.edu.memorymap.firebase.database.MarkerTagModel;
 import compsci290.duke.edu.memorymap.memory.MarkerTag;
-import compsci290.duke.edu.memorymap.memory.MemoryActivity;
 import compsci290.duke.edu.memorymap.memory.EditableMemoryActivity;
 import compsci290.duke.edu.memorymap.R;
 
@@ -333,6 +332,9 @@ public class EditableMapsActivity extends MapsActivity
             latLng = new LatLng(address1.getLatitude(),address1.getLongitude());
         }catch (IOException e){
             Log.d(TAG, "Could not convert address to latlng. Error: "+e);
+            latLng = null;
+        }catch(IndexOutOfBoundsException e){
+            Log.d(TAG, "Could not convert address to latlng");
             latLng = null;
         }
         return latLng;
