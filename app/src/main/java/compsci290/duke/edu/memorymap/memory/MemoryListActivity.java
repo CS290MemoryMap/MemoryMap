@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -23,10 +22,6 @@ import java.util.List;
 import compsci290.duke.edu.memorymap.R;
 import compsci290.duke.edu.memorymap.firebase.database.FirebaseDatabaseHandler;
 import compsci290.duke.edu.memorymap.firebase.database.MarkerTagModel;
-
-/**
- * TODO: rotating app when different sort selected does not save
- **/
 
 public class MemoryListActivity extends AppCompatActivity implements RecyclerViewClickListener {
     private static final String MARKERTAG = "markertag";
@@ -220,7 +215,6 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                         Log.d(TAG, "Error querying by title: " + databaseError.getMessage());
-                        // TODO how do you want to handle error querying from database?
                     }
                 });
     }
@@ -257,7 +251,6 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                         Log.d(TAG, "Error: query by date: " + databaseError.getMessage());
-                        // TODO how do you want to handle error querying from database?
                     }
                 });
     }
@@ -294,7 +287,6 @@ public class MemoryListActivity extends AppCompatActivity implements RecyclerVie
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                         Log.d(TAG, "Error: query by location: " + databaseError.getMessage());
-                        // TODO how do you want to handle error querying from database?
                     }
                 });
     }
