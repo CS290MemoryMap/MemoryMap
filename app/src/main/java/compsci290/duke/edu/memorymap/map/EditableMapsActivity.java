@@ -132,7 +132,7 @@ public class EditableMapsActivity extends MapsActivity
     @Override
     public void onInfoWindowLongClick(final Marker marker) {
         new AlertDialog.Builder(new ContextThemeWrapper(EditableMapsActivity.this, R.style.myDialog))
-                .setMessage("Delete/edit this memory?")
+                .setMessage("Delete this memory?")
                 .setCancelable(true)
                 .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -141,17 +141,17 @@ public class EditableMapsActivity extends MapsActivity
                         marker.remove();
                     }
                 })
-                .setNeutralButton("Edit", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        MarkerTag markerTag = (MarkerTag) marker.getTag();
-                        Intent intent = new Intent(EditableMapsActivity.this, EditableMemoryActivity.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putParcelable(MARKERTAG, markerTag);
-                        intent.putExtras(bundle);
-                        markerToRemove = marker; //remove marker to be edited, will replace when returns
-                        startActivityForResult(intent, EDIT_MEMORY);
-                    }
-                })
+//                .setNeutralButton("Edit", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        MarkerTag markerTag = (MarkerTag) marker.getTag();
+//                        Intent intent = new Intent(EditableMapsActivity.this, EditableMemoryActivity.class);
+//                        Bundle bundle = new Bundle();
+//                        bundle.putParcelable(MARKERTAG, markerTag);
+//                        intent.putExtras(bundle);
+//                        markerToRemove = marker; //remove marker to be edited, will replace when returns
+//                        startActivityForResult(intent, EDIT_MEMORY);
+//                    }
+//                })
                 .setNegativeButton("Cancel", null)
                 .show();
     }
