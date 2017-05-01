@@ -81,10 +81,11 @@ public class EditableMemoryActivity extends MemoryActivity {
      * @param  view  unused parameter. is the button view
      */
     public void onClickImageUpload(View view){
-        final CharSequence[] items = { "Take Photo", "Choose from Library",
-                "Cancel" };
+        //final CharSequence[] items = { "Take Photo", "Choose from Library",
+        //        "Cancel" };
+        final CharSequence[] items = { "Take Photo", "Cancel"};
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Add Photo!");
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
