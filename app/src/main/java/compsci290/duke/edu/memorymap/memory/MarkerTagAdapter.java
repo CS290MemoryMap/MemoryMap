@@ -1,6 +1,5 @@
 package compsci290.duke.edu.memorymap.memory;
 
-import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -20,21 +19,10 @@ import compsci290.duke.edu.memorymap.R;
 class MarkerTagAdapter extends RecyclerView.Adapter<MarkerTagAdapter.MarkerTagHolder> {
 
     private static RecyclerViewClickListener mListener;
-
     private List<MarkerTag> mMemoryList;
-    private Context mContext;
-    private MarkerTagAdapter.OnItemClickListener mOnItemClickListener;
 
-    /**
-     * public interface for RecyclerView ClickListener
-     **/
-    interface OnItemClickListener {
-        void onItemClick(View view, int position);
-    }
-
-    MarkerTagAdapter(List<MarkerTag> list, Context c, RecyclerViewClickListener itemClickListener) {
+    MarkerTagAdapter(List<MarkerTag> list, RecyclerViewClickListener itemClickListener) {
         this.mMemoryList = list;
-        this.mContext = c;
         mListener = itemClickListener;
     }
 

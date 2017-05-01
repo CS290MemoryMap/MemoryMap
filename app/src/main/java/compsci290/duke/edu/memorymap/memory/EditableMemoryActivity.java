@@ -19,8 +19,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -28,18 +26,9 @@ import java.util.Date;
 import java.util.Locale;
 
 import compsci290.duke.edu.memorymap.R;
-import compsci290.duke.edu.memorymap.memory.MemoryActivity;
 
 public class EditableMemoryActivity extends MemoryActivity {
     private static final int SELECT_PICTURE = 1;
-    private static final String DATE = "date";
-    private static final String DETAILS = "details";
-    private static final String TITLE = "title";
-    private static final String BITMAP = "bitmap";
-    private static final String LATLNG = "latlng";
-    private static final String BUNDLE = "bundle";
-    private static final String ISPUBLIC = "ispublic";
-    //private static final String MARKERTAG = "markertag";
 
     private static final String TAG = "EditableMemoryActivity";
 

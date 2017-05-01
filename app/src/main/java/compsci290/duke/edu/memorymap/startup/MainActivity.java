@@ -18,8 +18,6 @@ import compsci290.duke.edu.memorymap.memory.PublicMemoryListActivity;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private static final String TAG = "MainActivity";
-
     private TextView mStatusTextView;
     private FirebaseAuth mAuth;
 

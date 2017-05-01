@@ -134,11 +134,11 @@ public class MarkerTag implements Parcelable {
         this.date = date;
         this.dateStr = createStringFromDate(date);
     }
-    void setDetails(String details){this.details = details;}
-    void setImg(Bitmap img){this.img = img;}
+    public void setDetails(String details){this.details = details;}
+    public void setImg(Bitmap img){this.img = img;}
     public void setLatitude(Double latitude){this.latitude = latitude;}
     public void setLongitude(Double longitude){this.longitude = longitude;}
-    void setIsPublic(Boolean isPublic){this.isPublic = isPublic;}
+    public void setIsPublic(Boolean isPublic){this.isPublic = isPublic;}
     public void setID(String ID){this.ID = ID;}
 
     protected MarkerTag(Parcel in) {

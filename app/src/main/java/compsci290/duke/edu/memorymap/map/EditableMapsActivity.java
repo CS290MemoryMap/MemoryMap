@@ -50,6 +50,9 @@ public class EditableMapsActivity extends MapsActivity
     private Marker markerToRemove = null;
     private static List<MarkerTag> mTagList;
 
+    protected MarkerTag mNewMarkerTag = null;
+    protected boolean mMarkerEdited = false;
+
 
     /**
      * Manipulates the map once available.
@@ -100,6 +103,51 @@ public class EditableMapsActivity extends MapsActivity
 
     }
 
+    @Override
+    public void onResume(){
+        Log.d(TAG,"On resume....");
+        super.onResume();
+        if(mMarkerEdited){
+            if(mNewMarkerTag != null){
+                    MarkerTag markerTag = mNewMarkerTag;
+                    if(markerTag != null) {
+                        Log.d(TAG,"updating markerTag");
+                        markerTag = mDbHandler.updateMarkerTag(markerTag);
+                        mNewMarkerLatLng = new LatLng(markerTag.getLatitude(),markerTag.getLongitude());
+                        for (MarkerTag tag : mTagList) {
+                            if (tag.getID().equals(markerTag.getID())) {
+                                tag.setDate(markerTag.getDateDate());
+                                tag.setDetails(markerTag.getDetails());
+                                tag.setImg(markerTag.getImg());
+                                tag.setIsPublic(markerTag.getIsPublic());
+                                tag.setTitle(markerTag.getTitle());
+                            }
+                        }
+                        Marker newMarker;
+                        if (markerTag.getImg() == null) {
+                            newMarker = mMap.addMarker(new MarkerOptions()
+                                    .position(mNewMarkerLatLng));
+                            newMarker.setTag(markerTag);
+
+                        } else {
+                            newMarker = mMap.addMarker(new MarkerOptions()
+                                    .position(mNewMarkerLatLng)
+                                    .icon(BitmapDescriptorFactory.fromBitmap(markerTag.getImg())));
+                            newMarker.setTag(markerTag);
+                        }
+                        mSeeNewMarker = true;
+                        if(markerToRemove != null){
+                            Log.d(TAG, "removing old marker");
+                            markerToRemove.remove();
+                            markerToRemove = null;
+                        }
+                }
+                mNewMarkerTag = null;
+            }
+            mMarkerEdited = false;
+        }
+    }
+
 
     /* Activated when the user long clicks on the map.
      * Asks the user if they would like to create a memory at the clicked location.
@@ -132,7 +180,7 @@ public class EditableMapsActivity extends MapsActivity
     @Override
     public void onInfoWindowLongClick(final Marker marker) {
         new AlertDialog.Builder(new ContextThemeWrapper(EditableMapsActivity.this, R.style.myDialog))
-                .setMessage("Delete/edit this memory?")
+                .setMessage("Delete this memory?")
                 .setCancelable(true)
                 .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -141,17 +189,17 @@ public class EditableMapsActivity extends MapsActivity
                         marker.remove();
                     }
                 })
-                .setNeutralButton("Edit", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        MarkerTag markerTag = (MarkerTag) marker.getTag();
-                        Intent intent = new Intent(EditableMapsActivity.this, EditableMemoryActivity.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putParcelable(MARKERTAG, markerTag);
-                        intent.putExtras(bundle);
-                        markerToRemove = marker; //remove marker to be edited, will replace when returns
-                        startActivityForResult(intent, EDIT_MEMORY);
-                    }
-                })
+//                .setNeutralButton("Edit", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        MarkerTag markerTag = (MarkerTag) marker.getTag();
+//                        Intent intent = new Intent(EditableMapsActivity.this, EditableMemoryActivity.class);
+//                        Bundle bundle = new Bundle();
+//                        bundle.putParcelable(MARKERTAG, markerTag);
+//                        intent.putExtras(bundle);
+//                        markerToRemove = marker; //remove marker to be edited, will replace when returns
+//                        startActivityForResult(intent, EDIT_MEMORY);
+//                    }
+//                })
                 .setNegativeButton("Cancel", null)
                 .show();
     }
@@ -188,17 +236,21 @@ public class EditableMapsActivity extends MapsActivity
         }
         else if(requestCode == EDIT_MEMORY){
             if(resultCode == RESULT_OK){
-                if(mMap == null){
+                if(mMap != null){
                     final Bundle extras = data.getExtras();
                     if(extras != null){
                         MarkerTag markerTag = extras.getParcelable(MARKERTAG);
                         if(markerTag != null) {
+                            Log.d(TAG,"updating markerTag");
                             markerTag = mDbHandler.updateMarkerTag(markerTag);
                             mNewMarkerLatLng = new LatLng(markerTag.getLatitude(),markerTag.getLongitude());
                             for (MarkerTag tag : mTagList) {
                                 if (tag.getID().equals(markerTag.getID())) {
-                                    mTagList.remove(tag);
-                                    mTagList.add(markerTag);
+                                    tag.setDate(markerTag.getDateDate());
+                                    tag.setDetails(markerTag.getDetails());
+                                    tag.setImg(markerTag.getImg());
+                                    tag.setIsPublic(markerTag.getIsPublic());
+                                    tag.setTitle(markerTag.getTitle());
                                 }
                             }
                             Marker newMarker;
@@ -215,6 +267,7 @@ public class EditableMapsActivity extends MapsActivity
                             }
                             mSeeNewMarker = true;
                             if(markerToRemove != null){
+                                Log.d(TAG, "removing old marker");
                                 markerToRemove.remove();
                                 markerToRemove = null;
                             }
@@ -226,6 +279,8 @@ public class EditableMapsActivity extends MapsActivity
                     }
                 }else{
                     Log.d(TAG, "mMap was null");
+                    mMarkerEdited = true;
+                    mNewMarkerTag = data.getExtras().getParcelable(MARKERTAG);
                 }
             }else{
                 markerToRemove = null;
