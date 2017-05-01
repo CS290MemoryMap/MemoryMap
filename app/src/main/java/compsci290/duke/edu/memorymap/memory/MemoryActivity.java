@@ -1,16 +1,12 @@
 package compsci290.duke.edu.memorymap.memory;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,10 +14,8 @@ import android.widget.ToggleButton;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-
-import java.util.Calendar;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
@@ -38,6 +32,7 @@ public class MemoryActivity extends AppCompatActivity {
     private static final String TAG = "MemoryActivity";
     private static final int EDIT_MEMORY = 1;
 
+    /* necessary to access */
     protected static TextView mDateView;
     protected EditText mTitleView;
     protected EditText mDetailsView;
@@ -46,9 +41,7 @@ public class MemoryActivity extends AppCompatActivity {
     protected ToggleButton mToggleButton;
 
     protected Bitmap mPic;
-    protected LatLng mLatLng;
     protected MarkerTag mTag;
-    protected boolean mIsPublic;
     protected boolean publicList;
 
     private FirebaseDatabaseHandler mFirebaseDbHandler;
@@ -82,7 +75,10 @@ public class MemoryActivity extends AppCompatActivity {
 
         if (mTag != null) {
              /* set data of elements */
-            mDateView.setText(mTag.getDate(), TextView.BufferType.EDITABLE);
+
+            DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
+            Date date = mTag.getDateDate();
+            if(date != null) mDateView.setText(format.format(date), TextView.BufferType.EDITABLE);
             mDateView.setEnabled(false);
             mDateView.setTextColor(Color.BLACK);
 
@@ -145,7 +141,9 @@ public class MemoryActivity extends AppCompatActivity {
                         markerTag = mFirebaseDbHandler.updateMarkerTag(markerTag);
                         mTag = markerTag;
 
-                        mDateView.setText(mTag.getDate(), TextView.BufferType.EDITABLE);
+                        DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
+                        Date date = mTag.getDateDate();
+                        if(date != null) mDateView.setText(format.format(date), TextView.BufferType.EDITABLE);
                         mDateView.setEnabled(false);
                         mDateView.setTextColor(Color.BLACK);
 

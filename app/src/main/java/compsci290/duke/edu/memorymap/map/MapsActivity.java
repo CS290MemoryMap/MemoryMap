@@ -33,7 +33,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.location.LocationServices;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormat;
@@ -207,7 +206,12 @@ public class MapsActivity extends AppCompatActivity
         TextView dateView = (TextView) v.findViewById(R.id.infowin_date);
         Date date = markerTag.getDateDate();
         DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
-        dateView.setText(format.format(date));
+        if(date != null){
+            dateView.setText(format.format(date));
+        }else{
+            String str = "@string/map_no_date";
+            dateView.setText(str);
+        }
         TextView detailsView = (TextView) v.findViewById(R.id.infowin_details);
         detailsView.setText(markerTag.getDetails());
 

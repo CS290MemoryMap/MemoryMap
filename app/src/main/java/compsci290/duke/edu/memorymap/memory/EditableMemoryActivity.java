@@ -21,7 +21,11 @@ import android.widget.ToggleButton;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import compsci290.duke.edu.memorymap.R;
 import compsci290.duke.edu.memorymap.memory.MemoryActivity;
@@ -241,11 +245,12 @@ public class EditableMemoryActivity extends MemoryActivity {
             mImageView.setAdjustViewBounds(true);
         }
         String title = mTag.getTitle();
-        if(title != "" && title != null) mTitleView.setText(title);
-        String date = mTag.getDate();
-        if(date != null) mDateView.setText(date);
+        if(!title.equals("") && title != null) mTitleView.setText(title);
+        DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
+        Date date = mTag.getDateDate();
+        if(date != null) mDateView.setText(format.format(date));
         String details = mTag.getDetails();
-        if(details != "" && details != null) mDetailsView.setText(details);
+        if(!details.equals("") && details != null) mDetailsView.setText(details);
         Boolean checked = mTag.getIsPublic();
         if(checked != null) mToggleButton.setChecked(checked);
     }
