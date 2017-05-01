@@ -97,7 +97,7 @@
         android:layout_height="wrap_content"
         android:background="@color/colorAccent"
         android:onClick="onClickPersonalMapBtn"
-        android:text= "Personal Map"
+        android:text="@string/personal_map_text"
         android:textColor="@android:color/white" />
 
     <Space
@@ -110,7 +110,7 @@
         android:layout_height="wrap_content"
         android:background="@color/colorAccent"
         android:onClick="onClickPersonalListBtn"
-        android:text="Personal Memory List"
+        android:text="@string/personal_memory_list"
         android:textColor="@android:color/white" />
 
     <Space
@@ -123,7 +123,7 @@
         android:layout_height="wrap_content"
         android:background="@color/colorAccent"
         android:onClick="onClickPublicMapBtn"
-        android:text="Public Map"
+        android:text="@string/public_map"
         android:textColor="@android:color/white" />
 
     <Space
@@ -136,7 +136,7 @@
         android:layout_height="wrap_content"
         android:background="@color/colorAccent"
         android:onClick="onClickPublicListBtn"
-        android:text="Public Memory List"
+        android:text="@string/public_memory_list"
         android:textColor="@android:color/white" />
 
 </LinearLayout>
