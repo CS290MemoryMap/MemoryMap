@@ -2,15 +2,11 @@ package compsci290.duke.edu.memorymap.memory;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -23,11 +19,8 @@ import java.util.Collections;
 import java.util.List;
 
 import compsci290.duke.edu.memorymap.R;
-import compsci290.duke.edu.memorymap.database.MarkerTagDbHandler;
 import compsci290.duke.edu.memorymap.firebase.database.FirebaseDatabaseHandler;
 import compsci290.duke.edu.memorymap.firebase.database.MarkerTagModel;
-import compsci290.duke.edu.memorymap.memory.MarkerTag;
-import compsci290.duke.edu.memorymap.memory.MarkerTagAdapter;
 
 /**
  * TODO: rotating app when different sort selected does not save
@@ -74,7 +67,7 @@ public class PublicMemoryListActivity extends AppCompatActivity implements Recyc
      * Initialize and set custom adapter for RecyclerView
      **/
     private void initializeAdapter() {
-        mAdapter = new MarkerTagAdapter(mMarkerTagList, this, this);
+        mAdapter = new MarkerTagAdapter(mMarkerTagList, this);
         mRecyclerView.setAdapter(mAdapter);
     }
 
