@@ -44,4 +44,9 @@
     <string name="menu_create_at_curr_loc">Create Memory at My Location</string>
 
     <string name="map_no_date">No date!</string>
+
+    <string name="public_map">Public Map</string>
+    <string name="personal_memory_list">Personal Memory List</string>
+    <string name="public_memory_list">Public Memory List</string>
+    <string name="personal_map_text">Personal Map</string>
 </resources>
