@@ -174,7 +174,7 @@ public class EditableMemoryActivity extends MemoryActivity {
          * @param  day      day chosen
          */
         public void onDateSet(DatePicker view, int year, int month, int day) {
-            String str = String.format("%d/%d/%d",month,day,year);
+            String str = String.format("%d/%d/%d",month+1,day,year);
             mDateView.setText(str);
         }
     }
