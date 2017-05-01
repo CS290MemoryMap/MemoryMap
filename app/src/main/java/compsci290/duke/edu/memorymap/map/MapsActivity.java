@@ -209,7 +209,7 @@ public class MapsActivity extends AppCompatActivity
         if(date != null){
             dateView.setText(format.format(date));
         }else{
-            String str = "@string/map_no_date";
+            String str = "";
             dateView.setText(str);
         }
         TextView detailsView = (TextView) v.findViewById(R.id.infowin_details);
